@@ -1,0 +1,102 @@
+---
+title: "Getting started with kanjistat"
+author: "Dominic Schuhmacher"
+date: "2023-04-08"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Getting started with kanjistat}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The kanjistat package provides a number of tools for retrieving, processing and learning about kanji.
+Some of them are variants of known methods for ordering and categorizing kanji. A major novelty
+are some tools for comparing kanji as spatial objects in terms of mass transport distances. There are
+also some tools of a more playful nature. I hope this package will be helpful to researchers and
+Japanese learners alike.
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+oldopt <- options(width = 120)
+if(capabilities("cairo"))
+    knitr::opts_chunk$set(dev.args = list(type = "cairo"))
+```
+
+
+## Technical tips and tricks
+
+<!-- We start by addressing some of the underlying principles used in this package. This section may be skipped on first reading -->
+
+### Using kanji in the R console
+
+Many functions in kanjistat take "a kanji" as input. If you have set up a Japanese input method for your system, you can pass the kanji directly as a character object. 
+```{r message=FALSE}
+  library(kanjistat)
+  lookup("猫")
+  kbase[kbase$kanji == "猫",]
+```
+This usually works in the same way if you copy kanji from other sources (the console, pdfs, online dictionaries, ...). Alternatively, if you know the kanji's Unicode codepoint from somewhere, you can use it as an alternative.
+```{r message = TRUE}
+  lookup("\u732b")
+  kbase[kbase$kanji == "\u732b",]
+```
+It seems, however, that only Unicode codepoints in the range 0000-ffff can be escaped like this. From the 13108 kanji in KANJIDIC2, this currently excludes only 303. The function codepointToKanji helps in this case.
+```{r message = TRUE}
+  # "\u{26951}" gives Error: invalid \u{xxxx} sequence, but:
+  codepointToKanji("26951")
+  code5 <- kbase$unicode[kbase$unicode > as.hexmode("ffff")]
+  cat(codepointToKanji(code5, concat=TRUE))
+```
+Whether all of the (rarer) kanji are displayed correctly, still depends on whether the console font supports the corresponding Unicode character. In all of this it is assumed that the console has UTF-8 capabilities.
+
+
+### Japanese fonts
+
+In this package, we are mainly interested in visual features of the kanji. For this we use objects of S3 classes
+`kanjimat` and `kanjivec` in order to store kanji as bitmap and vector graphics *in a certain font*. Further statistical anlyses can be performed based on pixel values in the matrix and stroke information in the vector graphics. For the vector graphics we rely on the data of the fantastic [KanjiVG project](https://kanjivg.tagaini.net/), as segmenting kanji into strokes is currently beyond this package. This limits the choice of fonts to one Kyōkasho and one Kaisho font each.
+
+For bitmaps the user can use any font on her computer. There are many free Japanese fonts available for download, including at <https://www.freekanjifonts.com/>, <https://www.freejapanesefont.com/> and <https://github.com/fontworks-fonts>. Common terms for font styles are Gothic (ゴシック, sans serif), Minchō (明朝, serif), Kyōkasho (教科書, school textbook). Sho (書) generally indicates a handwriting style, with the three main calligraphy styles being Kaisho (楷書, regular script), Gyōsho (行書, semi-cursiv script), Sōsho (草書, cursiv script). Sometimes the kanji 体 (-tai, for typeface) is added (or anything expressing style or type is added).
+
+Once fonts are installed (which depends on your operating system), we need to make R aware of it. We use a combination of the font management package `sysfonts` and the package `showtext` for plotting. The function `sysfonts::font_files()` gives a list of fonts
+(pre-)installed in standard places on your operating system. But the list it returns might be a little overwhelming, plus it sometimes misses fonts that you have installed in more special places. A useful tool for searching the path to the font by name is `systemfonts::match_font` (not `sysfonts`!).
+```{r}
+  require(systemfonts)
+  # looking for the free kaisho font by Nagayama Norio we have previously installed
+  nagayama <- systemfonts::match_font("nagayama_kai")
+  nagayama
+  hsans <- systemfonts::match_font("Hiragino Sans")
+  hmincho <- systemfonts::match_font("Hiragino Mincho ProN")
+  yukyokasho <- systemfonts::match_font("YuKyokasho")
+  
+  sysfonts::font_add(family = "nagayama", regular=nagayama$path)
+  sysfonts::font_add(family = "hsans", regular=hsans$path)
+  sysfonts::font_add(family = "hmincho", regular=hmincho$path)
+  sysfonts::font_add(family = "yukyokasho", regular=yukyokasho$path)
+  
+  sysfonts::font_families()
+  # showtext_auto()    # sees to it that showtext gets used when we say text below
+  # showtext_auto(enable = FALSE)
+```
+
+To check we can use the basic function kanjiplot
+<!-- for a single kanji take width and height = 3 -->
+```{r message = FALSE, fig.align='left', fig.width=8, fig.height=2, fig.showtext=TRUE}
+  showtext::showtext_auto()
+  par(mai=rep(0,4), mfrow=c(1,4))
+  plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
+  text(x=0.5, y=0.5, "猫", family="hsans", cex=16)
+  plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
+  text(x=0.5, y=0.5, "猫", family="hmincho", cex=16)
+  plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
+  text(x=0.5, y=0.5, "猫", family="yukyokasho", cex=16)
+  plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
+  text(x=0.5, y=0.5, "猫", family="nagayama", cex=16)
+```
+
