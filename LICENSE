@@ -13,8 +13,8 @@ and at <https://www.gnu.org/licenses/>.
 
 
 
-Copyright holders
------------------
+Attribution of prior work
+-------------------------
 
 The code in the file R/svgparser_lite is slightly altered from R package
 svgparser v0.1.2 --- Copyright (C) 2021 mikefc@coolbutuseless.com
@@ -34,7 +34,7 @@ made available under a CC BY-SA 4.0 license at
 http://www.edrdg.org/wiki/
 
 The variables "jlpt", "frank" and "idc" of data sets kbase and kmorph are taken from
-Kanjium --- Copyright (C) Uros Ozvatic on any additions or modifications
+Kanjium --- Copyright (C) Uros O. on any additions or modifications
             from previous sources
 made available under a CC BY-SA 4.0 license at
 https://github.com/mifunetoshiro/kanjium
@@ -45,6 +45,3 @@ made available under a CC BY-SA 3.0 license at
 https://kanjivg.tagaini.net/
 085e4.svg and 090f5.svg (included for unit tests) are exact copies
 of files from the same source
-
-All other parts of this package are
-Copyright (C) 2023 Dominic Schuhmacher

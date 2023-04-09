@@ -5,8 +5,7 @@ Version: 0.7.0
 Date: 2023-04-07
 Authors@R: person("Dominic", "Schuhmacher", email = "dominic.schuhmacher@mathematik.uni-goettingen.de", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7079-6313"))
 Maintainer: Dominic Schuhmacher <dominic.schuhmacher@mathematik.uni-goettingen.de>
-Description: Various tools and data sets that support the study of kanji, including their morphology, decomposition
-  and concepts of distance and similarity between them.
+Description: Various tools and data sets that support the study of kanji, including their morphology, decomposition and concepts of distance and similarity between them.
 Depends: R (>= 3.5)
 Imports: 
     methods,
