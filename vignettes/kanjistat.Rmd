@@ -138,7 +138,7 @@ sysfonts::font_families()
 # showtext_auto(enable = FALSE)
 ```
 
-`r emo::ji("warning")` **Adding fonts to the sysfont database is only effective until the end of the session. It is therefore advisable to add the `font_add` commands to your kanjistat profile file; see the last section of this document.**
+:warning: **Adding fonts to the sysfont database is only effective until the end of the session. It is therefore advisable to add the `font_add` commands to your kanjistat profile file; see the last section of this document.**
 
 Once the fonts are in the sysfonts database, we can use them in plots in many ways we like thanks to the package `showtext`. A first obvious example is for plot annotation.
 <!-- for a single kanji take width and height = 3 -->
