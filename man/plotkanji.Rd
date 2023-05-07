@@ -2,7 +2,7 @@
 % Please edit documentation in R/kanji1.R
 \name{plotkanji}
 \alias{plotkanji}
-\title{Plot a kanji}
+\title{Plot kanji}
 \usage{
 plotkanji(
   kanji,
@@ -15,14 +15,15 @@ plotkanji(
 )
 }
 \arguments{
-\item{kanji}{a single character, string or numeric specifying a single kanji.}
+\item{kanji}{a vector of class character specifying one or several kanji to be plotted.}
 
 \item{device}{the type of graphics device where the kanji is plotted. Defaults to the
-user's default type according to \code{getOption("device")}. Can be set to
-"current", in which case the kanji is plotted on the currently active device.}
+user's default type according to \code{getOption("device")}.}
 
-\item{family}{the font family used for writing the kanji. Make sure to add the font
-first by using \code{\link[sysfonts]{font_add}}. See details.}
+\item{family}{the font family or families used for writing the kanji. Make sure to add the font(s)
+first by using \code{\link[sysfonts]{font_add}}; see details. If \code{family} is
+a vector of several font families they are matched to the characters in \code{kanji}
+(and possibly recycled).}
 
 \item{factor}{a maginification factor applied to the font size (typically 12 points).}
 
@@ -32,29 +33,30 @@ first by using \code{\link[sysfonts]{font_add}}. See details.}
 file name for devices that create a file).}
 }
 \description{
-Plot a kanji
+Write kanji to a graphics device.
 }
 \details{
-This function allows to "draw" a kanji on a number of possible graphics devices
-in an arbitrary font that is installed on the user's system and has been added
-to the database in package \code{sysfonts}. For the latter \code{\link[sysfonts]{font_add}} or
-\code{\link[sysfonts]{font_families}} to verify what fonts are available. Locating user installed
-fonts varies from system to system and finding the path needed for \code{\link[sysfonts]{font_add}}
-can sometimes be tricky. The suggested package \code{systemfonts} (NOT the same as \code{sysfonts})
-offers the helpful command \code{\link[systemfonts]{match_font}}, which provides the font path based
-on the name of the font family (and if desired the font face).
+This function writes one or several kanji to a graphics device
+in an arbitrary font that has been registered, i.e., added
+to the database in package \code{sysfonts}. For the latter say \code{\link[sysfonts]{font_add}} or
+\code{\link[sysfonts]{font_families}} to verify what fonts are available.
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{     The function uses then the package \code{showtext} to write the kanji in a large font at the
-     center of a new device of the specified type. If no font family is provided, the CJK font 
-     WenQuanYi Micro Hei that that comes with the package showtext is used. This font targets
-     Chinese writing and some strokes will therefore look odd for Japanese characters. We strongly
-     advised that a Japanese font is used.
-     
-     For further details on CJK characters and computers, see the corresponding vignette (TO DO). 
-}\if{html}{\out{</div>}}
+For further information see \emph{Working with Japanese fonts} in \code{vignette("kanjistat", package = "kanjistat")}.
+\code{plotkanji} uses the package \code{showtext} to write the kanji in a large font at the
+center of a new device of the specified type.
+specify \code{device = "current"} to write the kanji to the current device. It is now recommended
+to simply use \code{graphics::text} in combination with \code{showtext::showtext_auto} instead.
 }
+\section{Warning}{
+
+If no font family is provided, the default \strong{Chinese} font WenQuanYi Micro Hei that comes with the package showtext is used.
+This means that the characters will typically be recognizable, but quite often look odd as Japanese characters.
+We strongly advised that a Japanese font is used as detailed above.
+}
+
 \examples{
 \dontrun{
-plotkanji("滝")   # uses Chinese font!}
+plotkanji("滝")   
+plotkanji("犬猫魚")}
 
 }

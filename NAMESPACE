@@ -3,6 +3,7 @@
 S3method(plot,kanjimat)
 S3method(plot,kanjivec)
 S3method(print,kanjimat)
+S3method(print,kanjivec)
 S3method(str,kanjivec)
 export(codepointToKanji)
 export(get_kanjistat_option)

@@ -49,3 +49,4 @@ src/*o
 *.so
 *.so.*
 *.dylib
+docs

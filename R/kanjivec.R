@@ -326,6 +326,8 @@ plot.kanjivec <- function(x, type=c("kanji", "dend"), seg_depth=0, palette = "Da
 #' @param dend whether to print the structure of the \code{strokedend} component.
 #' @param ... further parameters passed to \code{print.default}.
 #'
+#' @export
+#'
 print.kanjivec <- function(x, dend=FALSE, ...) {
   cat("Kanjivec representation of ", x$char, " (Unicode ", as.character(x$hex), ")\n", sep="")
   # cat(x$nstrokes, " vector graphics in ", x$family, " font with ", attr(x$strokedend, "height"), " decomposition", sep="")

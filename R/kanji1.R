@@ -1,7 +1,9 @@
 # Functions in this file operate on individual kanji.
 # They may take vectors of kanji as input, but generate output per kanji.
 
-#' Look up readings and meanings of kanji
+#' Look up kanji
+#' 
+#' Return readings and meanings or information from `kbase` or `kmorph`.
 #'
 #' @param kanji a (vector of) character strings containing kanji. 
 #' @param what the sort of information to display.
@@ -53,112 +55,156 @@ lookup <- function(kanji, what=c("readmean", "basic", "morphologic")) {
 
 
 
-#' Plot a kanji
+#' Plot kanji
 #' 
-#' @param kanji a single character, string or numeric specifying a single kanji.
+#' Write kanji to a graphics device.
+#' 
+#' @param kanji a vector of class character specifying one or several kanji to be plotted.
 #' @param device the type of graphics device where the kanji is plotted. Defaults to the
-#'        user's default type according to \code{getOption("device")}. Can be set to
-#'        "current", in which case the kanji is plotted on the currently active device.
-#' @param family the font family used for writing the kanji. Make sure to add the font
-#'        first by using \code{\link[sysfonts]{font_add}}. See details.
+#'        user's default type according to \code{getOption("device")}. 
+#' @param family the font family or families used for writing the kanji. Make sure to add the font(s)
+#'        first by using \code{\link[sysfonts]{font_add}}; see details. If `family` is
+#'        a vector of several font families they are matched to the characters in `kanji`
+#'        (and possibly recycled).
 #' @param factor a maginification factor applied to the font size (typically 12 points).
 #' @param width,height the dimensions of the device.
 #' @param ... further parameters passed to the function opening the device (such as a
 #'        file name for devices that create a file).
 #'
-#' @details This function allows to "draw" a kanji on a number of possible graphics devices
-#'          in an arbitrary font that is installed on the user's system and has been added
-#'          to the database in package \code{sysfonts}. For the latter \code{\link[sysfonts]{font_add}} or
-#'          \code{\link[sysfonts]{font_families}} to verify what fonts are available. Locating user installed
-#'          fonts varies from system to system and finding the path needed for \code{\link[sysfonts]{font_add}}
-#'          can sometimes be tricky. The suggested package \code{systemfonts} (NOT the same as \code{sysfonts})
-#'          offers the helpful command \code{\link[systemfonts]{match_font}}, which provides the font path based
-#'          on the name of the font family (and if desired the font face).
+#' @details
+#' This function writes one or several kanji to a graphics device
+#' in an arbitrary font that has been registered, i.e., added
+#' to the database in package `sysfonts`. For the latter say \code{\link[sysfonts]{font_add}} or
+#' \code{\link[sysfonts]{font_families}} to verify what fonts are available. 
 #'          
-#'          The function uses then the package \code{showtext} to write the kanji in a large font at the
-#'          center of a new device of the specified type. If no font family is provided, the CJK font 
-#'          WenQuanYi Micro Hei that that comes with the package showtext is used. This font targets
-#'          Chinese writing and some strokes will therefore look odd for Japanese characters. We strongly
-#'          advised that a Japanese font is used.
+#' For further information see _Working with Japanese fonts_ in `vignette("kanjistat", package = "kanjistat")`.
+#' `plotkanji` uses the package `showtext` to write the kanji in a large font at the
+#' center of a new device of the specified type.
+#' specify `device = "current"` to write the kanji to the current device. It is now recommended
+#' to simply use `graphics::text` in combination with `showtext::showtext_auto` instead.
 #'          
-#'          For further details on CJK characters and computers, see the corresponding vignette (TO DO). 
+#' @section Warning:
+#' If no font family is provided, the default **Chinese** font WenQuanYi Micro Hei that comes with the package showtext is used. 
+#' This means that the characters will typically be recognizable, but quite often look odd as Japanese characters.
+#' We strongly advised that a Japanese font is used as detailed above.
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' plotkanji("滝")   # uses Chinese font!}
+#' plotkanji("滝")   
+#' plotkanji("犬猫魚")}
 #' 
 # most kanji are \u{4e00 to 9faf}, the notorious 𠮟 is the only 常用 kanji that isn't (just saying)
 plotkanji <- function(kanji, device="default", family=NULL, factor=10, width=NULL, height=NULL, ...) {
+  
+  temp <- paste(kanji, collapse="")
+  kanji <- unlist(strsplit(temp, split=""))
+  n <- length(kanji)
+  nfam <- length(family)
+  
+  # if (is.null(filename)) {
+  #   filename <- paste0("kanji.", device) 
+  # }
+  
   showtext::showtext_auto()
   if (device == "default") {
-    device <- getOption("device")
-    dev.new(...)
+    # device <- getOption("device")
+    if (is.null(width) && is.null(height)) {
+      dev.new(...)
+    } else {
+      if (is.null(width)) {
+        width <- height * n
+      } else {
+        height <- width / n
+      }
+      dev.new(width=width, height=height, ...)  # set noRStudioGD = TRUE via ... if needed
+    }
   } else if (device == "png") {
-    if (is.null(width) & is.null(height)) {
+    
+    if (is.null(width) && is.null(height)) {
       width <- 128
       height <- 128
     } else if (is.null(width)) {
-      width <- height
+      width <- height * n
     } else {
-      height <- width
+      height <- width/n
     }
+    
     png(width = width, height = height, ...)
     on.exit(dev.off())
   } else if (device == "tiff") {
-    if (is.null(width) & is.null(height)) {
+    
+    if (is.null(width) && is.null(height)) {
       width <- 128
       height <- 128
     } else if (is.null(width)) {
-      width <- height
+      width <- height * n
     } else {
-      height <- width
+      height <- width / n
     }
+
     tiff(width = width, height = height, ...)  
     on.exit(dev.off())
   } else if (device == "pdf") {
-    if (is.null(width) & is.null(height)) {
+    
+    if (is.null(width) && is.null(height)) {
       width <- 1.8
       height <- 1.8
     } else if (is.null(width)) {
-      width <- height
+      width <- height * n
     } else {
-      height <- width
+      height <- width / n
     }
+
     pdf(width = width, height = height, ...)
     on.exit(dev.off())
   } else if (device == "svg") {
+    
     stopifnot(capabilities("cairo"))
-    if (is.null(width) & is.null(height)) {
+    if (is.null(width) && is.null(height)) {
       width <- 1.8
       height <- 1.8
     } else if (is.null(width)) {
-      width <- height
+      width <- height * n
     } else {
-      height <- width
+      height <- width / n
     }
+
     svg(width = width, height = height, onefile=TRUE, ...)
     on.exit(dev.off())
-  } else if (device != "current") {
-    eval(parse(text=paste(device,"(width=width, height=height, ...)",sep="")))
+  } else {
+    
+    if (is.null(width) && is.null(height)) {
+      eval(parse(text=paste(device, "(...)", sep="")))
+    } else {
+      if (is.null(width)) {
+        width <- height * n
+      } else {
+        height <- width / n
+      }
+      eval(parse(text=paste(device, "(width=width, height=height, ...)", sep="")))
+    }
   }
+  
   if (is.null(family)) {
     default_font <- get_kanjistat_option("default_font")
     if (is.null(default_font)) {
-      rlang::warn("No font family specified. Kanji will be represented in the CJK font WenQuanYi Micro Hei
-that is included in the package showtext. The font targets Chinese writing and some strokes will
-therefore look odd for Japanese characters. It is strongly advised that you register a Japanese font.
-See help with Japanese font.", 
+      rlang::warn("No font family specified. Kanji will be represented in the Chinese font WenQuanYi Micro Hei
+that is included in the package showtext. It is strongly advised that you register a Japanese font.
+See vignette(\"kanjistat\").", 
         .frequency = "regularly", .frequency_id = "no_font_family")
       family <- "wqy-microhei"
     } else {
       family <- default_font
     }
   }
-  par(mai=rep(0,4))
-  plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
-  text(x=0.5, y=0.5, kanji, family=family, cex=factor)
+  
+  par(mai=rep(0,4), mfrow=c(1,n))
+  for (i in seq_len(n)) {
+    plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
+    text(x=0.5, y=0.5, kanji[i], family=family[(i-1) %% nfam + 1], cex=factor)
+  }
   showtext::showtext_auto(enable=FALSE)
   invisible()
 }

@@ -1,0 +1,23 @@
+-------------------------------
+
+#	kanjistat 0.8.0 (2023-05-06)
+
+## Documentation
+
+* More extensive readme file and main package vignette.
+
+* Add package website using [pkgdown](https://pkgdown.r-lib.org/).
+
+## Improvements
+
+* Increase functionality for `plotkanji`. This function now plots several kanji in possibly different fonts. A parameter `filename` was added for devices that plot to a file.
+
+## Minor bug fixes
+
+* Add `print.kanjivec()` to package exports.
+
+-------------------------------
+
+#	kanjistat 0.7.0 (2023-04-07)
+
+* First public release.

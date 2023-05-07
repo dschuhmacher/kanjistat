@@ -1,36 +1,34 @@
 # kanjistat
 
-This repository contains the R package 
+kanjistat offers tools for processing and analyzing Japanese kanji characters. You can look up readings and meanings along with further dictionary information (to a large part provided by [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project)) including morphological details. You can plot kanji in your favorite font and process the resulting bitmap. You can represent kanji as nested lists of stroke paths (based on original data by [kanjiVG](https://kanjivg.tagaini.net/)), plot components in different color or display the tree structure, and analyze these decompositions and their individual strokes. Various old and new distance functions between kanji are implemented.
 
-**kanjistat: A Statistical Framework for the Analysis of Japanese Kanji Characters**
-
-As of April 8, 2023, this first public version is still a work in progress as more testing is required and more introductory material has to be added.  
-
-Comments, suggestions and contributions are very welcome...
+Comments, suggestions and contributions are welcome!
 
 
 
 ## Installation
 
-kanjistat is most conveniently installed directly from R by saying
+Install directly from GitHub by saying in R
 ```
-remotes::install_github("dschuhmacher/kanjistat", build_vignettes=TRUE)
+remotes::install_github("dschuhmacher/kanjistat")
 ```
-The function `kanjidist` requires currently via its use of the suggested package `ROI.plugin.glpk` that you have the [GNU Linear Programming Kit](https://www.gnu.org/software/glpk/) installed.
+If you want to use the function `kanjidist`, you will have to install the [GNU Linear Programming Kit](https://www.gnu.org/software/glpk/) (and the R package `ROI.plugin.glpk`).
 
 
 
 ## Getting started
 
-Suggested readings are the vignette `getting_started` and the help for `kanjivec` and `kanjidist`:
-```
-library(kanjistat)
-vignette("getting_started", package="kanjistat")
-?kanjivec
-?kanjidist
-```
+Kanji are represented in three different ways in this package:
 
-Note that a file with `kanjivec` objects for all Jōyō kanji can be obtained from the [kanjistat.data repository](https://github.com/dschuhmacher/kanjistat.data).
+1. as **characters** (or there Unicode codepoints) in the console
+
+1. as **`kanjimat` objects**, i.e., bitmaps using a certain font-family and possibly other typographical parameters.
+
+1. as **`kanjivec` objects**, i.e., nested lists of strokes given as paths.
+
+See `vignette("kanjistat")` for the basics and `?kanjivec` and `?kanjidist` for more information on the third point.
+
+A file with `kanjivec` objects for all Jōyō kanji can be obtained from the [kanjistat.data repository](https://github.com/dschuhmacher/kanjistat.data).
 
 
 

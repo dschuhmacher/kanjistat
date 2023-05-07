@@ -7,7 +7,7 @@
 \alias{fivetrees1}
 \alias{fivetrees2}
 \alias{fivetrees3}
-\title{Sample Lists of kanjimat Objects}
+\title{Sample lists of kanjimat objects}
 \format{
 \code{fivetrees1}, \code{fivetrees2} and \code{fivetrees3} are lists of five \code{\link{kanjimat}}
 objects each, representing the same five basic kanji 校,木,休,林,相, containing each
@@ -39,7 +39,7 @@ fivetrees2
 fivetrees3
 }
 \description{
-Sample Lists of kanjimat Objects
+Sample lists of kanjimat objects
 }
 \examples{
 \dontrun{

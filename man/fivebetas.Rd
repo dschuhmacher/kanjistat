@@ -4,7 +4,7 @@
 \encoding{UTF-8}
 \name{fivebetas}
 \alias{fivebetas}
-\title{A Sample List of kanjivec objects}
+\title{A sample list of kanjivec objects}
 \format{
 \code{fivebetas} is a list of five \code{\link{kanjivec}} objects
 representing the basic kanji 部,障,陪,郵,陣 containing  "beta" components,
@@ -23,7 +23,7 @@ in the KanjiVG database by Ulrich Apel (\url{https://kanjivg.tagaini.net/}).
 fivebetas
 }
 \description{
-A Sample List of kanjivec objects
+A sample list of kanjivec objects
 }
 \examples{
 \dontrun{

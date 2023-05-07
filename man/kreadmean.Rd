@@ -3,7 +3,7 @@
 \docType{data}
 \name{kreadmean}
 \alias{kreadmean}
-\title{Kanji Readings and Meanings}
+\title{Kanji readings and meanings}
 \format{
 An object of class \code{list} of length 13108.
 }

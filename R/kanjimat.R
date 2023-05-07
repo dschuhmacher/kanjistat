@@ -145,7 +145,7 @@ kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
 #' 
 #' @export
 #'
-# the export above is just for registtering S3 method, exporting plot.kanjimat would require
+# the export above is just for registering S3 method, exporting plot.kanjimat would require
 # another @export plot.kanjimat afaics (which we don't to)
 plot.kanjimat <- function(x, mode=c("dark","light") , col=gray(seq(0,1,length.out=256)), ...) {
   # 256 grayscales is (on my system) exactly what we have from kanjimat

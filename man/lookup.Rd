@@ -2,7 +2,7 @@
 % Please edit documentation in R/kanji1.R
 \name{lookup}
 \alias{lookup}
-\title{Look up readings and meanings of kanji}
+\title{Look up kanji}
 \usage{
 lookup(kanji, what = c("readmean", "basic", "morphologic"))
 }
@@ -16,7 +16,7 @@ If \code{what} is "readmean" the information is output with cat and there is no 
 In the other cases the appropriate subsets of the tables kbase and kmorph are returned
 }
 \description{
-Look up readings and meanings of kanji
+Return readings and meanings or information from \code{kbase} or \code{kmorph}.
 }
 \details{
 This is a very basic interface for a quick lookup information based on exact

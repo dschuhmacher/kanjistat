@@ -13,7 +13,7 @@ NULL
 ## usethis namespace: end
 NULL
 
-#' Data on Kanji
+#' Data on kanji
 #'
 #' The tibbles kbase and kmorph provide basic and morphologic information, respectively, for
 #' all kanji contained in the KANJIDIC2 file (see below)
@@ -88,7 +88,7 @@ NULL
 "kmorph"
 
 
-#' Kanji Readings and Meanings
+#' Kanji readings and meanings
 #'
 #' Data set of all kanji readings and meanings from the KANJIDIC2 dataset in an R list
 #' format. For convenient access to this data use function \code{\link{lookup}}.
@@ -100,7 +100,7 @@ NULL
 "kreadmean"
 
 
-#' Sample Lists of kanjimat Objects
+#' Sample lists of kanjimat objects
 #'
 #' @encoding UTF-8
 #'
@@ -140,7 +140,7 @@ NULL
 
 
 
-#' A Sample List of kanjivec objects
+#' A sample list of kanjivec objects
 #'
 #' @encoding UTF-8
 #'

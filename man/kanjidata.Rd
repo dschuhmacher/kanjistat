@@ -5,7 +5,7 @@
 \alias{kanjidata}
 \alias{kbase}
 \alias{kmorph}
-\title{Data on Kanji}
+\title{Data on kanji}
 \format{
 kbase is a tibble with 13,108 rows and 13 variables:
 \describe{
