@@ -76,7 +76,8 @@ kmatdist <- function(k1, k2, p=1, C=0.2, type=c("unbalanced", "balanced"), outpu
 #' \dontrun{
 #' kmatdistmat(fivetrees1)
 #' kmatdistmat(fivetrees1, fivetrees1)  # same result but slower
-#' kmatdistmat(fivetrees1, fivetrees2)  # note the smaller values on the diagonal}
+#' kmatdistmat(fivetrees1, fivetrees2)  # note the smaller values on the diagonal
+#' }
 #' 
 kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "balanced")) {
   stopifnot( is.list(klist) )
