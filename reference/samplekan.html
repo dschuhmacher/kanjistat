@@ -30,7 +30,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/dschuhmacher/kanjistat/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -38,7 +44,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Sample kanji from a set</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/dschuhmacher/kanjistat/blob/HEAD/R/utilities.R" class="external-link"><code>R/utilities.R</code></a></small>
       <div class="d-none name"><code>samplekan.Rd</code></div>
     </div>
 
@@ -84,30 +90,30 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="op">(</span><span class="va">sam</span> <span class="op">&lt;-</span> <span class="fu">samplekan</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "対" "坂" "救" "次" "死" "首" "喜" "未" "選" "任"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "件" "品" "雪" "郵" "入" "童" "私" "写" "院" "州"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"index")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 253 383 788 270 276 178 755 544 477 679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 661 294 221 998  14 426 837 373 324 352</span>
 <span class="r-in"><span><span class="fu"><a href="lookup.html">lookup</a></span><span class="op">(</span><span class="va">sam</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 対 --&gt; ON: タイ, ツイ | kun: あいて, こた.える, そろ.い, つれあ.い, なら.ぶ, むか.う | nanori: つし</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: vis-a-vis, opposite, even, equal, versus, anti-, compare</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 坂 --&gt; ON: ハン | kun: さか | nanori: か, ざ</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: slope, incline, hill</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 救 --&gt; ON: キュウ | kun: すく.う | nanori: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: salvation, save, help, rescue, reclaim</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 次 --&gt; ON: ジ, シ | kun: つ.ぐ, つぎ | nanori: き, すき, つぐ, よし</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: next, order, sequence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 死 --&gt; ON: シ | kun: し.ぬ, し.に- | nanori: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: death, die</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 首 --&gt; ON: シュ | kun: くび | nanori: おびと, こべ, す</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: neck, counter for songs and poems</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 喜 --&gt; ON: キ | kun: よろこ.ぶ, よろこ.ばす | nanori: あき, きゅ, のぶ, ゆき, よし</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: rejoice, take pleasure in</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 未 --&gt; ON: ミ, ビ | kun: いま.だ, ま.だ, ひつじ | nanori: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: un-, not yet, hitherto, still, even now, sign of the ram, 1-3PM, eighth sign of Chinese zodiac</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 選 --&gt; ON: セン | kun: えら.ぶ, え.る, よ.る | nanori: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: elect, select, choose, prefer</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 任 --&gt; ON: ニン | kun: まか.せる, まか.す | nanori: さ, とう, ひで</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: responsibility, duty, term, entrust to, appoint</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 件 --&gt; ON: ケン | kun: くだん | nanori: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: affair, case, matter, item</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 品 --&gt; ON: ヒン, ホン | kun: しな | nanori: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: goods, refinement, dignity, article, counter for meal courses</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 雪 --&gt; ON: セツ | kun: ゆき | nanori: せっ, ぶき</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: snow</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 郵 --&gt; ON: ユウ | kun:  | nanori: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: mail, stagecoach stop</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 入 --&gt; ON: ニュウ, ジュ | kun: い.る, -い.る, -い.り, い.れる, -い.れ, はい.る | nanori: いり, いる, に, の, りり</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: enter, insert</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 童 --&gt; ON: ドウ | kun: わらべ | nanori: ぱ</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: juvenile, child</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 私 --&gt; ON: シ | kun: わたくし, わたし | nanori: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: private, I, me</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 写 --&gt; ON: シャ, ジャ | kun: うつ.す, うつ.る, うつ-, うつ.し | nanori: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: copy, be photographed, describe</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 院 --&gt; ON: イン | kun:  | nanori: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: Inst., institution, temple, mansion, school</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 州 --&gt; ON: シュウ, ス | kun: す | nanori: くに</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        meaning: state, province</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
