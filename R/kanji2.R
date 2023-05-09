@@ -178,7 +178,8 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' kanjidist(fivebetas[[4]], fivebetas[[5]], compo_seg_depth1=2, compo_seg_depth2=2, 
 #'           size=32, lwd=1.8, verbose=TRUE) 
 #' # slower and similar:
-#' kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)} 
+#' kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)
+#' } 
 kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2,
                          type=c("rtt", "unbalanced", "balanced"), size=48, lwd=2.5, verbose=FALSE) {  
   stopifnot(is(k1, "kanjivec") && is(k2, "kanjivec"))
@@ -394,7 +395,8 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #'
 #' @examples
 #' \dontrun{
-#' kanjidistmat(fivebetas)}
+#' kanjidistmat(fivebetas)
+#' }
 kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
                     type=c("rtt", "unbalanced", "balanced"), size=48, lwd=2.5, verbose=FALSE) {
   stopifnot( is.list(klist) )

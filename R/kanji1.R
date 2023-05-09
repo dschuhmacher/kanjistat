@@ -93,7 +93,8 @@ lookup <- function(kanji, what=c("readmean", "basic", "morphologic")) {
 #' @examples
 #' \dontrun{
 #' plotkanji("滝")   
-#' plotkanji("犬猫魚")}
+#' plotkanji("犬猫魚")
+#' }
 #' 
 # most kanji are \u{4e00 to 9faf}, the notorious 𠮟 is the only 常用 kanji that isn't (just saying)
 plotkanji <- function(kanji, device="default", family=NULL, factor=10, width=NULL, height=NULL, ...) {

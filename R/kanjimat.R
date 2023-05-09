@@ -26,7 +26,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' res <- kanjimat(kanji="藤", family="klee", size = 128)}
+#' res <- kanjimat(kanji="藤", family="klee", size = 128)
+#' }
 #' 
 kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
                      save=FALSE, overwrite=FALSE, simplify=TRUE, ...) {

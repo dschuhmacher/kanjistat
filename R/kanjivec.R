@@ -109,7 +109,8 @@
 #' @examples
 #' \dontrun{
 #'   # Tries to load the svg file for the kanji from GitHub.
-#'   res <- kanjivec("藤", database=NULL)}
+#'   res <- kanjivec("藤", database=NULL)
+#' }
 #'
 #'   fivebetas  # some sample kanjivec data
 #'   str(fivebetas[[1]])

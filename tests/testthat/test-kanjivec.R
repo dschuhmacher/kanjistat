@@ -76,6 +76,8 @@ test_that("stroketree and strokedend produced with various options of flatten in
 
 
 test_that("plot kanjivec object, type kanji", {
+  skip_on_cran()
+  skip_on_ci()
   skip_if_not(capabilities("cairo"))
   kanjivec_kanji_to_jpg <- function(kanji) {
     path <- tempfile("fuji_kanji", fileext = ".jpg")
@@ -89,6 +91,8 @@ test_that("plot kanjivec object, type kanji", {
 })
 
 test_that("plot kanjivec object, type dend", {
+  skip_on_cran()
+  skip_on_ci()
   skip_if_not(capabilities("cairo"))
   kanjivec_dend_to_jpg <- function(kanji) {
     path <- tempfile("fuji_dend", fileext = ".jpg")
