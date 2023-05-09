@@ -138,7 +138,7 @@ sysfonts::font_families()
 # showtext_auto(enable = FALSE)
 ```
 
-:warning: **Adding fonts to the sysfont database is only effective until the end of the session. It is therefore advisable to add the `font_add` commands to your kanjistat profile file; see the last section of this document.**
+&#x26A0;️ **Adding fonts to the sysfont database is only effective until the end of the session. It is therefore advisable to add the `font_add` commands to your kanjistat profile file; see the last section of this document.**
 
 Once the fonts are in the sysfonts database, we can use them in plots in many ways we like thanks to the package `showtext`. A first obvious example is for plot annotation.
 <!-- for a single kanji take width and height = 3 -->
@@ -164,7 +164,7 @@ mtext("Source: ペットフード協会 (https://petfood.or.jp/data/)", side=1, 
 showtext::showtext_auto(enable = FALSE)  # give back control to the usual R code
 ```
 
-![](./figures/japanese_pets.svg){width=110%}
+![](./figures/japanese_pets.svg){width=100%}
 
 The function `plotkanji` provides a simple way of depicting individual kanji in a graphics device. 
 ```{r message=FALSE, eval=FALSE, fig.align='left', fig.height=2, fig.width=8, fig.showtext=TRUE, message=FALSE}

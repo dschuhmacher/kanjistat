@@ -20,7 +20,7 @@ If you want to use the function `kanjidist`, you will have to install the [GNU L
 
 Kanji are represented in three different ways in this package:
 
-1. as **characters** (or there Unicode codepoints) in the console
+1. as **characters** (or their Unicode codepoints) in the console
 
 1. as **`kanjimat` objects**, i.e., bitmaps using a certain font-family and possibly other typographical parameters.
 

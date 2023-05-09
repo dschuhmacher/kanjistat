@@ -39,9 +39,9 @@ get_kanjistat_option <- function(x) {
 
 #' Convert between Unicode codepoint and kanji
 #' 
-#' Given codepoints (=UTF-32 code units) \code{cp} the function unicodeToKanji transforms
-#' to UTF-8, which will typically be shown as the actual character the codepoints stands for.
-#' Vice versa given (UTF-8 encoded) kanjis \code{kan} the function kanjiToUnicode transforms
+#' Given codepoints \code{cp}, the function `codepointToKanji` transforms
+#' to UTF-8, which will typically show as the actual character the codepoints stands for.
+#' Vice versa, given (UTF-8 encoded) kanjis \code{kan}, the function `kanjiToCodepoint` transforms
 #' to unicode codepoints.
 #'
 #' @param cp a vector of character strings or objects of class \code{hexmode}, representing
