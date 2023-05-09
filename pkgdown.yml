@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   kanjistat: kanjistat.html
-last_built: 2023-05-09T08:47Z
+last_built: 2023-05-09T09:56Z
 urls:
   reference: https://dschuhmacher.github.io/kanjistat/reference
   article: https://dschuhmacher.github.io/kanjistat/articles
