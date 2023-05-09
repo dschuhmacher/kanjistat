@@ -1,5 +1,9 @@
 # kanjistat
 
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/dschuhmacher/kanjistat/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/dschuhmacher/kanjistat/actions/workflows/check-standard.yaml)
+  <!-- badges: end -->
+
 kanjistat offers tools for processing and analyzing Japanese kanji characters. You can look up readings and meanings along with further dictionary information (to a large part provided by [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project)) including morphological details. You can plot kanji in your favorite font and process the resulting bitmap. You can represent kanji as nested lists of stroke paths (based on original data by [kanjiVG](https://kanjivg.tagaini.net/)), plot components in different color or display the tree structure, and analyze these decompositions and their individual strokes. Various old and new distance functions between kanji are implemented.
 
 Comments, suggestions and contributions are welcome!
