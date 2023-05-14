@@ -1,8 +1,8 @@
 Package: kanjistat
 Type: Package
 Title: A Statistical Framework for the Analysis of Japanese Kanji Characters
-Version: 0.8.0
-Date: 2023-05-06
+Version: 0.8.0.9000
+Date: 2023-05-13
 Authors@R: person("Dominic", "Schuhmacher", email = "dominic.schuhmacher@mathematik.uni-goettingen.de", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7079-6313"))
 Maintainer: Dominic Schuhmacher <dominic.schuhmacher@mathematik.uni-goettingen.de>
 Description: Various tools and data sets that support the study of kanji, including their morphology, decomposition and concepts of distance and similarity between them.

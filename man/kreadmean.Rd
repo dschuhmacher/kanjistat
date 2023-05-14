@@ -10,7 +10,7 @@ An object of class \code{list} of length 13108.
 \source{
 KANJIDIC2 file by Jim Breen and The Electronic Dictionary Research
 and Development Group (EDRDG)\cr
-\url{http://www.edrdg.org/wiki/index.php/KANJIDIC_Project}\cr
+\url{https://www.edrdg.org/wiki/index.php/KANJIDIC_Project}\cr
 The use of this data is covered by the Creative Commons BY-SA 4.0 License.
 }
 \usage{

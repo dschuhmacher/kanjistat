@@ -1,18 +1,14 @@
 ---
 title: "Introduction to kanjistat"
-# author: "Dominic Schuhmacher"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette
-# 
-# variant 1: for getting md output of code chunks
-#  md_document:
-#    variant: gfm
-# variant 2: for getting output via prettydoc package
-#  prettydoc::html_pretty:
-#    theme: cayman
-#    highlight: github
-#    toc: true
+  pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: preamble.tex
+  html_document:
+    df_print: paged
+  rmarkdown::html_vignette: null
 vignette: >
   %\VignetteIndexEntry{Introduction to kanjistat}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,7 +20,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-oldopt <- options(width = 120)
+oldopt <- options(width = 90)
 if(capabilities("cairo"))
     knitr::opts_chunk$set(dev.args = list(png  = list(type = "cairo")))
 ```
@@ -40,17 +36,20 @@ Many functions in kanjistat take "a kanji" as input. If you have set up a Japane
 library(kanjistat)
 lookup("猫")  
 ```
-Alternatively, you can use the kanji's Unicode codepoint (if known).
+Alternatively, you can use the kanji's Unicode codepoint and escape it by `\u` if it has at most four hex digits or by `\U` in general (up to eight hex digits). The latter is currently only necessary for 303 out of the 13108 kanji in KANJIDIC2.
 ```{r error=TRUE}
 "\u732b"
 lookup("\u732b")
-```
-It seems that only Unicode codepoints in the range 0000-ffff can be escaped like this. From the 13108 kanji in KANJIDIC2, this currently excludes only 303. The function `codepointToKanji` helps in this case.
-```{r}
 # "\u{26951}" gives usually Error: invalid \u{xxxx} sequence
-codepointToKanji("26951")
+"\U26951"
+"\U00026951"
 ```
-Whether this or any other (of the rarer) kanji are displayed correctly still depends on whether the console font supports the corresponding character.
+Whether this or any other (of the rarer) kanji are displayed correctly still depends on whether the console font supports the corresponding character. You can also use the kanjistat functions codepointToKanji or kanjiToCodepoint to switch between codepoint and character.
+```{r}
+codepointToKanji("26951")
+kanjiToCodepoint("猫")  
+```
+
 
 
 ## Kanji data included
@@ -116,9 +115,10 @@ sysfonts::font_add(family = "yu_kyokasho", regular=yukyokasho$path)
 
 # Display the fonts families in the sysfonts database
 sysfonts::font_families()
-#> [1] "sans"            "serif"           "mono"            "nagayama_kai"    "hiragino_sans"   "hiragino_mincho" "yu_kyokasho"
+#> [1] "sans"            "serif"           "mono"            "nagayama_kai"    "hiragino_sans" 
+#> [6] "hiragino_mincho" "yu_kyokasho"
 ```
-
+         
 ```{r echo = FALSE, eval = FALSE}
 require(systemfonts)
 # looking for the free kaisho font by Nagayama Norio we have previously installed
@@ -159,22 +159,31 @@ barplot(petshort, las=1, col="darkolivegreen3", # names.arg=petnames does not po
 mtext(petnames, side=1, line=0.35, at=-0.5 + 1.2*(1:8), family="hiragino_mincho")
   # bars have width 1 and space 0.2
 mtext("%", side=2, line=0.5, at=11, las=1, family="hiragino_mincho")
-mtext("Source: ペットフード協会 (https://petfood.or.jp/data/)", side=1, line=2, family="hiragino_mincho", cex=0.75)
+mtext("Source: ペットフード協会 (https://petfood.or.jp/data/)", side=1, line=2,
+      family="hiragino_mincho", cex=0.75)
 
 showtext::showtext_auto(enable = FALSE)  # give back control to the usual R code
 ```
 
-![](./figures/japanese_pets.svg){width=100%}
+```{r echo=FALSE, eval=TRUE}
+ if (knitr::is_html_output()) {
+   knitr::asis_output("![](./figures/japanese_pets.svg){width=90%}")
+ } else {
+   knitr::asis_output("![](./figures/japanese_pets.pdf){width=90%}")
+ }
+```
 
 The function `plotkanji` provides a simple way of depicting individual kanji in a graphics device. 
 ```{r message=FALSE, eval=FALSE, fig.align='left', fig.height=2, fig.width=8, fig.showtext=TRUE, message=FALSE}
 # Pregenerated output, run on the author's system. Your mileage may vary.
-plotkanji(rep("猫",4), family=c("hiragino_sans", "hiragino_mincho", "yu_kyokasho", "nagayama_kai"), height=2)
+plotkanji(rep("猫",4), family=c("hiragino_sans", "hiragino_mincho", "yu_kyokasho", "nagayama_kai"),
+          height=2)
 ```
 
 ```{r message=FALSE, echo=FALSE, eval=FALSE, fig.align='left', fig.height=2, fig.width=8, fig.showtext=TRUE, message=FALSE}
 plotkanji(rep("猫",4), device="png", filename="four_cats.png",
-          family=c("hiragino_sans", "hiragino_mincho", "yu_kyokasho", "nagayama_kai"), factor=40, width=1536, height=384)
+          family=c("hiragino_sans", "hiragino_mincho", "yu_kyokasho", "nagayama_kai"),
+          factor=40, width=1536, height=384)
 ```
 ![](./figures/four_cats.png){width=90%}
 
