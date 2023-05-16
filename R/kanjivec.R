@@ -26,7 +26,7 @@
 #'          For more information on the original data see \url{http://kanjivg.tagaini.net/}. That data
 #'          is licenced under Creative Commons BY-SA 3.0 (see licence file of this package).
 #'
-#' @details The original .svg files sometimes contain additional <g> elements that provide
+#' @details The original .svg files sometimes contain additional `<g>` elements that provide
 #'          information about the current group of strokes rather than establishing a new subgroup
 #'          of its own. This happens typically for information that establishes coherence with another
 #'          part of the tree (by noting that the current subgroup is also part 2 of something else), 

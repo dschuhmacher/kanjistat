@@ -66,7 +66,7 @@ NULL
 #'   or consult a dictionary.
 #' 
 #' @source Most of the data is directly from the KANJIDIC2 file.
-#'   \url{http://www.edrdg.org/wiki/index.php/KANJIDIC_Project}\cr
+#'   \url{https://www.edrdg.org/wiki/index.php/KANJIDIC_Project}\cr
 #'   Variables \code{jlpt}, \code{frank}, \code{idc}, \code{components} were taken from the Kanjium data base 
 #'   \url{https://github.com/mifunetoshiro/kanjium}\cr
 #'   Variable \code{components} is originally from RADKFILE/KRADFILE.
@@ -95,7 +95,7 @@ NULL
 #' 
 #' @source KANJIDIC2 file by Jim Breen and The Electronic Dictionary Research
 #' and Development Group (EDRDG)\cr
-#' \url{http://www.edrdg.org/wiki/index.php/KANJIDIC_Project}\cr 
+#' \url{https://www.edrdg.org/wiki/index.php/KANJIDIC_Project}\cr 
 #' The use of this data is covered by the Creative Commons BY-SA 4.0 License.
 "kreadmean"
 
