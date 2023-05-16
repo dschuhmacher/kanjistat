@@ -22,9 +22,9 @@ of kanjis.}
 \item{character}{logical. Shall the returned codepoints be of class "character" or hexmode.}
 }
 \description{
-Given codepoints (=UTF-32 code units) \code{cp} the function unicodeToKanji transforms
-to UTF-8, which will typically be shown as the actual character the codepoints stands for.
-Vice versa given (UTF-8 encoded) kanjis \code{kan} the function kanjiToUnicode transforms
+Given codepoints \code{cp}, the function \code{codepointToKanji} transforms
+to UTF-8, which will typically show as the actual character the codepoints stands for.
+Vice versa, given (UTF-8 encoded) kanjis \code{kan}, the function \code{kanjiToCodepoint} transforms
 to unicode codepoints.
 }
 \examples{

@@ -57,6 +57,7 @@ We strongly advised that a Japanese font is used as detailed above.
 \examples{
 \dontrun{
 plotkanji("滝")   
-plotkanji("犬猫魚")}
+plotkanji("犬猫魚")
+}
 
 }

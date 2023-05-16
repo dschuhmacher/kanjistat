@@ -52,6 +52,7 @@ and other typographical parameters.
 }
 \examples{
 \dontrun{
-res <- kanjimat(kanji="藤", family="klee", size = 128)}
+res <- kanjimat(kanji="藤", family="klee", size = 128)
+}
 
 }

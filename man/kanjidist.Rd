@@ -85,7 +85,8 @@ kanjidist(fivebetas[[4]], fivebetas[[5]], verbose=TRUE)
 kanjidist(fivebetas[[4]], fivebetas[[5]], compo_seg_depth1=2, compo_seg_depth2=2, 
           size=32, lwd=1.8, verbose=TRUE) 
 # slower and similar:
-kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)} 
+kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)
+} 
 }
 \references{
 Dominic Schuhmacher (2023).\cr

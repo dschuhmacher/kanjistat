@@ -4,15 +4,27 @@ title: "Introduction to kanjistat"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette
-# 
-# variant 1: for getting md output of code chunks
+#
+# variant 1: pdf output via lualatex (which can handle the utf-8 kanji)
+#  pdf_document:
+#    latex_engine: lualatex
+#    includes:
+#      in_header: preamble.tex
+#
+# variant 2: md output of code chunks
 #  md_document:
 #    variant: gfm
-# variant 2: for getting output via prettydoc package
+#
+# variant 3: html output via prettydoc package
 #  prettydoc::html_pretty:
 #    theme: cayman
 #    highlight: github
 #    toc: true
+#
+# variant 4: html output with nice tables
+#  html_document:
+#    df_print: paged
+#
 vignette: >
   %\VignetteIndexEntry{Introduction to kanjistat}
   %\VignetteEngine{knitr::rmarkdown}

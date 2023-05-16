@@ -45,7 +45,8 @@ The same precautions apply as for \code{\link{kanjidist}}.
 
 \examples{
 \dontrun{
-kanjidistmat(fivebetas)}
+kanjidistmat(fivebetas)
+}
 }
 \seealso{
 \code{\link{kanjidist}}, \code{\link{kmatdistmat}}
