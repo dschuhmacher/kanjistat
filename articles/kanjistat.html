@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,25 +94,32 @@ kanji directly as a character object.</p>
 <span><span class="fu"><a href="../reference/lookup.html">lookup</a></span><span class="op">(</span><span class="st">"猫"</span><span class="op">)</span>  </span>
 <span><span class="co">#&gt; 猫 --&gt; ON: ビョウ | kun: ねこ | nanori: </span></span>
 <span><span class="co">#&gt;        meaning: cat</span></span></code></pre></div>
-<p>Alternatively, you can use the kanji’s Unicode codepoint (if
-known).</p>
+<p>Alternatively, you can use the kanji’s Unicode codepoint and escape
+it by <code>\u</code> if it has at most four hex digits or by
+<code>\U</code> in general (up to eight hex digits). The latter is
+currently only necessary for 303 out of the 13108 kanji in
+KANJIDIC2.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="st">"\u732b"</span></span>
 <span><span class="co">#&gt; [1] "猫"</span></span>
 <span><span class="fu"><a href="../reference/lookup.html">lookup</a></span><span class="op">(</span><span class="st">"\u732b"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 猫 --&gt; ON: ビョウ | kun: ねこ | nanori: </span></span>
-<span><span class="co">#&gt;        meaning: cat</span></span></code></pre></div>
-<p>It seems that only Unicode codepoints in the range 0000-ffff can be
-escaped like this. From the 13108 kanji in KANJIDIC2, this currently
-excludes only 303. The function <code>codepointToKanji</code> helps in
-this case.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># "\u{26951}" gives usually Error: invalid \u{xxxx} sequence</span></span>
-<span><span class="fu"><a href="../reference/codepoint.html">codepointToKanji</a></span><span class="op">(</span><span class="st">"26951"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        meaning: cat</span></span>
+<span><span class="co"># "\u{26951}" gives usually Error: invalid \u{xxxx} sequence</span></span>
+<span><span class="st">"\U26951"</span></span>
+<span><span class="co">#&gt; [1] "𦥑"</span></span>
+<span><span class="st">"\U00026951"</span></span>
 <span><span class="co">#&gt; [1] "𦥑"</span></span></code></pre></div>
 <p>Whether this or any other (of the rarer) kanji are displayed
 correctly still depends on whether the console font supports the
-corresponding character.</p>
+corresponding character. You can also use the kanjistat functions
+codepointToKanji or kanjiToCodepoint to switch between codepoint and
+character.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/codepoint.html">codepointToKanji</a></span><span class="op">(</span><span class="st">"26951"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "𦥑"</span></span>
+<span><span class="fu"><a href="../reference/codepoint.html">kanjiToCodepoint</a></span><span class="op">(</span><span class="st">"猫"</span><span class="op">)</span>  </span>
+<span><span class="co">#&gt; [1] "732b"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="kanji-data-included">Kanji data included<a class="anchor" aria-label="anchor" href="#kanji-data-included"></a>
@@ -129,9 +136,12 @@ kanji the information is most easily retrieved via the
 <span><span class="co">#&gt; 猫 --&gt; ON: ビョウ | kun: ねこ | nanori: </span></span>
 <span><span class="co">#&gt;        meaning: cat</span></span>
 <span><span class="fu"><a href="../reference/lookup.html">lookup</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"猫"</span>,<span class="st">"犬"</span><span class="op">)</span>, <span class="st">"basic"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      kanji unicode strokes   class grade kanken jlpt wanikani frank frank_news read_on read_kun mean</span></span>
-<span><span class="co">#&gt; 1305    猫    732b      11  jouyou     8  pre-2    2       15  1212       1702  ビョウ     ねこ  cat</span></span>
-<span><span class="co">#&gt; 77      犬    72ac       4 kyouiku     1     10    4        2   899       1326    ケン     いぬ  dog</span></span>
+<span><span class="co">#&gt;      kanji unicode strokes   class grade kanken jlpt wanikani frank frank_news read_on</span></span>
+<span><span class="co">#&gt; 1305    猫    732b      11  jouyou     8  pre-2    2       15  1212       1702  ビョウ</span></span>
+<span><span class="co">#&gt; 77      犬    72ac       4 kyouiku     1     10    4        2   899       1326    ケン</span></span>
+<span><span class="co">#&gt;      read_kun mean</span></span>
+<span><span class="co">#&gt; 1305     ねこ  cat</span></span>
+<span><span class="co">#&gt; 77       いぬ  dog</span></span>
 <span><span class="fu"><a href="../reference/lookup.html">lookup</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"猫"</span>,<span class="st">"犬"</span><span class="op">)</span>, <span class="st">"morphologic"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      kanji strokes radical radvar nelson_c idc  components  skip mean</span></span>
 <span><span class="co">#&gt; 1305    猫      11      犬     犭     &lt;NA&gt; 品l 苗,田,犭,艹 1-3-8  cat</span></span>
@@ -140,28 +150,37 @@ kanji the information is most easily retrieved via the
 or tibbles. E.g.,</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kbase</span><span class="op">[</span><span class="va">kbase</span><span class="op">$</span><span class="va">strokes</span> <span class="op">&gt;</span> <span class="fl">30</span>,<span class="op">]</span></span>
-<span><span class="co">#&gt;       kanji unicode strokes   class grade kanken jlpt wanikani frank frank_news read_on   read_kun               mean</span></span>
-<span><span class="co">#&gt; 9756     籲    7c72      32 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA      ユ      よ.ぶ             appeal</span></span>
-<span><span class="co">#&gt; 12052    鱻    9c7b      33 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    セン あたらしい              fresh</span></span>
-<span><span class="co">#&gt; 12161    麤    9ea4      33 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA      ソ  はな.れる              rough</span></span>
-<span><span class="co">#&gt; 12243    龖    9f96      32 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    トウ  おそ.れる flight of a dragon</span></span>
-<span><span class="co">#&gt; 12244    龗    9f97      33 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    レイ       かみ               &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 12706    䯂    4bc2      34 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    &lt;NA&gt;       &lt;NA&gt;           numerous</span></span>
-<span><span class="co">#&gt; 12906    灩    7069      32 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    エン       なみ        overflowing</span></span>
+<span><span class="co">#&gt;       kanji unicode strokes   class grade kanken jlpt wanikani frank frank_news read_on</span></span>
+<span><span class="co">#&gt; 9756     籲    7c72      32 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA      ユ</span></span>
+<span><span class="co">#&gt; 12052    鱻    9c7b      33 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    セン</span></span>
+<span><span class="co">#&gt; 12161    麤    9ea4      33 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA      ソ</span></span>
+<span><span class="co">#&gt; 12243    龖    9f96      32 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    トウ</span></span>
+<span><span class="co">#&gt; 12244    龗    9f97      33 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    レイ</span></span>
+<span><span class="co">#&gt; 12706    䯂    4bc2      34 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12906    灩    7069      32 hyougai    11   &lt;NA&gt;   NA       NA    NA         NA    エン</span></span>
+<span><span class="co">#&gt;         read_kun               mean</span></span>
+<span><span class="co">#&gt; 9756       よ.ぶ             appeal</span></span>
+<span><span class="co">#&gt; 12052 あたらしい              fresh</span></span>
+<span><span class="co">#&gt; 12161  はな.れる              rough</span></span>
+<span><span class="co">#&gt; 12243  おそ.れる flight of a dragon</span></span>
+<span><span class="co">#&gt; 12244       かみ               &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12706       &lt;NA&gt;           numerous</span></span>
+<span><span class="co">#&gt; 12906       なみ        overflowing</span></span>
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">kbase</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">strokes</span> <span class="op">&gt;</span> <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 13</span></span></span>
-<span><span class="co">#&gt;   kanji unicode   strokes class   grade kanken  jlpt wanikani frank frank_news read_on read_kun   mean              </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hexmode&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 籲    7c72           32 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> ユ      よ.ぶ      appeal            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 鱻    9c7b           33 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> セン    あたらしい fresh             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 麤    9ea4           33 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> ソ      はな.れる  rough             </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 龖    9f96           32 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> トウ    おそ.れる  flight of a dragon</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 龗    9f97           33 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> レイ    かみ       <span style="color: #BB0000;">NA</span>                </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 䯂    4bc2           34 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>      <span style="color: #BB0000;">NA</span>         numerous          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 灩    7069           32 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> エン    なみ       overflowing</span></span></code></pre></div>
+<span><span class="co">#&gt;   kanji unicode   strokes class   grade kanken  jlpt wanikani frank frank_news read_on</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;hexmode&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 籲    7c72           32 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> ユ     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 鱻    9c7b           33 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> セン   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 麤    9ea4           33 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> ソ     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 龖    9f96           32 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> トウ   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 龗    9f97           33 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> レイ   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 䯂    4bc2           34 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 灩    7069           32 hyougai    11 <span style="color: #BB0000;">NA</span>        <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span> エン   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: read_kun &lt;chr&gt;, mean &lt;chr&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="getting-more-kanji-data">Getting more kanji data<a class="anchor" aria-label="anchor" href="#getting-more-kanji-data"></a>
@@ -220,10 +239,10 @@ displays console output and plots from the author’s system.</p>
 <span><span class="va">nagayama</span></span>
 <span><span class="co">#&gt; $path</span></span>
 <span><span class="co">#&gt; [1] "/Users/dschuhm/Library/Fonts/nagayama_kai08.otf"</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; $index</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; $features</span></span>
 <span><span class="co">#&gt; NULL</span></span>
 <span><span class="va">hsans</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"Hiragino Sans"</span><span class="op">)</span></span>
@@ -238,7 +257,8 @@ displays console output and plots from the author’s system.</p>
 <span></span>
 <span><span class="co"># Display the fonts families in the sysfonts database</span></span>
 <span><span class="fu">sysfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sysfonts/man/font_families.html" class="external-link">font_families</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "sans"            "serif"           "mono"            "nagayama_kai"    "hiragino_sans"   "hiragino_mincho" "yu_kyokasho"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "sans"            "serif"           "mono"            "nagayama_kai"    "hiragino_sans"</span></span>
+<span><span class="co">#&gt; [6] "hiragino_mincho" "yu_kyokasho"</span></span></code></pre></div>
 <p>⚠️ <strong>Adding fonts to the sysfont database is only effective
 until the end of the session. It is therefore advisable to add the
 <code>font_add</code> commands to your kanjistat profile file; see the
@@ -264,15 +284,17 @@ first obvious example is for plot annotation.
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span><span class="va">petnames</span>, side<span class="op">=</span><span class="fl">1</span>, line<span class="op">=</span><span class="fl">0.35</span>, at<span class="op">=</span><span class="op">-</span><span class="fl">0.5</span> <span class="op">+</span> <span class="fl">1.2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span>, family<span class="op">=</span><span class="st">"hiragino_mincho"</span><span class="op">)</span></span>
 <span>  <span class="co"># bars have width 1 and space 0.2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span><span class="st">"%"</span>, side<span class="op">=</span><span class="fl">2</span>, line<span class="op">=</span><span class="fl">0.5</span>, at<span class="op">=</span><span class="fl">11</span>, las<span class="op">=</span><span class="fl">1</span>, family<span class="op">=</span><span class="st">"hiragino_mincho"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span><span class="st">"Source: ペットフード協会 (https://petfood.or.jp/data/)"</span>, side<span class="op">=</span><span class="fl">1</span>, line<span class="op">=</span><span class="fl">2</span>, family<span class="op">=</span><span class="st">"hiragino_mincho"</span>, cex<span class="op">=</span><span class="fl">0.75</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span><span class="st">"Source: ペットフード協会 (https://petfood.or.jp/data/)"</span>, side<span class="op">=</span><span class="fl">1</span>, line<span class="op">=</span><span class="fl">2</span>,</span>
+<span>      family<span class="op">=</span><span class="st">"hiragino_mincho"</span>, cex<span class="op">=</span><span class="fl">0.75</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">showtext</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/showtext/man/showtext_auto.html" class="external-link">showtext_auto</a></span><span class="op">(</span>enable <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># give back control to the usual R code</span></span></code></pre></div>
-<p><img src="figures/japanese_pets.svg" style="width:100.0%"></p>
+<p><img src="figures/japanese_pets.svg" style="width:90.0%"></p>
 <p>The function <code>plotkanji</code> provides a simple way of
 depicting individual kanji in a graphics device.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Pregenerated output, run on the author's system. Your mileage may vary.</span></span>
-<span><span class="fu"><a href="../reference/plotkanji.html">plotkanji</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"猫"</span>,<span class="fl">4</span><span class="op">)</span>, family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hiragino_sans"</span>, <span class="st">"hiragino_mincho"</span>, <span class="st">"yu_kyokasho"</span>, <span class="st">"nagayama_kai"</span><span class="op">)</span>, height<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plotkanji.html">plotkanji</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"猫"</span>,<span class="fl">4</span><span class="op">)</span>, family<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hiragino_sans"</span>, <span class="st">"hiragino_mincho"</span>, <span class="st">"yu_kyokasho"</span>, <span class="st">"nagayama_kai"</span><span class="op">)</span>,</span>
+<span>          height<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figures/four_cats.png" style="width:90.0%"></p>
 </div>
 <div class="section level2">
