@@ -72,12 +72,7 @@ escape sequences (\u + 4 digit hex number or \U + 8 digit hex number where neces
 
 
 <dt>verbose</dt>
-<dd><p>whether to print a message for each output file.</p>
-<p>If <code>path</code> is a directory, the replacement is performed for all files at that location
-(subdirectories are ignored). If <code>outdir</code> is the same as <code>path</code> the original files
-are overwritten without warning.</p>
-<p>If <code>path</code> is a file, the replacement is limited to this file. It <code>outdir</code> is the same
-as <code>dirname(path)</code> the files are overwritten without warning.</p></dd>
+<dd><p>whether to print a message for each output file.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -85,6 +80,14 @@ as <code>dirname(path)</code> the files are overwritten without warning.</p></dd
     
 
 <p>Nothing (invisible <code>NULL</code>).</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>If <code>path</code> is a directory, the replacement is performed for all files at that location
+(subdirectories are ignored). If <code>outdir</code> is the same as <code>path</code>, the original files
+are overwritten without warning.</p>
+<p>If <code>path</code> is a file, the replacement is limited to this file. If <code>outdir</code> is the same
+as <code>dirname(path)</code>, the files are overwritten without warning.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
