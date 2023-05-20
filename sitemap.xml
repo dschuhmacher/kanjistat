@@ -4,9 +4,6 @@
     <loc>https://dschuhmacher.github.io/kanjistat/404.html</loc>
   </url>
   <url>
-    <loc>https://dschuhmacher.github.io/kanjistat/LICENSE-text.html</loc>
-  </url>
-  <url>
     <loc>https://dschuhmacher.github.io/kanjistat/LICENSE.html</loc>
   </url>
   <url>
@@ -23,6 +20,9 @@
   </url>
   <url>
     <loc>https://dschuhmacher.github.io/kanjistat/news/index.html</loc>
+  </url>
+  <url>
+    <loc>https://dschuhmacher.github.io/kanjistat/reference/cjk_escape.html</loc>
   </url>
   <url>
     <loc>https://dschuhmacher.github.io/kanjistat/reference/codepoint.html</loc>
