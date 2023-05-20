@@ -85,6 +85,68 @@ kanjiToCodepoint <- function(kan, character=FALSE) {   # x should be vector of i
   }
 }
 
+#' Replace CJK characters in files by escape sequences 
+#'
+#' All CJK characters in the file(s) found at the specified path are substituted by their Unicode
+#' escape sequences (\\u + 4 digit hex number or \\U + 8 digit hex number where necessary). 
+#'
+#' @param path the path to a directory or a single file.
+#' @param outdir the directory where the output files are written. Defaults to the subdirectory
+#' `out` of the directory in `path`. The output files have the same names as the originals.
+#' @param verbose whether to print a message for each output file.
+#'
+#' If `path` is a directory, the replacement is performed for all files at that location 
+#' (subdirectories are ignored). If `outdir` is the same as `path` the original files
+#' are overwritten without warning.
+#' 
+#' If `path` is a file, the replacement is limited to this file. It `outdir` is the same
+#' as `dirname(path)` the files are overwritten without warning.
+#'
+#' @return Nothing (invisible `NULL`).
+#' @export
+#'
+cjk_escape <- function(path, outdir = NULL, verbose = TRUE) {
+  stopifnot(file.exists(path))
+  
+  if (file.info(path)$isdir) {
+    fnames <- list.files(path)
+    indir <- path
+  } else {
+    fnames <- basename(path)
+    indir <- dirname(path)
+  }
+  if (is.null(outdir)) {
+    outdir <- file.path(indir, "out")
+  }
+  
+  if (!dir.exists(outdir)) dir.create(outdir)
+  
+  repl_fun <- function(x) {
+    hexchar <- kanjiToCodepoint(x, character=TRUE)
+    prefix <- ifelse(nchar(hexchar) <= 4, "\\u", "\\U")
+      # \u works only for up to 4 hex digits, but is more common
+      # \U would work up to 8 hex digits (including for 4)
+    paste0(prefix, hexchar)
+  }
+    
+  for (f in fnames) {
+    finpath <- file.path(indir, f)
+    if (!file.info(finpath)$isdir) {
+      text_in <- readLines(finpath, warn = FALSE, encoding = "UTF-8") 
+      # gives vector of class character (each element is 1 line of the file)
+      text_out <- gsubfn::gsubfn(pattern = "(\\p{Script=Han}|\\p{Script=Katakana}|\\p{Script=Hiragana}|\\p{Script=Hangul})",
+                         replacement = repl_fun,
+                         x = text_in, perl = TRUE, useBytes = FALSE)
+      foutpath <- file.path(outdir, f)
+      writeLines(text_out, foutpath)
+      if (verbose) message("File written to ", foutpath)
+    }
+  }
+  
+  invisible()
+}
+
+
 
 #' Sample kanji from a set
 #'

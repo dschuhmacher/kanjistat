@@ -1,5 +1,17 @@
 -------------------------------
 
+#	kanjistat 0.9.0 (2023-05-20)
+
+## New feature
+
+* Add function `cjk_escape`, which replaces CJK characters by their Unicode escape sequences in files.
+
+## Documentation
+
+* Improve the main package vignette and make it more versatile.
+
+-------------------------------
+
 #	kanjistat 0.8.0 (2023-05-06)
 
 ## Documentation

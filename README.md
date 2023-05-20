@@ -71,7 +71,7 @@ The variable `components` of data set `kmorph` is derived from
 RADKFILE/KRADFILE --- Copyright &copy; James William Breen and The Electronic
                       Dictionary Research and Development Group (EDRDG)  
 made available under a [CC BY-SA 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/) at  
-<https://www.edrdg.org/wiki/>
+<https://www.edrdg.org/wiki/index.php/Main_Page>
 
 The variables `jlpt`, `frank` and `idc` of data sets `kbase` and `kmorph` are taken from  
 Kanjium --- Copyright &copy; Uros O. on any additions or modifications
