@@ -95,12 +95,12 @@ kanjiToCodepoint <- function(kan, character=FALSE) {   # x should be vector of i
 #' `out` of the directory in `path`. The output files have the same names as the originals.
 #' @param verbose whether to print a message for each output file.
 #'
-#' If `path` is a directory, the replacement is performed for all files at that location 
-#' (subdirectories are ignored). If `outdir` is the same as `path` the original files
+#' @details If `path` is a directory, the replacement is performed for all files at that location 
+#' (subdirectories are ignored). If `outdir` is the same as `path`, the original files
 #' are overwritten without warning.
 #' 
-#' If `path` is a file, the replacement is limited to this file. It `outdir` is the same
-#' as `dirname(path)` the files are overwritten without warning.
+#' If `path` is a file, the replacement is limited to this file. If `outdir` is the same
+#' as `dirname(path)`, the files are overwritten without warning.
 #'
 #' @return Nothing (invisible `NULL`).
 #' @export

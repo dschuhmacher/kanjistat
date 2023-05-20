@@ -12,14 +12,7 @@ cjk_escape(path, outdir = NULL, verbose = TRUE)
 \item{outdir}{the directory where the output files are written. Defaults to the subdirectory
 \code{out} of the directory in \code{path}. The output files have the same names as the originals.}
 
-\item{verbose}{whether to print a message for each output file.
-
-If \code{path} is a directory, the replacement is performed for all files at that location
-(subdirectories are ignored). If \code{outdir} is the same as \code{path} the original files
-are overwritten without warning.
-
-If \code{path} is a file, the replacement is limited to this file. It \code{outdir} is the same
-as \code{dirname(path)} the files are overwritten without warning.}
+\item{verbose}{whether to print a message for each output file.}
 }
 \value{
 Nothing (invisible \code{NULL}).
@@ -27,4 +20,12 @@ Nothing (invisible \code{NULL}).
 \description{
 All CJK characters in the file(s) found at the specified path are substituted by their Unicode
 escape sequences (\\u + 4 digit hex number or \\U + 8 digit hex number where necessary).
+}
+\details{
+If \code{path} is a directory, the replacement is performed for all files at that location
+(subdirectories are ignored). If \code{outdir} is the same as \code{path}, the original files
+are overwritten without warning.
+
+If \code{path} is a file, the replacement is limited to this file. If \code{outdir} is the same
+as \code{dirname(path)}, the files are overwritten without warning.
 }
