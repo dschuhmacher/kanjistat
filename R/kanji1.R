@@ -21,9 +21,6 @@
 #' @author Dominic Schuhmacher \email{schuhmacher@math.uni-goettingen.de}
 #'
 #' @examples
-#' # kanji can be directly entered by Japanese input system
-#' # R package check does not allow UTF-8 characters in examples, so
-#' # we do it in a more complicated way
 #' lookup(c("晴", "曇", "雨"))  
 #' lookup("晴曇雨")   # same
 #'
@@ -88,13 +85,13 @@ lookup <- function(kanji, what=c("readmean", "basic", "morphologic")) {
 #' This means that the characters will typically be recognizable, but quite often look odd as Japanese characters.
 #' We strongly advised that a Japanese font is used as detailed above.
 #'
+#' @return No return value, called for side effects.
+#'
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' plotkanji("滝")   
 #' plotkanji("犬猫魚")
-#' }
 #' 
 # most kanji are \u{4e00 to 9faf}, the notorious 𠮟 is the only 常用 kanji that isn't (just saying)
 plotkanji <- function(kanji, device="default", family=NULL, factor=10, width=NULL, height=NULL, ...) {
@@ -201,7 +198,8 @@ See vignette(\"kanjistat\").",
     }
   }
   
-  par(mai=rep(0,4), mfrow=c(1,n))
+  oldpar <- par(mai=rep(0,4), mfrow=c(1,n))
+  on.exit(par(oldpar), add = TRUE, after = FALSE) # we already had on.exit above
   for (i in seq_len(n)) {
     plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
     text(x=0.5, y=0.5, kanji[i], family=family[(i-1) %% nfam + 1], cex=factor)

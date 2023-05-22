@@ -73,9 +73,8 @@ kmatdist <- function(k1, k2, p=1, C=0.2, type=c("unbalanced", "balanced"), outpu
 #' @seealso \code{\link{kmatdist}}, \code{\link{kanjidistmat}}
 #'
 #' @examples
-#' \dontrun{
 #' kmatdistmat(fivetrees1)
-#' kmatdistmat(fivetrees1, fivetrees1)  # same result but slower
+#' \donttest{kmatdistmat(fivetrees1, fivetrees1)  # same result but slower
 #' kmatdistmat(fivetrees1, fivetrees2)  # note the smaller values on the diagonal
 #' }
 #' 
@@ -170,15 +169,14 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' @seealso \code{\link{kanjidistmat}}, \code{\link{kmatdist}}
 #'
 #' @examples
-#' kanjidist(fivebetas[[4]], fivebetas[[5]])
-#' 
-#' \dontrun{
-#' kanjidist(fivebetas[[4]], fivebetas[[5]], verbose=TRUE)
-#' # faster and similar:
-#' kanjidist(fivebetas[[4]], fivebetas[[5]], compo_seg_depth1=2, compo_seg_depth2=2, 
-#'           size=32, lwd=1.8, verbose=TRUE) 
-#' # slower and similar:
-#' kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)
+#' if (requireNamespace("ROI.plugin.glpk")) {
+#'   kanjidist(fivebetas[[4]], fivebetas[[5]])
+#'   kanjidist(fivebetas[[4]], fivebetas[[5]], verbose=TRUE)
+#'   # faster and similar:
+#'   kanjidist(fivebetas[[4]], fivebetas[[5]], compo_seg_depth1=2, compo_seg_depth2=2, 
+#'             size=32, lwd=1.8, verbose=TRUE) 
+#'   # slower and similar:
+#'   \donttest{kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)}
 #' } 
 kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2,
                          type=c("rtt", "unbalanced", "balanced"), size=48, lwd=2.5, verbose=FALSE) {  
@@ -394,7 +392,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #' @seealso \code{\link{kanjidist}}, \code{\link{kmatdistmat}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' kanjidistmat(fivebetas)
 #' }
 kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
@@ -719,7 +717,8 @@ strokelist_to_bitmap <- function(strokelist, size=NULL, lwd=2.5, ...){
   # I do not seem to get antialiasing to work in that case:
   # bitmap(file=fname, type="pnggray", width=size, height=size, res=72, pointsize=12, units="px", taa=4)
   
-  par(mai=rep(0,4))
+  oldpar <- par(mai=rep(0,4))
+  on.exit(par(oldpar))
   plot(0.5, 0.5, xlim=c(0,1), ylim=c(0,1), axes=FALSE, type="n", asp=1, xaxs="i", yaxs="i", xlab="", ylab="")
   lapply(strokelist, lines, col=1, lwd=lwd, ...)
   dev.off()
@@ -809,7 +808,8 @@ kcompos_to_bitmaps <- function(kanji, compo_seg_depth=4, size=c(64, 64, 48, 48),
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         fname <- tempfile("subtree", fileext=".png")
         png(filename=fname, width = size[l], height = size[l], res=72, ...)
-        par(mai=rep(0,4))
+        oldpar <- par(mai=rep(0,4))
+        on.exit(par(oldpar))
         plot(0.5, 0.5, xlim=c(0,1), ylim=c(0,1), axes=FALSE, type="n", asp=1, xaxs="i", yaxs="i", xlab="", ylab="")
         lapply(strokes_trafo, lines, col=1, lwd=lwd[l], ...)
         dev.off()

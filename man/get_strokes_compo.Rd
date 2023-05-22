@@ -23,12 +23,10 @@ with further attributes.
 }
 \examples{
 kanji <- fivebetas[[5]]
+# get the three strokes of the component⻖ in 陣
 rad <- get_strokes_compo(kanji, c(2,1))    
-# the three strokes of the component⻖ in 陣
-
-\dontrun{
 plot(0.5, 0.5, xlim=c(0,1), ylim=c(0,1), type="n", asp=1, xaxs="i", yaxs="i", xlab="", ylab="")
-invisible(lapply(rad, lines, lwd=4))}
+invisible(lapply(rad, lines, lwd=4))
 
 }
 \seealso{

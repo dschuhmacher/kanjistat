@@ -19,16 +19,20 @@
 #' that may currently be used is \code{type}. Trying to change sizes, units, colors or fonts by this argument
 #' results in an error or an undesirable output.
 #'
+#' @section Warning:
+#' If no font family is provided, the default **Chinese** font WenQuanYi Micro Hei that comes with the package showtext is used. 
+#' This means that the characters will typically be recognizable, but quite often look odd as Japanese characters.
+#' We strongly advised that a Japanese font is used as detailed above.
+#'
 #' @return A list of objects of class \code{kanjimat} or, if only one kanji was specified and
 #' \code{simplify} is \code{TRUE}, a single objects of class \code{kanjimat}. If \code{save = TRUE},
 #' the same is (saved and) still returned invisibly.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' res <- kanjimat(kanji="藤", family="klee", size = 128)
-#' }
+#' res <- kanjimat(kanji="藤", size = 128)
 #' 
+# warnings are ok in examples!!
 kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
                      save=FALSE, overwrite=FALSE, simplify=TRUE, ...) {
   # I guess subpixel antialiasing does not make sense (we only use 1 channel in the end)
@@ -96,7 +100,8 @@ kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
     # saving as grayscale png would save memory (and time presumably), but
     # I do not seem to get antialiasing to work in that case:
     # bitmap(file=fname, type="pnggray", width=size, height=size, res=72, pointsize=12, units="px", taa=4)
-    par(mai=rep(0,4))
+    oldpar <- par(mai=rep(0,4))
+    on.exit(par(oldpar))
     plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
     text(x=0.5, y=0.5, kan1, family=family, cex=factor)
     dev.off()
@@ -144,6 +149,8 @@ kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
 #'   information of an (antialiased) kanjimat object.
 #' @param ... further parameters passed to \code{\link[graphics]{image}}.
 #' 
+#' @return No return value, called for side effects.
+#' 
 #' @export
 #'
 # the export above is just for registering S3 method, exporting plot.kanjimat would require
@@ -157,7 +164,8 @@ plot.kanjimat <- function(x, mode=c("dark","light") , col=gray(seq(0,1,length.ou
   xx <- seq(1/(2*nx), 1-1/(2*nx), 1/nx)
   yy <- seq(1/(2*ny), 1-1/(2*ny), 1/ny)
   rotclock <- function(m) t(m)[, nrow(m):1]
-  par(mai=rep(0,4))
+  oldpar <- par(mai=rep(0,4))
+  on.exit(par(oldpar))
   # plot(0.5, 0.5, xlim=c(0,1), ylim=c(0,1), axes=F, type="n", asp=1, xaxs="i", yaxs="i", xlab="", ylab="")
   if (mode == "dark") {
     image(yy, xx, rotclock(z), col=col, axes=FALSE, main="", asp=1, ...)

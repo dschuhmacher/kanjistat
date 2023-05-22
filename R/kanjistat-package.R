@@ -120,11 +120,11 @@ NULL
 #' by Norio Nagayama and KouzanBrushFontGyousyo by Aoyagi Kouzan.
 #'  
 #' @examples
-#' \dontrun{
-#' par(mfrow = c(3,5))
+#' oldpar <- par(mfrow = c(3,5))
 #' invisible( lapply(fivetrees1, plot) )
 #' invisible( lapply(fivetrees2, plot) )
-#' invisible( lapply(fivetrees3, plot) )}
+#' invisible( lapply(fivetrees3, plot) )
+#' par(oldpar)
 #'   
 #' @name fivetrees
 NULL
@@ -157,8 +157,9 @@ NULL
 #' in the KanjiVG database by Ulrich Apel (\url{https://kanjivg.tagaini.net/}).
 #'  
 #' @examples 
-#' \dontrun{
-#' par(mfrow = c(1,5), mai = rep(0,4))
-#' invisible( lapply(fivebetas, plot, seg_depth = 2) )}
+#' oldpar <- par(mfrow = c(1,5), mai = rep(0,4))
+#' invisible( lapply(fivebetas, plot, seg_depth = 2) )
+#' par(oldpar)
 #'   
+# warnings are no problems for R CMD check
 "fivebetas"

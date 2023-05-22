@@ -161,7 +161,7 @@ Once the fonts are in the sysfonts database, we can use them in plots in many wa
 # Pregenerated output, run on the author's system. Your mileage may vary.
 
 showtext::showtext_auto()  # give control for displaying text in plots to package `showtext`
-par(mai=c(0.8, 0.4, 0.8, 0.4))
+oldpar <- par(mai=c(0.8, 0.4, 0.8, 0.4))
 
 # data
 petpercent <- c(11.1, 9.6, 3.5, 2.2, 1.6, 1.5, 1.4, 0.7, 0.6, 0.5, 0.4, 0.4, 0.3, 0.2, 0.1, 0.1, 0.5)
@@ -177,6 +177,7 @@ mtext("%", side=2, line=0.5, at=11, las=1, family="hiragino_mincho")
 mtext("Source: ペットフード協会 (https://petfood.or.jp/data/)", side=1, line=2,
       family="hiragino_mincho", cex=0.75)
 
+par(oldpar)
 showtext::showtext_auto(enable = FALSE)  # give back control to the usual R code
 ```
 
@@ -250,17 +251,24 @@ but can be helpful in particular for the following three tasks:
 
 * Adding fonts to the `sysfonts` database as described above for the duration of the current R session.
 For this, include lines of the form
-```r
+```{r eval = FALSE}
+# not run
 sysfonts::font_add(family = "nagayama_kai", regular="/Users/dschuhm/Library/Fonts/nagayama_kai08.otf")
 ```
 where `regular` is obtained from `systemfonts::match_font`.
 
 * Setting kanjistat options via `kanjistat_options`. Options are mostly default choices for various functions. These options are mentioned in the help of the function. Example:
-```r
+```{r eval = FALSE}
+# not run
 kanjistat_options(ask_github = TRUE, default_bitmap_size = 64, default_font = "yu_kyokasho")
 ```
 
 * Loading further kanji data. For now, this concerns mainly the list of pregenerated kanjivec objects obtained from [kanjistat.data repository](https://github.com/dschuhmacher/kanjistat.data). After saving the .rda file locally, load by adding the following line to `.Rkanjistat-profile`
-```r
+```{r eval = FALSE}
+# not run
 load("/path/to/the/data/kvec.rda", envir = .GlobalEnv)
+```
+
+```{r cleanup, include = FALSE}
+  options(oldopt)
 ```

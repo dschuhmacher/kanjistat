@@ -13,6 +13,9 @@
 
 \item{...}{further parameters passed to \code{print.default}.}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Print basic information about a kanjivec object
 }

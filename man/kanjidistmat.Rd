@@ -44,7 +44,7 @@ The same precautions apply as for \code{\link{kanjidist}}.
 }
 
 \examples{
-\dontrun{
+\donttest{
 kanjidistmat(fivebetas)
 }
 }

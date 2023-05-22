@@ -52,6 +52,9 @@ get_kanjistat_option <- function(x) {
 #' @param character logical. Shall the returned codepoints be of class "character" or hexmode.
 #'
 #' @name codepoint
+#' 
+#' @return For `codepointToKanji` a character vector of kanji. For `kanjiToCodepoint` a vector
+#'   of hexadecimal numbers (class `hexmode`).
 #'
 #' @examples
 #' codepointToKanji(c("51b7", "6696", "71b1"))
@@ -102,7 +105,7 @@ kanjiToCodepoint <- function(kan, character=FALSE) {   # x should be vector of i
 #' If `path` is a file, the replacement is limited to this file. If `outdir` is the same
 #' as `dirname(path)`, the files are overwritten without warning.
 #'
-#' @return Nothing (invisible `NULL`).
+#' @return No return value, called for side effects.
 #' @export
 #'
 cjk_escape <- function(path, outdir = NULL, verbose = TRUE) {
@@ -343,7 +346,7 @@ handle_font <- function(family) {   # currently only called for family = NULL. I
       rlang::warn("No font family specified. Characters will be represented in the CJK font WenQuanYi Micro Hei
 that is included in the package showtext. The font targets Chinese writing and some strokes will
 therefore look odd for Japanese kanji. It is strongly advised that you register a Japanese font.
-See help with Japanese font.", .frequency = "regularly", .frequency_id = "no_font_family")
+See the package vignette for details.", .frequency = "regularly", .frequency_id = "no_font_family")
       family <- "wqy-microhei"
     } else {
       family <- default_font

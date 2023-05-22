@@ -32,6 +32,9 @@ a vector of several font families they are matched to the characters in \code{ka
 \item{...}{further parameters passed to the function opening the device (such as a
 file name for devices that create a file).}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Write kanji to a graphics device.
 }
@@ -55,9 +58,7 @@ We strongly advised that a Japanese font is used as detailed above.
 }
 
 \examples{
-\dontrun{
 plotkanji("滝")   
 plotkanji("犬猫魚")
-}
 
 }

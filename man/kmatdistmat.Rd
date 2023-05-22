@@ -31,9 +31,8 @@ Apply \code{\link{kmatdist}} to every pair of \code{\link{kanjimat}} objects to 
 the unbalanced or balanced Wasserstein distance.
 }
 \examples{
-\dontrun{
 kmatdistmat(fivetrees1)
-kmatdistmat(fivetrees1, fivetrees1)  # same result but slower
+\donttest{kmatdistmat(fivetrees1, fivetrees1)  # same result but slower
 kmatdistmat(fivetrees1, fivetrees2)  # note the smaller values on the diagonal
 }
 

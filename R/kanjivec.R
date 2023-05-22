@@ -107,13 +107,14 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'   # Tries to load the svg file for the kanji from GitHub.
+#' if (interactive()) {
+#'   # Try to load the svg file for the kanji from GitHub.
 #'   res <- kanjivec("藤", database=NULL)
+#'   str(res)
 #' }
 #'
-#'   fivebetas  # some sample kanjivec data
-#'   str(fivebetas[[1]])
+#' fivebetas  # sample kanjivec data
+#' str(fivebetas[[1]])
 #' 
 #' @seealso \code{\link{plot.kanjivec}}, \code{\link{str.kanjivec}}
 #' 
@@ -281,13 +282,15 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent",
 #'          font size which is currently not judiciously set and may be too large for some (especially
 #'          on-screen) devices. The parameter \code{cex} (via \code{...}) fixes this.
 #'
+#' @return No return value, called for side effects.
+#'
 #' @export
 #'
 #' @examples
 #' kanji <- fivebetas[[2]]
 #' plot(kanji, type = "kanji", seg_depth = 2)
-#' \dontrun{
-#' plot(kanji, type = "dend")}
+#' plot(kanji, type = "dend")  
+#'   # gives a warning if get_kanjistat_option("default_font") is NULL
 #' 
 # For colors we just pick a default from grDevices::hcl.pals()
 # plot(kanji, 2, col=list("darkblue",c("darkgreen", "chartreuse")))}
@@ -327,6 +330,8 @@ plot.kanjivec <- function(x, type=c("kanji", "dend"), seg_depth=0, palette = "Da
 #' @param dend whether to print the structure of the \code{strokedend} component.
 #' @param ... further parameters passed to \code{print.default}.
 #'
+#' @return No return value, called for side effects.
+#'
 #' @export
 #'
 print.kanjivec <- function(x, dend=FALSE, ...) {
@@ -349,6 +354,8 @@ print.kanjivec <- function(x, dend=FALSE, ...) {
 #' @param object an object of class \code{kanjivec}.
 #' @param ... further parameters passed to \code{str} for all but the \code{stroketree} component 
 #'   of \code{object}.
+#'
+#' @return No return value, called for side effects.
 #'
 #' @export
 #'
@@ -444,12 +451,10 @@ get_strokes <- function(kvec, which=1:kvec$nstrokes, simplify=TRUE) {
 #'
 #' @examples
 #' kanji <- fivebetas[[5]]
+#' # get the three strokes of the component⻖ in 陣
 #' rad <- get_strokes_compo(kanji, c(2,1))    
-#' # the three strokes of the component⻖ in 陣
-#'
-#' \dontrun{
 #' plot(0.5, 0.5, xlim=c(0,1), ylim=c(0,1), type="n", asp=1, xaxs="i", yaxs="i", xlab="", ylab="")
-#' invisible(lapply(rad, lines, lwd=4))}
+#' invisible(lapply(rad, lines, lwd=4))
 #' 
 #' @seealso \code{\link{get_strokes}}
 #'

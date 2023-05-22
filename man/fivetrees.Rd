@@ -42,11 +42,11 @@ fivetrees3
 Sample lists of kanjimat objects
 }
 \examples{
-\dontrun{
-par(mfrow = c(3,5))
+oldpar <- par(mfrow = c(3,5))
 invisible( lapply(fivetrees1, plot) )
 invisible( lapply(fivetrees2, plot) )
-invisible( lapply(fivetrees3, plot) )}
+invisible( lapply(fivetrees3, plot) )
+par(oldpar)
   
 }
 \keyword{datasets}

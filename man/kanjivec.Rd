@@ -128,13 +128,14 @@ The \code{components} at a given level can be plotted, see \code{\link{plot.kanj
 of \link[=kanjidist]{kanji distances}.
 }
 \examples{
-\dontrun{
-  # Tries to load the svg file for the kanji from GitHub.
+if (interactive()) {
+  # Try to load the svg file for the kanji from GitHub.
   res <- kanjivec("藤", database=NULL)
+  str(res)
 }
 
-  fivebetas  # some sample kanjivec data
-  str(fivebetas[[1]])
+fivebetas  # sample kanjivec data
+str(fivebetas[[1]])
 
 }
 \seealso{
