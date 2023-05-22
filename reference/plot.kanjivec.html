@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,6 +125,12 @@ if <code>type = "dend"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>No return value, called for side effects.</p>
+    </div>
+    <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Setting up nice labels for the nodes if <code>type = "dend"</code> is not easy. For many
 font families it appears that some "kanji components" cannot be displayed in plots
@@ -148,8 +154,9 @@ on-screen) devices. The parameter <code>cex</code> (via <code>...</code>) fixes 
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">kanji</span> <span class="op">&lt;-</span> <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">kanji</span>, type <span class="op">=</span> <span class="st">"kanji"</span>, seg_depth <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.kanjivec-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">kanji</span>, type <span class="op">=</span> <span class="st">"dend"</span><span class="op">)</span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">kanji</span>, type <span class="op">=</span> <span class="st">"dend"</span><span class="op">)</span>  </span></span>
+<span class="r-plt img"><img src="plot.kanjivec-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span>  <span class="co"># gives a warning if get_kanjistat_option("default_font") is NULL</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

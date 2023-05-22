@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Introduction to kanjistat</h1>
             
-            <h4 data-toc-skip class="date">2023-05-20</h4>
+            <h4 data-toc-skip class="date">2023-05-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dschuhmacher/kanjistat/blob/HEAD/vignettes/kanjistat.Rmd" class="external-link"><code>vignettes/kanjistat.Rmd</code></a></small>
       <div class="d-none name"><code>kanjistat.Rmd</code></div>
@@ -271,7 +271,7 @@ first obvious example is for plot annotation.
 <code class="sourceCode R"><span><span class="co"># Pregenerated output, run on the author's system. Your mileage may vary.</span></span>
 <span></span>
 <span><span class="fu">showtext</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/showtext/man/showtext_auto.html" class="external-link">showtext_auto</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># give control for displaying text in plots to package `showtext`</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mai<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.4</span>, <span class="fl">0.8</span>, <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mai<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.4</span>, <span class="fl">0.8</span>, <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># data</span></span>
 <span><span class="va">petpercent</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11.1</span>, <span class="fl">9.6</span>, <span class="fl">3.5</span>, <span class="fl">2.2</span>, <span class="fl">1.6</span>, <span class="fl">1.5</span>, <span class="fl">1.4</span>, <span class="fl">0.7</span>, <span class="fl">0.6</span>, <span class="fl">0.5</span>, <span class="fl">0.4</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span></span>
@@ -287,6 +287,7 @@ first obvious example is for plot annotation.
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html" class="external-link">mtext</a></span><span class="op">(</span><span class="st">"Source: ペットフード協会 (https://petfood.or.jp/data/)"</span>, side<span class="op">=</span><span class="fl">1</span>, line<span class="op">=</span><span class="fl">2</span>,</span>
 <span>      family<span class="op">=</span><span class="st">"hiragino_mincho"</span>, cex<span class="op">=</span><span class="fl">0.75</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span>
 <span><span class="fu">showtext</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/showtext/man/showtext_auto.html" class="external-link">showtext_auto</a></span><span class="op">(</span>enable <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># give back control to the usual R code</span></span></code></pre></div>
 <p><img src="figures/japanese_pets.svg" style="width:90.0%"></p>
 <p>The function <code>plotkanji</code> provides a simple way of
@@ -343,7 +344,8 @@ above for the duration of the current R session. For this, include lines
 of the form</li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">sysfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sysfonts/man/font_add.html" class="external-link">font_add</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"nagayama_kai"</span>, regular<span class="op">=</span><span class="st">"/Users/dschuhm/Library/Fonts/nagayama_kai08.otf"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># not run</span></span>
+<span><span class="fu">sysfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sysfonts/man/font_add.html" class="external-link">font_add</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"nagayama_kai"</span>, regular<span class="op">=</span><span class="st">"/Users/dschuhm/Library/Fonts/nagayama_kai08.otf"</span><span class="op">)</span></span></code></pre></div>
 <p>where <code>regular</code> is obtained from
 <code><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">systemfonts::match_font</a></code>.</p>
 <ul>
@@ -352,7 +354,8 @@ Options are mostly default choices for various functions. These options
 are mentioned in the help of the function. Example:</li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/options.html">kanjistat_options</a></span><span class="op">(</span>ask_github <span class="op">=</span> <span class="cn">TRUE</span>, default_bitmap_size <span class="op">=</span> <span class="fl">64</span>, default_font <span class="op">=</span> <span class="st">"yu_kyokasho"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># not run</span></span>
+<span><span class="fu"><a href="../reference/options.html">kanjistat_options</a></span><span class="op">(</span>ask_github <span class="op">=</span> <span class="cn">TRUE</span>, default_bitmap_size <span class="op">=</span> <span class="fl">64</span>, default_font <span class="op">=</span> <span class="st">"yu_kyokasho"</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>Loading further kanji data. For now, this concerns mainly the list
 of pregenerated kanjivec objects obtained from <a href="https://github.com/dschuhmacher/kanjistat.data" class="external-link">kanjistat.data
@@ -361,7 +364,8 @@ following line to <code>.Rkanjistat-profile</code>
 </li>
 </ul>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"/path/to/the/data/kvec.rda"</span>, envir <span class="op">=</span> <span class="va">.GlobalEnv</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># not run</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"/path/to/the/data/kvec.rda"</span>, envir <span class="op">=</span> <span class="va">.GlobalEnv</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

@@ -16,7 +16,7 @@ ratio) plus the (relative unbalanced) Wasserstein distance between the registere
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -165,17 +165,521 @@ ArXiv Preprint, <a href="https://doi.org/10.48550/arXiv.2304.02493" class="exter
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1775693</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, verbose<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># faster and similar:</span></span></span>
-<span class="r-in"><span><span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, compo_seg_depth1<span class="op">=</span><span class="fl">2</span>, compo_seg_depth2<span class="op">=</span><span class="fl">2</span>, </span></span>
-<span class="r-in"><span>          size<span class="op">=</span><span class="fl">32</span>, lwd<span class="op">=</span><span class="fl">1.8</span>, verbose<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="co"># slower and similar:</span></span></span>
-<span class="r-in"><span><span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, size<span class="op">=</span><span class="fl">64</span>, lwd<span class="op">=</span><span class="fl">3.2</span>, verbose<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ROI.plugin.glpk"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, verbose<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># faster and similar:</span></span></span>
+<span class="r-in"><span>  <span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, compo_seg_depth1<span class="op">=</span><span class="fl">2</span>, compo_seg_depth2<span class="op">=</span><span class="fl">2</span>, </span></span>
+<span class="r-in"><span>            size<span class="op">=</span><span class="fl">32</span>, lwd<span class="op">=</span><span class="fl">1.8</span>, verbose<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>  <span class="co"># slower and similar:</span></span></span>
+<span class="r-in"><span>  <span class="fu">kanjidist</span><span class="op">(</span><span class="va">fivebetas</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span>, <span class="va">fivebetas</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span>, size<span class="op">=</span><span class="fl">64</span>, lwd<span class="op">=</span><span class="fl">3.2</span>, verbose<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> </span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: ROI.plugin.glpk</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.00000000 1.00000000 1.00000000 1.00000000 1.00000000 1.00000000 0.44659193 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.07491261 1.00000000 1.00000000 0.02808986 0.01027523 0.99614823 1.01739130 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.97912005 1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     flatind1     flatind2       level1         ind1       level2         ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.000000000  2.000000000  1.000000000  1.000000000  2.000000000  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      totcost         dist      weight1      weight2       transx       transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.784655125  0.119777514  1.000000000  0.313539590 -0.242366644  0.003627086 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       scalex       scaley     distortx     distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.278411206  0.904819766  0.307697971  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.00000000 3.00000000 1.00000000 1.00000000 2.00000000 2.00000000 0.37410355 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.07238802 1.00000000 0.68646041 0.13166785 0.01027523 0.72127316 1.01739130 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.70894370 1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  1.00000000  2.00000000  1.00000000  1.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.42253813  0.07673603  0.63596141  1.00000000  0.17344037 -0.04693199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.62168054  1.18936564  1.36348359  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  2.00000000  2.00000000  1.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.73608926  0.11918274  0.63596141  0.31353959 -0.09701614 -0.05358014 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.45323981  1.05776562  0.42848794  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  3.00000000  2.00000000  1.00000000  2.00000000  2.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.21167340  0.05209631  0.63596141  0.68646041  0.27701835 -0.04693199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.17419738  1.18936564  0.98724677  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  1.00000000  2.00000000  2.00000000  1.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.74031477  0.11324079  0.36403859  1.00000000 -0.22865325  0.04949527 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.12609719  1.12934319  2.76806663  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  2.00000000  2.00000000  2.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.09672928  0.02541194  0.36403859  0.31353959 -0.49910976  0.04284713 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.87370581  1.00438448  0.86989178  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  3.00000000  2.00000000  2.00000000  2.00000000  2.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.71395276  0.11472293  0.36403859  0.68646041 -0.12507527  0.04949527 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.26348843  1.12934319  2.00425208  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4.0000000  1.0000000  3.0000000  1.0000000  1.0000000  1.0000000  0.7793960 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1320157  0.2008847  1.0000000  0.1784862 -0.0793578  1.9756156  1.3153950 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.5019182  1.0000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "千" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4.00000000  2.00000000  3.00000000  1.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.72281488  0.11865299  0.20088472  0.31353959 -0.09197027 -0.08600594 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.55216033  1.16985017  0.47199235  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "千" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4.0000000  3.0000000  3.0000000  1.0000000  2.0000000  2.0000000  0.6703091 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1107852  0.2008847  0.6864604  0.2820642 -0.0793578  1.4304684  1.3153950 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.0874820  1.0000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "千" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5.0000000  1.0000000  3.0000000  2.0000000  1.0000000  1.0000000  0.8083822 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1308616  0.1967095  1.0000000  0.1734404 -0.0409633  1.6216805  3.3620690 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.9325356  1.9333333 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "g"  "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5.00000000  2.00000000  3.00000000  2.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.81186521  0.12740729  0.19670949  0.31353959 -0.09701614 -0.04761145 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.45323981  2.99006532  0.29305836  1.93333333 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "g"  "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5.0000000  3.0000000  3.0000000  2.0000000  2.0000000  2.0000000  0.7974040 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1232692  0.1967095  0.6864604  0.2770183 -0.0409633  1.1741974  3.3620690 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.6752137  1.9333333 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "g"  "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6.000000000 1.000000000 3.000000000 3.000000000 1.000000000 1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.791288325 0.136493552 0.225647973 1.000000000 0.175825688 0.005499199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.012543040 1.407404223 1.429968027 1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "土" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     flatind1     flatind2       level1         ind1       level2         ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6.000000000  2.000000000  3.000000000  3.000000000  2.000000000  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      totcost         dist      weight1      weight2       transx       transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.826973335  0.153554807  0.225647973  0.313539590 -0.094630821 -0.001148944 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       scalex       scaley     distortx     distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.562481086  1.251678832  0.449381320  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "土" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6.000000000 3.000000000 3.000000000 3.000000000 2.000000000 2.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.727305007 0.122611823 0.225647973 0.686460410 0.279403670 0.005499199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.457206099 1.407404223 1.035385624 1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "土" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Overview of matches:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   labfrom labto      costs    masses   masses1   masses2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      ⻏    ⻖ 0.09672928 0.3135396 0.3640386 0.3135396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      垂    車 0.21167340 0.6359614 0.6359614 0.6864604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched at cost 0.25: 0.050499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Directly computed total cost based on this overview: 0.17756932132619</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.00000000 1.00000000 1.00000000 1.00000000 1.00000000 1.00000000 0.43282427 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.07360803 1.00000000 1.00000000 0.02808986 0.01027523 0.99614823 1.01739130 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.97912005 1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     flatind1     flatind2       level1         ind1       level2         ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.000000000  2.000000000  1.000000000  1.000000000  2.000000000  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      totcost         dist      weight1      weight2       transx       transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.780704076  0.118930021  1.000000000  0.313539590 -0.242366644  0.003627086 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       scalex       scaley     distortx     distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.278411206  0.904819766  0.307697971  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.00000000 3.00000000 1.00000000 1.00000000 2.00000000 2.00000000 0.36832288 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.07170271 1.00000000 0.68646041 0.13166785 0.01027523 0.72127316 1.01739130 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.70894370 1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  1.00000000  2.00000000  1.00000000  1.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.41301626  0.07560606  0.63596141  1.00000000  0.17344037 -0.04693199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.62168054  1.18936564  1.36348359  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  2.00000000  2.00000000  1.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.73097590  0.11810400  0.63596141  0.31353959 -0.09701614 -0.05358014 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.45323981  1.05776562  0.42848794  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  3.00000000  2.00000000  1.00000000  2.00000000  2.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.20487990  0.05112955  0.63596141  0.68646041  0.27701835 -0.04693199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.17419738  1.18936564  0.98724677  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  1.00000000  2.00000000  2.00000000  1.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.73480196  0.11222037  0.36403859  1.00000000 -0.22865325  0.04949527 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.12609719  1.12934319  2.76806663  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  2.00000000  2.00000000  2.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.09582504  0.02512123  0.36403859  0.31353959 -0.49910976  0.04284713 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.87370581  1.00438448  0.86989178  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  3.00000000  2.00000000  2.00000000  2.00000000  2.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.70976175  0.11392045  0.36403859  0.68646041 -0.12507527  0.04949527 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.26348843  1.12934319  2.00425208  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Overview of matches:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   labfrom labto      costs    masses   masses1   masses2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      ⻏    ⻖ 0.09582504 0.3135396 0.3640386 0.3135396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      垂    車 0.20487990 0.6359614 0.6359614 0.6864604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched at cost 0.25: 0.050499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Directly computed total cost based on this overview: 0.17296540263549</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.00000000 1.00000000 1.00000000 1.00000000 1.00000000 1.00000000 0.45376699 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.07559294 1.00000000 1.00000000 0.02808986 0.01027523 0.99614823 1.01739130 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.97912005 1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     flatind1     flatind2       level1         ind1       level2         ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.000000000  2.000000000  1.000000000  1.000000000  2.000000000  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      totcost         dist      weight1      weight2       transx       transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.787058568  0.120301477  1.000000000  0.313539590 -0.242366644  0.003627086 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       scalex       scaley     distortx     distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.278411206  0.904819766  0.307697971  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.00000000 3.00000000 1.00000000 1.00000000 2.00000000 2.00000000 0.37875934 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.07293964 1.00000000 0.68646041 0.13166785 0.01027523 0.72127316 1.01739130 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.70894370 1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "郵" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  1.00000000  2.00000000  1.00000000  1.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.42776207  0.07735700  0.63596141  1.00000000  0.17344037 -0.04693199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.62168054  1.18936564  1.36348359  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  2.00000000  2.00000000  1.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.73870009  0.11974420  0.63596141  0.31353959 -0.09701614 -0.05358014 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.45323981  1.05776562  0.42848794  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[2]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.00000000  3.00000000  2.00000000  1.00000000  2.00000000  2.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.21513288  0.05258259  0.63596141  0.68646041  0.27701835 -0.04693199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.17419738  1.18936564  0.98724677  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "垂" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  1.00000000  2.00000000  2.00000000  1.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.74109286  0.11338660  0.36403859  1.00000000 -0.22865325  0.04949527 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.12609719  1.12934319  2.76806663  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  2.00000000  2.00000000  2.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.09572261  0.02508803  0.36403859  0.31353959 -0.49910976  0.04284713 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.87370581  1.00438448  0.86989178  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[3]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.00000000  3.00000000  2.00000000  2.00000000  2.00000000  2.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.71596209  0.11511267  0.36403859  0.68646041 -0.12507527  0.04949527 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2.26348843  1.12934319  2.00425208  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "⻏" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4.0000000  1.0000000  3.0000000  1.0000000  1.0000000  1.0000000  0.7807105 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1324087  0.2008847  1.0000000  0.1784862 -0.0793578  1.9756156  1.3153950 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.5019182  1.0000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "千" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4.00000000  2.00000000  3.00000000  1.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.72577322  0.11928183  0.20088472  0.31353959 -0.09197027 -0.08600594 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.55216033  1.16985017  0.47199235  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "千" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[4]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4.0000000  3.0000000  3.0000000  1.0000000  2.0000000  2.0000000  0.6729803 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1112626  0.2008847  0.6864604  0.2820642 -0.0793578  1.4304684  1.3153950 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.0874820  1.0000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "千" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5.0000000  1.0000000  3.0000000  2.0000000  1.0000000  1.0000000  0.8094450 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1311689  0.1967095  1.0000000  0.1734404 -0.0409633  1.6216805  3.3620690 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.9325356  1.9333333 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "g"  "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5.00000000  2.00000000  3.00000000  2.00000000  2.00000000  1.00000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.81393038  0.12795289  0.19670949  0.31353959 -0.09701614 -0.04761145 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.45323981  2.99006532  0.29305836  1.93333333 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "g"  "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[5]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5.0000000  3.0000000  3.0000000  2.0000000  2.0000000  2.0000000  0.7989914 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       dist    weight1    weight2     transx     transy     scalex     scaley </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.1236453  0.1967095  0.6864604  0.2770183 -0.0409633  1.1741974  3.3620690 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   distortx   distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.6752137  1.9333333 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "g"  "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]][[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6.000000000 1.000000000 3.000000000 3.000000000 1.000000000 1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.792221398 0.136810726 0.225647973 1.000000000 0.175825688 0.005499199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.012543040 1.407404223 1.429968027 1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "土" "陣"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]][[2]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     flatind1     flatind2       level1         ind1       level2         ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6.000000000  2.000000000  3.000000000  3.000000000  2.000000000  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      totcost         dist      weight1      weight2       transx       transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.828363169  0.154392617  0.225647973  0.313539590 -0.094630821 -0.001148944 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       scalex       scaley     distortx     distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  0.562481086  1.251678832  0.449381320  1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "土" "⻖"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[6]][[3]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    flatind1    flatind2      level1        ind1      level2        ind2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6.000000000 3.000000000 3.000000000 3.000000000 2.000000000 2.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     totcost        dist     weight1     weight2      transx      transy </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.727824582 0.122732560 0.225647973 0.686460410 0.279403670 0.005499199 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      scalex      scaley    distortx    distorty </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.457206099 1.407404223 1.035385624 1.000000000 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"elements")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "土" "車"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Overview of matches:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   labfrom labto      costs    masses   masses1   masses2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      ⻏    ⻖ 0.09572261 0.3135396 0.3640386 0.3135396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      垂    車 0.21513288 0.6359614 0.6359614 0.6864604</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched at cost 0.25: 0.050499</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Directly computed total cost based on this overview: 0.179453784845399</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.1794538</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

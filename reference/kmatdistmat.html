@@ -12,7 +12,7 @@ the unbalanced or balanced Wasserstein distance."><!-- mathjax --><script src="h
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,11 +97,28 @@ is computed and then symmetrized with diagonal zero.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">kmatdistmat</span><span class="op">(</span><span class="va">fivetrees1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">kmatdistmat</span><span class="op">(</span><span class="va">fivetrees1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]     [,2]     [,3]     [,4]     [,5]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.00000 84.16072 57.59337 44.14622 44.49426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 84.16072  0.00000 69.80940 75.60980 86.55121</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 57.59337 69.80940  0.00000 39.16901 66.16746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 44.14622 75.60980 39.16901  0.00000 44.66810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 44.49426 86.55121 66.16746 44.66810  0.00000</span>
 <span class="r-in"><span><span class="fu">kmatdistmat</span><span class="op">(</span><span class="va">fivetrees1</span>, <span class="va">fivetrees1</span><span class="op">)</span>  <span class="co"># same result but slower</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]     [,2]     [,3]     [,4]     [,5]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.00000 84.16072 57.59337 44.14622 44.49426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 84.16072  0.00000 69.80940 75.60980 86.55121</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 57.59337 69.80940  0.00000 39.16901 66.16746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 44.14622 75.60980 39.16901  0.00000 44.66810</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 44.49426 86.55121 66.16746 44.66810  0.00000</span>
 <span class="r-in"><span><span class="fu">kmatdistmat</span><span class="op">(</span><span class="va">fivetrees1</span>, <span class="va">fivetrees2</span><span class="op">)</span>  <span class="co"># note the smaller values on the diagonal</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]     [,2]     [,3]     [,4]      [,5]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  59.79662 84.09319 72.24528 76.97499  75.05534</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 106.92515 58.29519 82.81458 93.28782 107.15642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  90.64552 90.41827 65.10304 82.02497  92.14198</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  78.74045 88.73563 76.48978 67.54018  74.64072</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,]  73.54473 88.44780 76.12515 72.28624  57.70252</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
