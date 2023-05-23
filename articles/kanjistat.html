@@ -70,7 +70,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Introduction to kanjistat</h1>
             
-            <h4 data-toc-skip class="date">2023-05-22</h4>
+            <h4 data-toc-skip class="date">2023-05-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dschuhmacher/kanjistat/blob/HEAD/vignettes/kanjistat.Rmd" class="external-link"><code>vignettes/kanjistat.Rmd</code></a></small>
       <div class="d-none name"><code>kanjistat.Rmd</code></div>
@@ -344,8 +344,7 @@ above for the duration of the current R session. For this, include lines
 of the form</li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># not run</span></span>
-<span><span class="fu">sysfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sysfonts/man/font_add.html" class="external-link">font_add</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"nagayama_kai"</span>, regular<span class="op">=</span><span class="st">"/Users/dschuhm/Library/Fonts/nagayama_kai08.otf"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">sysfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sysfonts/man/font_add.html" class="external-link">font_add</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"nagayama_kai"</span>, regular<span class="op">=</span><span class="st">"/Users/dschuhm/Library/Fonts/nagayama_kai08.otf"</span><span class="op">)</span></span></code></pre></div>
 <p>where <code>regular</code> is obtained from
 <code><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">systemfonts::match_font</a></code>.</p>
 <ul>
@@ -354,8 +353,7 @@ Options are mostly default choices for various functions. These options
 are mentioned in the help of the function. Example:</li>
 </ul>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># not run</span></span>
-<span><span class="fu"><a href="../reference/options.html">kanjistat_options</a></span><span class="op">(</span>ask_github <span class="op">=</span> <span class="cn">TRUE</span>, default_bitmap_size <span class="op">=</span> <span class="fl">64</span>, default_font <span class="op">=</span> <span class="st">"yu_kyokasho"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/options.html">kanjistat_options</a></span><span class="op">(</span>ask_github <span class="op">=</span> <span class="cn">TRUE</span>, default_bitmap_size <span class="op">=</span> <span class="fl">64</span>, default_font <span class="op">=</span> <span class="st">"yu_kyokasho"</span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>Loading further kanji data. For now, this concerns mainly the list
 of pregenerated kanjivec objects obtained from <a href="https://github.com/dschuhmacher/kanjistat.data" class="external-link">kanjistat.data
@@ -364,8 +362,7 @@ following line to <code>.Rkanjistat-profile</code>
 </li>
 </ul>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># not run</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"/path/to/the/data/kvec.rda"</span>, envir <span class="op">=</span> <span class="va">.GlobalEnv</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"/path/to/the/data/kvec.rda"</span>, envir <span class="op">=</span> <span class="va">.GlobalEnv</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
