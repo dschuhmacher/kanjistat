@@ -79,7 +79,7 @@ speed-ups.
 \examples{
 if (requireNamespace("ROI.plugin.glpk")) {
   kanjidist(fivebetas[[4]], fivebetas[[5]])
-  kanjidist(fivebetas[[4]], fivebetas[[5]], verbose=TRUE)
+  \donttest{kanjidist(fivebetas[[4]], fivebetas[[5]], verbose=TRUE)}
   # faster and similar:
   kanjidist(fivebetas[[4]], fivebetas[[5]], compo_seg_depth1=2, compo_seg_depth2=2, 
             size=32, lwd=1.8, verbose=TRUE) 

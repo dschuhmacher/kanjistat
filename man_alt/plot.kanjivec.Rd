@@ -51,6 +51,9 @@ all numbers or a matrix of dimension kanjivec$nstrokes times 2.}
 \item{...}{further parameters passed to \code{lines} if \code{type = "kanji"} and to \code{plot.dendrogram}
 if \code{type = "dend"}.}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Plot kanjivec objects
 }
@@ -76,7 +79,7 @@ on-screen) devices. The parameter \code{cex} (via \code{...}) fixes this.
 \examples{
 kanji <- fivebetas[[2]]
 plot(kanji, type = "kanji", seg_depth = 2)
-\dontrun{
-plot(kanji, type = "dend")}
+plot(kanji, type = "dend")  
+  # gives a warning if get_kanjistat_option("default_font") is NULL
 
 }

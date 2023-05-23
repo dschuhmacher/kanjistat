@@ -12,6 +12,9 @@
 \item{...}{further parameters passed to \code{str} for all but the \code{stroketree} component
 of \code{object}.}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Compactly display the structure of a kanjivec object
 }

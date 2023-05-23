@@ -50,9 +50,14 @@ the same is (saved and) still returned invisibly.
 Create a (list of) kanjimat object(s), i.e. bitmap representations of a kanji using a certain font-family
 and other typographical parameters.
 }
-\examples{
-\dontrun{
-res <- kanjimat(kanji="\u85e4", family="klee", size = 128)
+\section{Warning}{
+
+If no font family is provided, the default \strong{Chinese} font WenQuanYi Micro Hei that comes with the package showtext is used.
+This means that the characters will typically be recognizable, but quite often look odd as Japanese characters.
+We strongly advised that a Japanese font is used as detailed above.
 }
+
+\examples{
+res <- kanjimat(kanji="\u85e4", size = 128)
 
 }

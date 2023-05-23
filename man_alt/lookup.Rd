@@ -26,9 +26,6 @@ Please use one of the many excellent online kanji dictionaries (see e.g.) more
 sophisticated lookup methods and more detailed results.
 }
 \examples{
-# kanji can be directly entered by Japanese input system
-# R package check does not allow UTF-8 characters in examples, so
-# we do it in a more complicated way
 lookup(c("\u6674", "\u66c7", "\u96e8"))  
 lookup("\u6674\u66c7\u96e8")   # same
 

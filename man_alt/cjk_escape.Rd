@@ -15,7 +15,7 @@ cjk_escape(path, outdir = NULL, verbose = TRUE)
 \item{verbose}{whether to print a message for each output file.}
 }
 \value{
-Nothing (invisible \code{NULL}).
+No return value, called for side effects.
 }
 \description{
 All CJK characters in the file(s) found at the specified path are substituted by their Unicode

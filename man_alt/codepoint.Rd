@@ -21,6 +21,10 @@ of kanjis.}
 
 \item{character}{logical. Shall the returned codepoints be of class "character" or hexmode.}
 }
+\value{
+For \code{codepointToKanji} a character vector of kanji. For \code{kanjiToCodepoint} a vector
+of hexadecimal numbers (class \code{hexmode}).
+}
 \description{
 Given codepoints \code{cp}, the function \code{codepointToKanji} transforms
 to UTF-8, which will typically show as the actual character the codepoints stands for.

@@ -252,20 +252,17 @@ but can be helpful in particular for the following three tasks:
 * Adding fonts to the `sysfonts` database as described above for the duration of the current R session.
 For this, include lines of the form
 ```{r eval = FALSE}
-# not run
 sysfonts::font_add(family = "nagayama_kai", regular="/Users/dschuhm/Library/Fonts/nagayama_kai08.otf")
 ```
 where `regular` is obtained from `systemfonts::match_font`.
 
 * Setting kanjistat options via `kanjistat_options`. Options are mostly default choices for various functions. These options are mentioned in the help of the function. Example:
 ```{r eval = FALSE}
-# not run
 kanjistat_options(ask_github = TRUE, default_bitmap_size = 64, default_font = "yu_kyokasho")
 ```
 
 * Loading further kanji data. For now, this concerns mainly the list of pregenerated kanjivec objects obtained from [kanjistat.data repository](https://github.com/dschuhmacher/kanjistat.data). After saving the .rda file locally, load by adding the following line to `.Rkanjistat-profile`
 ```{r eval = FALSE}
-# not run
 load("/path/to/the/data/kvec.rda", envir = .GlobalEnv)
 ```
 

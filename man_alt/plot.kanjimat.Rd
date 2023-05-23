@@ -23,6 +23,9 @@ information of an (antialiased) kanjimat object.}
 
 \item{...}{further parameters passed to \code{\link[graphics]{image}}.}
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Plot kanjimat object
 }

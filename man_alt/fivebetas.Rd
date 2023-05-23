@@ -26,9 +26,9 @@ fivebetas
 A sample list of kanjivec objects
 }
 \examples{
-\dontrun{
-par(mfrow = c(1,5), mai = rep(0,4))
-invisible( lapply(fivebetas, plot, seg_depth = 2) )}
+oldpar <- par(mfrow = c(1,5), mai = rep(0,4))
+invisible( lapply(fivebetas, plot, seg_depth = 2) )
+par(oldpar)
   
 }
 \keyword{datasets}
