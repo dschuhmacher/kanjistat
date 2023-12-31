@@ -4,7 +4,9 @@
   # (but not inside .onLoad and apparently not even with <<-)
   kanjistat_env$kanjistatOptions <- list(ask_github=TRUE,     # ask before reading svg data from github
                                          default_bitmap_size=64,   # default side length of bitmap (also for kanjidist)
-                                         default_font=NULL)  # fonts have to be set by user (a default_font is not needed)
+                                         default_font=NULL,  # fonts have to be set by user (a default_font is not needed)
+                                         verbose=getOption("verbose"))  # we take this from the overall options if not specified in the kanjistat file
+  # for easy reference we list all options here that are understood by kanjistat
   locpath <- file.path(getwd(), ".Rkanjistat-profile") 
   locpathR <- file.path(getwd(), ".Rkanjistat-profile.R")
   homepath <- path.expand(file.path("~", ".Rkanjistat-profile"))

@@ -364,5 +364,3 @@ strokelength <- function(smat) {
   length <- sum(apply(dcoord, 1, \(d) {sqrt(d[1]^2 + d[2]^2)}))
   length
 }
-
-
