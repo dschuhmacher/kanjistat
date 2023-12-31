@@ -35,8 +35,8 @@ usually regarded as a variant, or an alternative indexing code for the current k
 The type of variant is given in the name.
 \item \code{freq}: the frequency rank (1 = most frequent) based on newspaper data.
 \code{NA} if not among the 2500 most frequent.
-\item \code{rad_name}: a character vector. For a kanji that is a radical itself, the name(s) of the radical,
-otherwise of length 0.
+\item \code{rad_name}: a character vector. For a kanji that is a radical itself, the name(s) of the radical
+(if there are any), otherwise of length 0.
 \item \code{jlpt}: The Japanese Language Proficiency Test level according to the old four-level system
 that was in place before 2010. A value from 4 (most elementary) to 1 (most advanced).
 }

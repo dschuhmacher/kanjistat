@@ -45,8 +45,8 @@
 #'   - `freq`: the frequency rank (1 = most frequent) based on newspaper data.
 ###########(2501 most frequent kanji over four years in the Mainichi Shimbun?) 
 #'      `NA` if not among the 2500 most frequent.
-#'   - `rad_name`: a character vector. For a kanji that is a radical itself, the name(s) of the radical, 
-#'      otherwise of length 0.
+#'   - `rad_name`: a character vector. For a kanji that is a radical itself, the name(s) of the radical
+#'      (if there are any), otherwise of length 0.
 #'   - `jlpt`: The Japanese Language Proficiency Test level according to the old four-level system
 #'     that was in place before 2010. A value from 4 (most elementary) to 1 (most advanced). 
 #' * `dic_number`: a named character vector (possibly of length 0) giving the index numbers (for some
@@ -145,11 +145,13 @@ read_kanjidic2 <- function(fpath=NULL, output=c("list","xml")) {
 transform_kanjidic2_entry <- function(x) {
   
   # cat(x$literal[[1]], " ")
+  res <- list()
+  
   # ---------
   #  literal
   # ---------
   # The character itself in UTF8 coding.
-  x$literal <- unlist(x$literal)
+  res$literal <- unlist(x$literal)
   
   # -----------
   #  codepoint
@@ -167,7 +169,7 @@ transform_kanjidic2_entry <- function(x) {
   cp_value <- unname( unlist(x$codepoint) )
   stopifnot(length(cp_type) == length(cp_value))
   # we do not transform the ucs values to hexmode because we would need to have two sublists then
-  x$codepoint <- setNames(cp_value, cp_type)
+  res$codepoint <- setNames(cp_value, cp_type)
   
   # ---------
   #  radical
@@ -182,7 +184,7 @@ transform_kanjidic2_entry <- function(x) {
   rad_type <- unname( unlist(sapply(x$radical, attributes)) )
   rad_value <- unname( unlist(x$radical) )
   stopifnot(length(rad_type) == length(rad_value))
-  x$radical <- setNames(as.numeric(rad_value), rad_type)
+  res$radical <- setNames(as.numeric(rad_value), rad_type)
   
   # ------
   #  misc (list of lists)
@@ -234,7 +236,7 @@ transform_kanjidic2_entry <- function(x) {
   
   if (is.null(x$misc)) {
     warning('Kanji ', x, ' does not have any misc entries. Check original file and output.')
-    x$misc <- list()
+    res$misc <- list()
   } else {
     tempmisc <- list()
     
@@ -252,7 +254,7 @@ transform_kanjidic2_entry <- function(x) {
     tempcount <- sum(tempbool)  
     temp <- x$misc[tempbool]
     if (tempcount == 0) {
-      warning('Kanji ', x, ' does not have any stroke_count information. Check original file and output.')
+      warning('Kanji ', res$literal, ' does not have any stroke_count information. Check original file and output.')
       tempmisc$stroke_count <- numeric(0)
     } else {
       tempmisc$stroke_count <- as.numeric(unlist(temp))
@@ -297,7 +299,7 @@ transform_kanjidic2_entry <- function(x) {
       tempmisc$jlpt <- as.numeric(unlist(temp))
     }
   
-    x$misc <- tempmisc
+    res$misc <- tempmisc
   }
   # eof misc
   
@@ -315,14 +317,14 @@ transform_kanjidic2_entry <- function(x) {
   # -* m_page: for some kanji with dr_type="moro", the page number in the volume
   
   if (is.null(x$dic_number)) { # happens for the very rare kanji
-    x$dic_number <- list()
+    res$dic_number <- list()
   } else { 
     attrlist <- lapply(x$dic_number, attributes)
     indlist <- which(sapply(attrlist, length) > 1) # should be only moro
     for (i in indlist) {
       dic <- attrlist[[i]]
       if (dic$dr_type != "moro") {
-        warning('Multivariate attribute found in kanji ', x$literal, ', dic_number for dictionary ',
+        warning('Multivariate attribute found in kanji ', res$literal, ', dic_number for dictionary ',
                 dic$dr_type, '. This should only be possible for dictionary "moro". Check original file and output.')
       }
       attrlist[[i]] <- list(dr_type = do.call(\(...) paste(..., sep="."), args=dic))
@@ -330,7 +332,7 @@ transform_kanjidic2_entry <- function(x) {
     dr_type <- unname( unlist(attrlist) ) 
     dic_ref <- unname( unlist(x$dic_number) )   # don't say as.numeric, e.g. 7022 and 7765 have a single moro entry with a final P here
     stopifnot(length(dr_type) == length(dic_ref))
-    x$dic_number <- setNames(dic_ref, dr_type)
+    res$dic_number <- setNames(dic_ref, dr_type)
   }
     
   # ------------
@@ -379,18 +381,18 @@ transform_kanjidic2_entry <- function(x) {
   
   if (is.null(x$query_code)) {
     warning('kanji ', x, ' does not have any query codes. Check original file and output.')
-    x$query_code <- list()
+    res$query_code <- list()
   } else { 
     attrlist <- lapply(x$query_code, attributes)
     indlist <- which(sapply(attrlist, length) > 1) # should be only skip
     for (i in indlist) {
       query <- attrlist[[i]]
       if (query$qc_type != "skip") {
-        warning('Multivariate attribute found in kanji ', x$literal, ', query_code for qc_type ', query$qc_type,
+        warning('Multivariate attribute found in kanji ', res$literal, ', query_code for qc_type ', query$qc_type,
                 '. This should only be possible for qc_type "skip". Check original file and output.')
       }
       if (length(query) > 2 || names(query)[2] != "skip_misclass") {
-        warning('Multivariate attribute in kanji ', x$literal, ', $query_code[[', i, ']] has unexpected format. ',
+        warning('Multivariate attribute in kanji ', res$literal, ', $query_code[[', i, ']] has unexpected format. ',
                 'In addition to "qc_type" only a single "skip_misclass" attribute should be present.')
       }
       attrlist[[i]] <- list(qc_type = do.call(\(...) paste("mis", ..., sep="."), args=query))
@@ -398,7 +400,7 @@ transform_kanjidic2_entry <- function(x) {
     qc_type <- unname( unlist(attrlist) ) 
     q_code <- unname( unlist(x$query_code) )
     stopifnot(length(qc_type) == length(q_code))
-    x$query_code <- setNames(q_code, qc_type)
+    res$query_code <- setNames(q_code, qc_type)
   }
   
   # -----------------
@@ -450,7 +452,7 @@ transform_kanjidic2_entry <- function(x) {
   # Japanese readings that are now only associated with names.
   
   if (is.null(x$reading_meaning)) { # happens for the very rare kanji
-    x$reading_meaning <- list()
+    res$reading_meaning <- list()
   } else {   
     nam <- names(x$reading_meaning)
     whrm <- which(nam == "rmgroup")  # in practice either the first or none (but the dtd allows for several groups)
@@ -471,7 +473,7 @@ transform_kanjidic2_entry <- function(x) {
         reading <- list()    # empty list if there are no readings
       } else {
         if (any( sapply(temp[wh_read], \(x) {length(attributes(x))}) != 1)) {
-          warning('More than one attribute for kanji ', x$literal, ', in a $reading_meaning$rmgroup$reading entry. ',
+          warning('More than one attribute for kanji ', res$literal, ', in a $reading_meaning$rmgroup$reading entry. ',
                   'Everything but the attribute "r_type" is lost.')
           # safety check to be aware if one day there really are attributes r_status or on_type added
         }
@@ -489,7 +491,7 @@ transform_kanjidic2_entry <- function(x) {
         wh_en <- wh_mean[wh_mean_en]
         temp[wh_en] <- lapply(temp[wh_en], \(x) {attr(x, "m_lang") <- "en"; x})
         if (any( sapply(temp[wh_mean], \(x) {length(attributes(x))}) != 1)) {
-          warning('More than one attribute for kanji ', x$literal, ', in a $reading_meaning$rmgroup$meaning entry. ',
+          warning('More than one attribute for kanji ', res$literal, ', in a $reading_meaning$rmgroup$meaning entry. ',
                   'There should be only an "m_lang" attribute. Check original file and output.')
         }
         fac_mlang <- as.factor( sapply(temp[wh_mean], attr, "m_lang") )
@@ -508,10 +510,10 @@ transform_kanjidic2_entry <- function(x) {
       list_of_nanori <- list( nanori=unname(unlist(x$reading_meaning[whnano])) )
     }
 
-    x$reading_meaning <- c(list_of_rmgroups, list_of_nanori)  # either may be empty
+    res$reading_meaning <- c(list_of_rmgroups, list_of_nanori)  # either may be empty
   }
   
-  return(x)
+  return(res)
 }
 
 
@@ -586,38 +588,39 @@ transform_kanjidic2_entry <- function(x) {
 # }
 
 
-
 # if (FALSE) {
-#   xml <- read_kanjidic2("../kanjidic2.xml", output="xml")
+#   xml <- read_kanjidic2("../kanjidic2-2023-365.xml", output="xml")
 #   characters <- xml_find_all(xml, "/kanjidic2/character")
 #   system.time( dat <- as_list(characters) )
-#   
-#   system.time( kdic <- read_kanjidic2("../kanjidic2.xml") )
-#   
+# 
+#   system.time( kdic <- read_kanjidic2("../kanjidic2-2023-365.xml") )
+# 
 #   library(listviewer)
 #   library(rlist)
+#   which(sapply(kdic, \(x) {x$literal=="一"}))
+#   which(sapply(kdic, \(x) {x$literal=="蘒"}))
 #   list.filter(kdic, as.numeric(misc$stroke_count) > 32)
 #   walk(1:13108, \(x) {if (kdic[[x]]$literal == "䯂") print(x)}) # max stroke count of 34
 #   kdic[[12614]]
 #   jsonedit(kdic)
-#   
+# 
 #   # testing (looked at for impression and comparison to KANJIDIC2 xml-file)
 #   # (former mainly for spotting remaining unnecessary hierarchies
 #   # latter mainly for loss (and mixup) of information)
-#   
+# 
 #   # classics
 #   kdic[[9]]   # multiple stroke counts
 #   jsonedit(dat[[9]])
 #   kdic[[6371]]   # no meaning
-#   kdic[[76]]  
+#   kdic[[76]]
 #   kdic[[123]]
 #   kdic[[2557]]
 #   kdic[[12158]]
-#   
+# 
 #   # random
 #   (selection <- sort(sample(13108,4)))
 #   for (i in 1:4) print(kdic[[selection[i]]])
-#   
+# 
 #   # search kanji xml with certain features then check, e.g.
 #   walk(1:13108, \(x) {if (kdic[[x]]$literal == "圧") print(x)})
 #   kdic[[21]]   # checked against original xml
