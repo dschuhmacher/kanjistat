@@ -8,8 +8,8 @@
 <meta name="description" content="kanjistat">
 <title>Introduction to kanjistat • kanjistat</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to kanjistat">
 <meta property="og:description" content="kanjistat">
@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.9006</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Introduction to kanjistat</h1>
             
-            <h4 data-toc-skip class="date">2023-05-23</h4>
+            <h4 data-toc-skip class="date">2024-01-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dschuhmacher/kanjistat/blob/HEAD/vignettes/kanjistat.Rmd" class="external-link"><code>vignettes/kanjistat.Rmd</code></a></small>
       <div class="d-none name"><code>kanjistat.Rmd</code></div>
@@ -225,7 +225,7 @@ the font management package <code>sysfonts</code>. The function
 standard places on your operating system, but the list may be a little
 overwhelming and it sometimes misses fonts that you have installed in
 more special places. A useful tool for finding the path to a font you
-know by name is <code><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">systemfonts::match_font</a></code> (not
+know by name is <code><a href="https://systemfonts.r-lib.org/reference/match_font.html" class="external-link">systemfonts::match_font</a></code> (not
 <code>sysfonts</code>!). You may then add the font to the sysfonts
 database.</p>
 <p>Since installed font families and their locations depend on the
@@ -235,7 +235,7 @@ displays console output and plots from the author’s system.</p>
 <code class="sourceCode R"><span><span class="co"># Pregenerated output, run on the author's system. Your mileage may vary.</span></span>
 <span></span>
 <span><span class="co"># Locate the free kaisho font by Nagayama Norio (previously installed)</span></span>
-<span><span class="va">nagayama</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"nagayama_kai"</span><span class="op">)</span></span>
+<span><span class="va">nagayama</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://systemfonts.r-lib.org/reference/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"nagayama_kai"</span><span class="op">)</span></span>
 <span><span class="va">nagayama</span></span>
 <span><span class="co">#&gt; $path</span></span>
 <span><span class="co">#&gt; [1] "/Users/dschuhm/Library/Fonts/nagayama_kai08.otf"</span></span>
@@ -245,9 +245,9 @@ displays console output and plots from the author’s system.</p>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; $features</span></span>
 <span><span class="co">#&gt; NULL</span></span>
-<span><span class="va">hsans</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"Hiragino Sans"</span><span class="op">)</span></span>
-<span><span class="va">hmincho</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"Hiragino Mincho ProN"</span><span class="op">)</span></span>
-<span><span class="va">yukyokasho</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"YuKyokasho"</span><span class="op">)</span></span>
+<span><span class="va">hsans</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://systemfonts.r-lib.org/reference/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"Hiragino Sans"</span><span class="op">)</span></span>
+<span><span class="va">hmincho</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://systemfonts.r-lib.org/reference/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"Hiragino Mincho ProN"</span><span class="op">)</span></span>
+<span><span class="va">yukyokasho</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://systemfonts.r-lib.org/reference/match_font.html" class="external-link">match_font</a></span><span class="op">(</span><span class="st">"YuKyokasho"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Add the font to the sysfonts database under the name given by `family`</span></span>
 <span><span class="fu">sysfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sysfonts/man/font_add.html" class="external-link">font_add</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"nagayama_kai"</span>, regular<span class="op">=</span><span class="va">nagayama</span><span class="op">$</span><span class="va">path</span><span class="op">)</span></span>
@@ -346,7 +346,7 @@ of the form</li>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">sysfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/sysfonts/man/font_add.html" class="external-link">font_add</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">"nagayama_kai"</span>, regular<span class="op">=</span><span class="st">"/Users/dschuhm/Library/Fonts/nagayama_kai08.otf"</span><span class="op">)</span></span></code></pre></div>
 <p>where <code>regular</code> is obtained from
-<code><a href="https://rdrr.io/pkg/systemfonts/man/match_font.html" class="external-link">systemfonts::match_font</a></code>.</p>
+<code><a href="https://systemfonts.r-lib.org/reference/match_font.html" class="external-link">systemfonts::match_font</a></code>.</p>
 <ul>
 <li>Setting kanjistat options via <code>kanjistat_options</code>.
 Options are mostly default choices for various functions. These options

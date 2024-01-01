@@ -4,6 +4,9 @@
     <loc>https://dschuhmacher.github.io/kanjistat/404.html</loc>
   </url>
   <url>
+    <loc>https://dschuhmacher.github.io/kanjistat/CONTRIBUTING.html</loc>
+  </url>
+  <url>
     <loc>https://dschuhmacher.github.io/kanjistat/LICENSE.html</loc>
   </url>
   <url>
@@ -83,6 +86,9 @@
   </url>
   <url>
     <loc>https://dschuhmacher.github.io/kanjistat/reference/print.kanjivec.html</loc>
+  </url>
+  <url>
+    <loc>https://dschuhmacher.github.io/kanjistat/reference/read_kanjidic2.html</loc>
   </url>
   <url>
     <loc>https://dschuhmacher.github.io/kanjistat/reference/samplekan.html</loc>
