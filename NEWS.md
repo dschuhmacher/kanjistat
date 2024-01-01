@@ -1,4 +1,4 @@
-# kanjistat (development version)
+# kanjistat 0.10.0 (2024-01-01)
 
 ## New feature
 
