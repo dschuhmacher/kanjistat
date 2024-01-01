@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kanjidic2>
+<header>
+<!-- Two kanji from the KANJIDIC 2 - XML kanji database.
+     See https://www.edrdg.org/wiki/index.php/KANJIDIC_Project
+     This version here is for unit tests in the R package kanjistat
+     The header information refers to the header information of the original file
+-->
+<file_version>4</file_version>
+<database_version>2023-365</database_version>
+<date_of_creation>2023-12-31</date_of_creation>
+</header>
+<!-- Entry for Kanji: 一 -->
+<character>
+<literal>一</literal>
+<codepoint>
+<cp_value cp_type="ucs">4e00</cp_value>
+<cp_value cp_type="jis208">1-16-76</cp_value>
+</codepoint>
+<radical>
+<rad_value rad_type="classical">1</rad_value>
+</radical>
+<misc>
+<grade>1</grade>
+<stroke_count>1</stroke_count>
+<variant var_type="jis208">1-48-01</variant>
+<freq>2</freq>
+<jlpt>4</jlpt>
+</misc>
+<dic_number>
+<dic_ref dr_type="nelson_c">1</dic_ref>
+<dic_ref dr_type="nelson_n">1</dic_ref>
+<dic_ref dr_type="halpern_njecd">3341</dic_ref>
+<dic_ref dr_type="halpern_kkd">4148</dic_ref>
+<dic_ref dr_type="halpern_kkld">2105</dic_ref>
+<dic_ref dr_type="halpern_kkld_2ed">2850</dic_ref>
+<dic_ref dr_type="heisig">1</dic_ref>
+<dic_ref dr_type="heisig6">1</dic_ref>
+<dic_ref dr_type="gakken">4</dic_ref>
+<dic_ref dr_type="oneill_names">3</dic_ref>
+<dic_ref dr_type="oneill_kk">1</dic_ref>
+<dic_ref dr_type="moro" m_vol="1" m_page="0001">1</dic_ref>
+<dic_ref dr_type="henshall">1</dic_ref>
+<dic_ref dr_type="sh_kk">2</dic_ref>
+<dic_ref dr_type="sh_kk2">2</dic_ref>
+<dic_ref dr_type="sakade">1</dic_ref>
+<dic_ref dr_type="jf_cards">1</dic_ref>
+<dic_ref dr_type="henshall3">1</dic_ref>
+<dic_ref dr_type="tutt_cards">1</dic_ref>
+<dic_ref dr_type="crowley">1</dic_ref>
+<dic_ref dr_type="kanji_in_context">1</dic_ref>
+<dic_ref dr_type="busy_people">1.A</dic_ref>
+<dic_ref dr_type="kodansha_compact">1</dic_ref>
+<dic_ref dr_type="maniette">1</dic_ref>
+</dic_number>
+<query_code>
+<q_code qc_type="skip">4-1-4</q_code>
+<q_code qc_type="sh_desc">0a1.1</q_code>
+<q_code qc_type="four_corner">1000.0</q_code>
+<q_code qc_type="deroo">3072</q_code>
+</query_code>
+<reading_meaning>
+<rmgroup>
+<reading r_type="pinyin">yi1</reading>
+<reading r_type="korean_r">il</reading>
+<reading r_type="korean_h">일</reading>
+<reading r_type="vietnam">Nhất</reading>
+<reading r_type="ja_on">イチ</reading>
+<reading r_type="ja_on">イツ</reading>
+<reading r_type="ja_kun">ひと-</reading>
+<reading r_type="ja_kun">ひと.つ</reading>
+<meaning>one</meaning>
+<meaning>one radical (no.1)</meaning>
+<meaning m_lang="fr">un</meaning>
+<meaning m_lang="fr">radical un (no. 1)</meaning>
+<meaning m_lang="es">uno</meaning>
+<meaning m_lang="es">1</meaning>
+<meaning m_lang="pt">um</meaning>
+</rmgroup>
+<nanori>かず</nanori>
+<nanori>い</nanori>
+<nanori>いっ</nanori>
+<nanori>いる</nanori>
+<nanori>かつ</nanori>
+<nanori>かづ</nanori>
+<nanori>てん</nanori>
+<nanori>はじめ</nanori>
+<nanori>ひ</nanori>
+<nanori>ひとつ</nanori>
+<nanori>まこと</nanori>
+</reading_meaning>
+</character>
+<!-- Entry for Kanji: 蘒 -->
+<character>
+<literal>蘒</literal>
+<codepoint>
+<cp_value cp_type="ucs">FA20</cp_value>
+<cp_value cp_type="jis213">2-87-24</cp_value>
+</codepoint>
+<radical>
+<rad_value rad_type="classical">140</rad_value>
+</radical>
+<misc>
+<stroke_count>23</stroke_count>
+<stroke_count>27</stroke_count>
+</misc>
+<query_code>
+<q_code qc_type="skip">2-3-22</q_code>
+</query_code>
+<reading_meaning>
+<rmgroup>
+<reading r_type="ja_kun">はぎ</reading>
+</rmgroup>
+</reading_meaning>
+</character>
+</kanjidic2>
