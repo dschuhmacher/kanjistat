@@ -1,6 +1,16 @@
+# kanjistat (development version)
+
+## New feature
+
+* Function `read_kanjidic2`, which reads a KANJIDIC2 file and converts it to a list. All kanji information in the original file is retained, but the structure is simplified.
+
+## Documentation
+
+* Add contribution guidelines.
+
 -------------------------------
 
-#	kanjistat 0.9.0 (2023-05-20)
+# kanjistat 0.9.0 (2023-05-20)
 
 ## New feature
 
@@ -12,7 +22,7 @@
 
 -------------------------------
 
-#	kanjistat 0.8.0 (2023-05-06)
+# kanjistat 0.8.0 (2023-05-06)
 
 ## Documentation
 
@@ -30,6 +40,6 @@
 
 -------------------------------
 
-#	kanjistat 0.7.0 (2023-04-07)
+# kanjistat 0.7.0 (2023-04-07)
 
 * First public release.
