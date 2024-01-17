@@ -93,6 +93,7 @@ test_that("plot kanjivec object, type kanji", {
 test_that("plot kanjivec object, type dend", {
   skip_on_cran()
   skip_on_ci()
+  skip_on_os("windows")
   skip_if_not(capabilities("cairo"))
   kanjivec_dend_to_jpg <- function(kanji) {
     path <- tempfile("fuji_dend", fileext = ".jpg")

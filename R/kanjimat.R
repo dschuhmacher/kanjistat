@@ -56,14 +56,6 @@ kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
     default_size <- get_kanjistat_option("default_bitmap_size")
     if (is.null(default_size)) size <- 64 else size <- default_size
   }
-  margin <- margin * size / 32  # our margin is actually a relative margin (how many 1/32-th of pixel size)
-  # of course margin can still be non-integer if you need fine control
-  factor <- (size-2*margin)/12
-  # 5*12 = 60 points kanji  (12 is the default pointsize)
-  # 60 * 1/72 = 0.8333333 inches is size of kanji
-  # 64 * 1/72 size of window
-  # user sets size and margin we compute factor
-  # (size-2*margin)/12 = factor
  
   family <- handle_font(family)  # get from NULL or a maybe incomplete (not yet implemented)
                                  # specification of a font family to the closest suitable font
@@ -94,7 +86,7 @@ kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
     
     fname <- tempfile("kanji", fileext=".png")
     png(filename=fname, width = size, height = size, res=72, ...)
-    # type = c("cairo", "Xlib", "quartz"), at least on my system (cairo I pressume)
+    # type = c("cairo", "Xlib", "quartz"), at least on my system (cairo I presume)
     # gray-antialiasing is the standard (I guess subpixel aa (if possible for png),
     # would make things difficult if we extract (only) the grayscales)
     # saving as grayscale png would save memory (and time presumably), but
@@ -103,10 +95,14 @@ kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
     oldpar <- par(mai=rep(0,4))
     on.exit(par(oldpar))
     plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
+    
+    # Precalculate the width and height to adjust cex dynamically
+    longer_side <- max(strwidth(kan1, family=family), strheight(kan1, family=family))
+    factor <- 1/(2*margin/size+longer_side)
     text(x=0.5, y=0.5, kan1, family=family, cex=factor)
     dev.off()
     
-    temp<- png::readPNG(fname)
+    temp <- png::readPNG(fname)
     # on my system identical(res[,,1], res[,,2]) and identical(res[,,1], res[,,3])
     # return true, but you never know so we take an unweighted average
     # (note that rgb to grayscale algos would usually take a weighted average with more than

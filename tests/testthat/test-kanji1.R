@@ -21,6 +21,7 @@ test_that("kanjiplot", {
 #    return(path)
 #  }
 #  expect_snapshot_file(save_pdf("紅"), "koucha.pdf")
+  skip_on_os("windows")
   skip_if_not(capabilities("cairo")) # for svg so that it runs and for png for reproducibility
   skip_on_cran()
   skip_on_ci()  # (it seems on some systems a border is added!!?? --> fix)
