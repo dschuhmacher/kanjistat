@@ -163,3 +163,49 @@ NULL
 #'   
 # warnings are no problems for R CMD check
 "fivebetas"
+
+#' Stroke Edit Distance
+#'
+#' @encoding UTF-8
+#'
+#' @format \code{strokeEditDistance} is a sparse matrix containing
+#' the stroke edit distance according to Yencken and Baldwin (2008) for 
+#' its ten nearest neighbors. All pre-2010 jouyou kanji that are also post-2010
+#' jouyou kanji are included. The indices are those from \code{\link{kbase}}.
+#' 
+#' @examples
+#' # Look up characters with smallest stroke edit distance to 部.
+#' bu_index <- match("部", kanjistat::kbase$kanji)
+#' non_zero <- which(strokeEditDistance[bu_index,] != 0)
+#' rbind(kbase[non_zero,]$kanji, strokeEditDistance[non_zero,bu_index])
+#' 
+#' @source Dataset from at \url{https://lars.yencken.org/datasets} under 
+#' Creative Commons Attribution 3.0 Unported, as part of "Yencken, Lars (2010) 
+#' Orthographic support for passing the reading hurdle in Japanese. 
+#' PhD Thesis, University of Melbourne, Melbourne, Australia".
+#' 
+#' @name strokeEditDistance
+NULL
+
+#' Bag-of-Radicals Distance according to Yeh and Li
+#'
+#' @encoding UTF-8
+#'
+#' @format \code{yehLiDistnace} is a sparse matrix containing
+#' the bag-of-radicals distance according to Yeh and Li (2002) for 
+#' its ten nearest neighbors. All pre-2010 jouyou kanji that are also post-2010
+#' jouyou kanji are included. The indices are those from \code{\link{kbase}}.
+#' 
+#' @examples
+#' # Look up characters with smallest bag-of-radicals distance to 部.
+#' bu_index <- match("部", kanjistat::kbase$kanji)
+#' non_zero <- which(yehLiDistance[bu_index,] != 0)
+#' rbind(kbase[non_zero,]$kanji, yehLiDistance[non_zero,bu_index])
+#' 
+#' @source Dataset from \url{https://lars.yencken.org/datasets} under 
+#' Creative Commons Attribution 3.0 Unported, implementing "Yeh, Su-Ling 
+#' and Li, Jing-Ling. 2002. Role of structure and component in judgements of 
+#' visual similarity of Chinese characters. Journal of Experimental Psychology: 
+#' Human Perception and Performance, 28(4):933–947".
+#'
+"yehLiDistance"
