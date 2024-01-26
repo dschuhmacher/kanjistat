@@ -134,7 +134,8 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' be disposed of at cost \code{C^p} per unit. \code{"rtt"} is computationally the same, but the final
 #' distance is divided by the maximum of the total ink in each kanji to the (1/p). \code{"balanced"}
 #' means the pixel values are normalized so that both images have the same total mass 1. Everything has
-#' to be transported, i.e.\ disposal of mass is not allowed.
+#' to be transported, i.e.\ disposal of mass is not allowed. \code{"pointcloud"} computes points from
+#' SVG and then maps between those.
 #' @param size side length of the bitmaps used for matching components.
 #' @param lwd  linewidth for drawing the components in these bitmaps.
 #' @param verbose logical. Whether to print detailed information on the cost for all pairs of
@@ -179,7 +180,7 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #'   \donttest{kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)}
 #' } 
 kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2,
-                         type=c("rtt", "unbalanced", "balanced"), size=48, lwd=2.5, verbose=FALSE) {  
+                         type=c("rtt", "unbalanced", "balanced", "pointcloud"), size=48, lwd=2.5, verbose=FALSE) {  
   stopifnot(is(k1, "kanjivec") && is(k2, "kanjivec"))
   type <- match.arg(type)
   if (k1$char == k2$char) return(0) 
@@ -547,7 +548,7 @@ compoweights_ink <- function(kanji, compo_seg_depth=4, relative=TRUE, tricklelos
 # have same stroke order *and* all the points of drawing it would be in the same order; i.e. if assignment
 # is not close to identity, there could be an additional penalty, say)
 all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C=0.2,
-                          type=c("rtt", "unbalanced", "balanced"), size=48, lwd=2.5, precompute=FALSE) {
+                          type=c("rtt", "unbalanced", "balanced", "pointcloud"), size=48, lwd=2.5, precompute=FALSE) {
   #recommended combinations:
   # size=32, lwd=1.8 (noticable loss in quality, but still ok)
   # size=48, lwd=2.5
@@ -614,7 +615,7 @@ all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C
 # the plus in distplus is for total ink of the two kanji and their shift vector, scaling and
 # distortion rates.
 component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.5, p=1, C=0.2,
-                           type=c("rtt", "unbalanced", "balanced"), output=c("distplus","all")) {
+                           type=c("rtt", "unbalanced", "balanced", "pointcloud"), output=c("distplus","all")) {
   type <- match.arg(type)
   output <- match.arg(output)
   
@@ -624,57 +625,112 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
   s1 <- get_strokes_compo(k1, which1)
   s2 <- get_strokes_compo(k2, which2)
   
-  # location and scale based on min/max dimension of stroke info is extreme but
-  # not considerably worse than anything else and much more efficient than 
-  # creating a bitmap first points of all strokes in a single matrix
-  mat1 <- do.call(rbind, s1)
-  mat2 <- do.call(rbind, s2)
-  min1 <- apply(mat1, 2, min)   
-  max1 <- apply(mat1, 2, max)
-  min2 <- apply(mat2, 2, min)
-  max2 <- apply(mat2, 2, max)
-  cen1 <- (min1 + max1) / 2
-  sca1 <- max1-min1           # 2D extension
-  cen2 <- (min2 + max2) / 2
-  sca2 <- max2-min2
-  meansca <- sqrt(sca1*sca2)  # this is still 2D of course.
-  # The geometric mean is nicer here because going from ele1 to ele2 (the elements given
-  # by which) we can multiply twice by sqrt(sca2/sca1) and arrive after the first multipl. at the mean
-  # and after the second multipl. at ele2. In contrast to, say, the arithmetic mean this operation
-  # is consistent with the natural penalty of sca2/sca1 we return below.
-  upfact <- max(meansca) # this is one way of doing it meaning if the aspect ratio is not "the same
-                         # way round" for both kanji we do not make the kanji the same aspect ratio in the end
-                         # the other way would be instead of fact1, fact2 below to set both directions to size 1
-  fact1 <- sqrt(sca2/sca1)/upfact  
-  fact2 <- sqrt(sca1/sca2)/upfact  
-  s1_scaled <- lapply(s1, \(x) { (x - matrix(cen1, nrow(x), 2, byrow = TRUE))*matrix(fact1, nrow(x), 2, byrow = TRUE)*0.95 + matrix(0.5, nrow(x), 2) })
-  s2_scaled <- lapply(s2, \(x) { (x - matrix(cen2, nrow(x), 2, byrow = TRUE))*matrix(fact2, nrow(x), 2, byrow = TRUE)*0.95 + matrix(0.5, nrow(x), 2) })
-  bm1 <- strokelist_to_bitmap(s1_scaled, size=size, lwd=lwd)
-  bm2 <- strokelist_to_bitmap(s2_scaled, size=size, lwd=lwd)
-  # transport::matimage(bm1, asp=1)
-  # transport::matimage(bm2, asp=1)
-  
-  ink1 <- sum(bm1)
-  ink2 <- sum(bm2)
-  output <- ifelse(output=="distplus", "dist", output)
-  
-  if (type == "unbalanced") {
-    a <- transport::pgrid(bm1)
-    b <- transport::pgrid(bm2)
-    res <- as.list(transport::unbalanced(a, b, p=p, C=C, output=output))   # for output="all" it is already a list
-                                                                           # for output="dist" we will start a new list 
-  } else if (type == "rtt") {
-    a <- transport::pgrid(bm1)
-    b <- transport::pgrid(bm2)
-    res <- as.list(transport::unbalanced(a, b, p=p, C=C, output=output))
-    res[[1]] <- res[[1]]/max(ink1, ink2)^(1/p) # instead we could just divide bm1, bm2 above by max sum (same result, not clear which is preferable)
-  } else if (type == "balanced") {
-    a <- transport::pgrid(bm1/ink1)
-    b <- transport::pgrid(bm2/ink2)
-    res <- as.list(transport::unbalanced(a, b, p=p, output=output))
-    # essentially the same as transport::transport.pgrid, but the latter does not directly return the dist
-    # and the output is in a bit a different format
+  if (type=="pointcloud") {
+    svg_strings1 <- sapply(s1, function(x) attr(x, "d"))
+    svg_strings2 <- sapply(s2, function(x) attr(x, "d"))
+    
+    # This simply uses the precomputed points
+    #points1 = do.call(rbind, s1)
+    #points2 = do.call(rbind, s2)
+    
+    points1 <- list()
+    points2 <- list()
+    # In case we want to control the number of points, we would reconstruct from SVG like so:
+    for (svg_string in svg_strings1) {
+      points1 <- rbind(points1, spaced_points_from_svg(svg_string, 10))
+    }
+    for (svg_string in svg_strings2) {
+      points2 <- rbind(points2, spaced_points_from_svg(svg_string, 10))
+    }
+    
+    
+    padding1 <- max(0,(length(points2) - length(points1))/2)
+    padding2 <- max(0,(length(points1) - length(points2))/2)
+    
+    
+    massa <- rep(2/length(points1),length(points1)/2)
+    massb <- rep(2/length(points2),length(points2)/2)
+    
+    points1 <- unlist(points1)
+    points2 <- unlist(points2)
+    
+    # For debugging, we might want to have a look at the point clouds:
+    #plot(matrix(points1, length(points1)/2), asp=1)
+    #plot(matrix(points2, length(points2)/2), asp=1)
+    
+    # We transform to a weighted transport::points object.
+    a <- transport::wpp(matrix(points1, length(points1)/2), massa)
+    b <- transport::wpp(matrix(points2, length(points2)/2), massb)
+    min1 <- apply(a$coordinates, 2, min)
+    max1 <- apply(a$coordinates, 2, max)
+    min2 <- apply(b$coordinates, 2, min)
+    max2 <- apply(b$coordinates, 2, max)
+    
+    cen1 <- (min1 + max1) / 2
+    sca1 <- max1-min1
+    cen2 <- (min2 + max2) / 2
+    sca2 <- max2-min2
+    
+    ink1 <- length(svg_strings2) # Using the number of SVG commands as ink.
+    ink2 <- length(svg_strings1) # This is temporary, using arc length would be better.
+
+    res <- as.list(transport::wasserstein(a,b, method="networkflow"))
+  } else {
+    # Here, bitmaps are used for optimal transport:
+    
+    # location and scale based on min/max dimension of stroke info is extreme but
+    # not considerably worse than anything else and much more efficient than 
+    # creating a bitmap first points of all strokes in a single matrix
+    mat1 <- do.call(rbind, s1)
+    mat2 <- do.call(rbind, s2)
+    min1 <- apply(mat1, 2, min)   
+    max1 <- apply(mat1, 2, max)
+    min2 <- apply(mat2, 2, min)
+    max2 <- apply(mat2, 2, max)
+    cen1 <- (min1 + max1) / 2
+    sca1 <- max1-min1           # 2D extension
+    cen2 <- (min2 + max2) / 2
+    sca2 <- max2-min2
+    meansca <- sqrt(sca1*sca2)  # this is still 2D of course.
+    # The geometric mean is nicer here because going from ele1 to ele2 (the elements given
+    # by which) we can multiply twice by sqrt(sca2/sca1) and arrive after the first multipl. at the mean
+    # and after the second multipl. at ele2. In contrast to, say, the arithmetic mean this operation
+    # is consistent with the natural penalty of sca2/sca1 we return below.
+    upfact <- max(meansca) # this is one way of doing it meaning if the aspect ratio is not "the same
+                           # way round" for both kanji we do not make the kanji the same aspect ratio in the end
+                           # the other way would be instead of fact1, fact2 below to set both directions to size 1
+    fact1 <- sqrt(sca2/sca1)/upfact  
+    fact2 <- sqrt(sca1/sca2)/upfact  
+    s1_scaled <- lapply(s1, \(x) { (x - matrix(cen1, nrow(x), 2, byrow = TRUE))*matrix(fact1, nrow(x), 2, byrow = TRUE)*0.95 + matrix(0.5, nrow(x), 2) })
+    s2_scaled <- lapply(s2, \(x) { (x - matrix(cen2, nrow(x), 2, byrow = TRUE))*matrix(fact2, nrow(x), 2, byrow = TRUE)*0.95 + matrix(0.5, nrow(x), 2) })
+    bm1 <- strokelist_to_bitmap(s1_scaled, size=size, lwd=lwd)
+    bm2 <- strokelist_to_bitmap(s2_scaled, size=size, lwd=lwd)
+    # transport::matimage(bm1, asp=1)
+    # transport::matimage(bm2, asp=1)
+    
+    ink1 <- sum(bm1)
+    ink2 <- sum(bm2)
+    output <- ifelse(output=="distplus", "dist", output)
+    
+    if (type == "unbalanced") {
+      a <- transport::pgrid(bm1)
+      b <- transport::pgrid(bm2)
+      res <- as.list(transport::unbalanced(a, b, p=p, C=C, output=output))   # for output="all" it is already a list
+                                                                             # for output="dist" we will start a new list 
+    } else if (type == "rtt") {
+      a <- transport::pgrid(bm1)
+      b <- transport::pgrid(bm2)
+      res <- as.list(transport::unbalanced(a, b, p=p, C=C, output=output))
+      res[[1]] <- res[[1]]/max(ink1, ink2)^(1/p) # instead we could just divide bm1, bm2 above by max sum (same result, not clear which is preferable)
+    } else if (type == "balanced") {
+      a <- transport::pgrid(bm1/ink1)
+      b <- transport::pgrid(bm2/ink2)
+      res <- as.list(transport::unbalanced(a, b, p=p, output=output))
+      # essentially the same as transport::transport.pgrid, but the latter does not directly return the dist
+      # and the output is in a bit a different format
+    }
   }
+  
   names(res)[1] <- "dist"  # was already the case if output="all"
   
   # browser()
