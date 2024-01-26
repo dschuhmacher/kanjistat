@@ -3,11 +3,11 @@
 #' Create a (list of) kanjimat object(s), i.e. bitmap representations of a kanji using a certain font-family
 #' and other typographical parameters.
 #' 
-#' @param kanji a (vector of) character string(s) containing kanjis.
+#' @param kanji a (vector of) character string(s) containing kanji.
 #' @param family the font-family to be used. For details see vignette.
 #' @param size the sidelength of the (square) bitmap
-#' @param margin extra margin to around the character. Defaults to 0 which leaves a relatively slim margin.
-#' Can be negative, but risks cutting off parts of the character. Units are relative to size in steps of 1/32.
+#' @param margin numeric. Extra margin around the character. Defaults to 0 which leaves a relatively slim margin.
+#' Positive values increase this margin, negative values decrease it (which usually cuts off part of the kanji).
 #' @param antialias logical. Shall antialiasing be performed?
 #' @param save logical or character. If FALSE return the (list of) kanjimat object(s). Otherwise save the result
 #' as an rds file in the working directory (as kmatsave.rds) or under the file path provided.
@@ -94,7 +94,7 @@ kanjimat <- function(kanji, family=NULL, size=NULL, margin=0, antialias=TRUE,
     # bitmap(file=fname, type="pnggray", width=size, height=size, res=72, pointsize=12, units="px", taa=4)
     oldpar <- par(mai=rep(0,4))
     on.exit(par(oldpar))
-    plot(c(0,1),c(0,1), type="n", axes=FALSE, ann=FALSE)
+    plot(c(0,1),c(0,1), type="n", xaxs="i", yaxs="i", axes=FALSE, ann=FALSE)
     
     # Precalculate the width and height to adjust cex dynamically
     longer_side <- max(strwidth(kan1, family=family), strheight(kan1, family=family))

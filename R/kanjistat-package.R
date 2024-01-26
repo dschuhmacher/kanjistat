@@ -1,4 +1,4 @@
-#' @importFrom graphics image lines par text
+#' @importFrom graphics image lines par strheight strwidth text
 #' @importFrom grDevices dev.new dev.off gray hcl.colors pdf png svg tiff
 #' @importFrom methods hasArg is
 #' @importFrom stats approx setNames
@@ -191,7 +191,7 @@ NULL
 #'
 #' @encoding UTF-8
 #'
-#' @format \code{yehLiDistnace} is a sparse matrix containing
+#' @format \code{yehLiDistance} is a sparse matrix containing
 #' the bag-of-radicals distance according to Yeh and Li (2002) for 
 #' its ten nearest neighbors. All pre-2010 jouyou kanji that are also post-2010
 #' jouyou kanji are included. The indices are those from \code{\link{kbase}}.

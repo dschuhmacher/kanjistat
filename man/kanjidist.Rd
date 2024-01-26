@@ -11,7 +11,7 @@ kanjidist(
   compo_seg_depth2 = 3,
   p = 1,
   C = 0.2,
-  type = c("rtt", "unbalanced", "balanced"),
+  type = c("rtt", "unbalanced", "balanced", "pointcloud"),
   size = 48,
   lwd = 2.5,
   verbose = FALSE
@@ -36,7 +36,8 @@ in the two images are interpreted as mass. The total masses can be very differen
 be disposed of at cost \code{C^p} per unit. \code{"rtt"} is computationally the same, but the final
 distance is divided by the maximum of the total ink in each kanji to the (1/p). \code{"balanced"}
 means the pixel values are normalized so that both images have the same total mass 1. Everything has
-to be transported, i.e.\ disposal of mass is not allowed.}
+to be transported, i.e.\ disposal of mass is not allowed. \code{"pointcloud"} computes points from
+SVG and then maps between those.}
 
 \item{size}{side length of the bitmaps used for matching components.}
 

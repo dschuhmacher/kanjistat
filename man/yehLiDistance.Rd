@@ -6,7 +6,7 @@
 \alias{yehLiDistance}
 \title{Bag-of-Radicals Distance according to Yeh and Li}
 \format{
-\code{yehLiDistnace} is a sparse matrix containing
+\code{yehLiDistance} is a sparse matrix containing
 the bag-of-radicals distance according to Yeh and Li (2002) for
 its ten nearest neighbors. All pre-2010 jouyou kanji that are also post-2010
 jouyou kanji are included. The indices are those from \code{\link{kbase}}.
