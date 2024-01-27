@@ -41,10 +41,6 @@ the shape of the kanji}
 \item{skip}{the kanji's SKIP code}
 \item{mean}{a single English meaning of the kanji (same as in kbase)}
 }
-
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 13108 rows and 13 columns.
-
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 13108 rows and 9 columns.
 }
 \source{
 Most of the data is directly from the KANJIDIC2 file.
