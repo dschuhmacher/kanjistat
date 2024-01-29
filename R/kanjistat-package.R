@@ -174,10 +174,10 @@ ddd <- function() { kanjistat::dstrokedit[243,] }
 #' @encoding UTF-8
 #'
 #' @format
-#' Sparse matrices containing in each row the distances between a key kanji and its ten nearest neighbors.<br>
+#' Sparse matrices containing in each row the distances between a key kanji and ten of its nearest neighbors.<br>
 #' For `dstrokedit`, these are the stroke edit distances according to Yencken and Baldwin (2008).<br>
 #' For `dyehli`, these are the bag-of-radicals distances according to Yeh and Li (2002).
-## Both are object of the S4 class `dsCMatrix` with 2133 rows and 2133 columns??
+## Both are an instance of the S4 class `dsCMatrix` with 2133 rows and 2133 columns.
 #' 
 #' All pre-2010 jouyou kanji that are also post-2010
 #' jouyou kanji are included. The indices are those from [`kbase`].
