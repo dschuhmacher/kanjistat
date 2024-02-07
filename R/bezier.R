@@ -62,8 +62,59 @@ adjust_relative_points <- function(relative_points, current_point) {
   return(as.vector(adjusted_points))
 }
 
-# Given an SVG string and a parameter adjusting the number of points per space
-# unit, returns a point cloud as a 2xn matrix described by that SVG string.
+# Given an SVG string and a parameter adjusting the number of points, 
+# returns a point cloud as a 2xn matrix described by that SVG string.
+# If spaced, a boolean, is true, the number of points per curve will be divided
+# by the length of the curve.
+points_from_svg <- function(svg_str, point_density, spaced) {
+  parsed_path <- parse_svg_path(svg_str)
+  list_of_points <- list()
+  current_point <- c(0, 0)
+  # Iterate through each command
+  for (command in parsed_path) {
+    if (command$command == "M") {
+      # The 'Move' command sets the current point
+      current_point <- command$params
+    } else if (command$command == "C" || command$command == "c") {
+      # The "Cubic Bézier" command draws the eponymous curve
+      p0 <- current_point
+      
+      if (command$command == "C") {
+        # 'C' -> Absolute Coordinates
+        p1 <- command$params[1:2]
+        p2 <- command$params[3:4]
+        p3 <- command$params[5:6]
+      } else {
+        # 'c' -> Relative Coordinates
+        p1 <- adjust_relative_points(command$params[1:2], current_point)
+        p2 <- adjust_relative_points(command$params[3:4], current_point)
+        p3 <- adjust_relative_points(command$params[5:6], current_point)
+      }
+      
+      if (spaced) {
+        # Determine the number of points based on arc length
+        arc_length <- cubic_bezier_arc_length(p0, p1, p2, p3)
+        num_points <- max(1, floor(arc_length * point_density))
+      }
+      else {
+        num_points <- max(1, point_density)
+      }
+      
+      # Sample points along the curve
+      t_values <- seq(1/(2*num_points),(2*num_points-1)/(2*num_points), length.out = num_points)
+      curve_points <- sapply(t_values, function(t) cubic_bezier_point(t, p0, p1, p2, p3))
+      
+      # Add curve points to the list and update the current point
+      list_of_points <- c(list_of_points, list(t(curve_points)))
+      current_point <- p3
+    } # Let's hope that no other SVG commands are used.
+  }
+  
+  do.call(rbind, list_of_points)
+}
+
+'
+# A duplicate from the above, both should become one function eventually.
 points_from_svg <- function(svg_str, total_points=100, equidistant=TRUE) {
   parsed_path <- parse_svg_path(svg_str)
   arc_lengths <- list()
@@ -99,7 +150,7 @@ points_from_svg <- function(svg_str, total_points=100, equidistant=TRUE) {
       arc_lengths <- c(arc_lengths, arc_length)
       
       current_point <- p3
-    } # Let's hope that no other SVG commands are used ;)
+    } # Let`s hope that no other SVG commands are used ;)
   }
   
   total_arc_length <- sum(unlist(arc_lengths))
@@ -123,48 +174,4 @@ points_from_svg <- function(svg_str, total_points=100, equidistant=TRUE) {
   }
   do.call(rbind, list_of_points)
 }
-
-# A duplicate from the above, both should become one function eventually.
-# Below uses a point density, above uses a fixed number of points.
-spaced_points_from_svg <- function(svg_str, point_density) {
-  parsed_path <- parse_svg_path(svg_str)
-  list_of_points <- list()
-  current_point <- c(0, 0)
-  # Iterate through each command
-  for (command in parsed_path) {
-    if (command$command == "M") {
-      # The 'Move' command sets the current point
-      current_point <- command$params
-    } else if (command$command == "C" || command$command == "c") {
-      # The "Cubic Bézier" command draws the eponymous curve
-      p0 <- current_point
-      
-      if (command$command == "C") {
-        # 'C' -> Absolute Coordinates
-        p1 <- command$params[1:2]
-        p2 <- command$params[3:4]
-        p3 <- command$params[5:6]
-      } else {
-        # 'c' -> Relative Coordinates
-        p1 <- adjust_relative_points(command$params[1:2], current_point)
-        p2 <- adjust_relative_points(command$params[3:4], current_point)
-        p3 <- adjust_relative_points(command$params[5:6], current_point)
-      }
-      
-      # Determine the number of points based on arc length
-      arc_length <- cubic_bezier_arc_length(p0, p1, p2, p3)
-      num_points <- max(2, ceiling(point_density*arc_length))
-      
-      # Sample points along the curve
-      t_values <- seq(1/(2*num_points),(2*num_points-1)/(2*num_points), length.out = num_points)
-      curve_points <- sapply(t_values, function(t) cubic_bezier_point(t, p0, p1, p2, p3))
-      
-      # Add curve points to the list and update the current point
-      list_of_points <- c(list_of_points, list(t(curve_points)))
-      current_point <- p3
-    } # Let's hope that no other SVG commands are used.
-  }
-  
-  do.call(rbind, list_of_points)
-}
-
+'
