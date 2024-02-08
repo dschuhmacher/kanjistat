@@ -4,7 +4,7 @@ Title: A Statistical Framework for the Analysis of Japanese Kanji Characters
 Version: 0.10.0.9012
 Date: 2024-01-27
 Authors@R: c( person("Dominic", "Schuhmacher", email = "dominic.schuhmacher@mathematik.uni-goettingen.de", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7079-6313")),
-              person("Lennart", "Finke", email = "l.finke@stud.uni-goettingen.de", role = "aut") )
+              person("Lennart", "Finke", email = "l.finke@stud.uni-goettingen.de", role = "aut", comment = c(ORCID = "0009-0003-6908-314X")) )
 Maintainer: Dominic Schuhmacher <dominic.schuhmacher@mathematik.uni-goettingen.de>
 Description: Various tools and data sets that support the study of kanji, including their morphology, decomposition and concepts of distance and similarity between them.
 URL: https://dschuhmacher.github.io/kanjistat/
@@ -29,7 +29,8 @@ Imports:
     stringr,
     transport,
     xml2,
-    lifecycle
+    lifecycle,
+    RANN
 Suggests:
     dplyr,
     knitr,

@@ -6,6 +6,7 @@
 # non-standard packages (tidyverse), frequently used functions only (otherwise call with ::)  
 #' @importFrom purrr attr_getter chuck list_flatten pluck pluck<-
 #' @importFrom stringr str_sub
+#' @importFrom RANN nn2
 #' @importClassesFrom Matrix dsCMatrix
 NULL
 
