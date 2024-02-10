@@ -10,7 +10,7 @@ kanjidistmat(
   compo_seg_depth = 3,
   p = 1,
   C = 0.2,
-  type = c("rtt", "unbalanced", "balanced"),
+  type = c("rtt", "unbalanced", "balanced", "pc", "pcweighted"),
   size = 48,
   lwd = 2.5,
   verbose = FALSE

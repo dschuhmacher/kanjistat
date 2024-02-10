@@ -8,7 +8,7 @@
 \alias{dyehli}
 \title{Precomputed kanji distances}
 \format{
-Sparse matrices containing in each row the distances between a key kanji and its ten nearest neighbors.\if{html}{\out{<br>}}
+Sparse matrices containing in each row the distances between a key kanji and ten of its nearest neighbors.\if{html}{\out{<br>}}
 For \code{dstrokedit}, these are the stroke edit distances according to Yencken and Baldwin (2008).\if{html}{\out{<br>}}
 For \code{dyehli}, these are the bag-of-radicals distances according to Yeh and Li (2002).
 
