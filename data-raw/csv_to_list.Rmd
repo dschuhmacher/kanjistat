@@ -1,0 +1,103 @@
+
+```{r}
+# We depend on dendextend->ggplot2->mgcv->Matrix, so no need to install.
+library(Matrix)
+library(kanjistat)
+```
+
+```{r}
+# A function to convert csv files from https://lars.yencken.org/datasets/kanji-confusion
+csvToSparseMatrix <- function(file) {
+  data <- read.csv(file, header = FALSE, stringsAsFactors = FALSE)
+  
+  pairSet <- new.env(hash = TRUE)  # Environment used as a hash set
+  
+  processRow <- function(row) {
+    elements <- strsplit(row, " ")[[1]]
+    rowKey <- elements[1]
+    rows <- integer()
+    cols <- integer()
+    values <- numeric()
+    
+    for (i in seq(2, length(elements), by = 2)) {
+        colKey <- elements[i]
+        value <- 1 - as.numeric(elements[i + 1])
+        if (value == 0) {
+          value <- 1e-9
+        }
+        rowIndex <- match(rowKey, kanjistat::kbase$kanji)
+        colIndex <- match(colKey, kanjistat::kbase$kanji)
+        
+        # Ignoring Kanji that are not jouyou anymore 
+        if (max(rowIndex, colIndex) > 2136) { 
+          next
+        }
+        
+        # Ensure the lower index is always first
+        if (rowIndex > colIndex) {
+          temp <- rowIndex
+          rowIndex <- colIndex
+          colIndex <- temp
+        }
+        
+        pairKey <- paste(rowIndex, colIndex, sep = "-")
+        if (!exists(pairKey, pairSet)) {
+          pairSet[[pairKey]] <- TRUE
+          rows <- c(rows, rowIndex)
+          cols <- c(cols, colIndex)
+          
+          values <- c(values, value)
+        }
+    }
+    
+    list(rows = rows, cols = cols, values = values)
+  }
+  
+  processedData <- do.call(rbind, lapply(data$V1, processRow))
+  rows <- unlist(processedData[, "rows"])
+  cols <- unlist(processedData[, "cols"])
+  values <- unlist(processedData[, "values"])
+  
+  sparseMatrix(i = rows, j = cols, x = values, symmetric = TRUE)
+}
+
+# Create the sparse matrix
+dstrokedit <- csvToSparseMatrix("jyouyou_strokeEditDistance.csv")
+dyehli <- csvToSparseMatrix("jyouyou__yehAndLiRadical.csv")
+
+save(dstrokedit, file="../data/dstrokedit.rda", compress="xz")
+save(dyehli, file="../data/dyehli.rda", compress="xz")   
+```
+
+```{r}
+# A simple manual check of equivalence to the csv file
+dmatrix <- dyehli
+
+bu_index <- match("部", kbase$kanji)
+non_zero <- which(dmatrix[bu_index,] != 0)
+result <- rbind(kbase[non_zero,]$kanji, as.numeric(dmatrix[non_zero,bu_index]))
+result[, order(as.numeric(result[2,]))]
+
+ka_index <- match("佳", kbase$kanji)
+non_zero <- which(dmatrix[ka_index,] != 0)
+result <- rbind(kbase[non_zero,]$kanji, as.numeric(dmatrix[non_zero,ka_index]))
+result[, order(as.numeric(result[2,]))]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
