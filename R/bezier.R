@@ -97,7 +97,7 @@ points_from_svg <- function(svg_str, point_density, spaced) {
         num_points <- max(1, floor(arc_length * point_density))
       }
       else {
-        num_points <- max(1, point_density)
+        num_points <- max(2, point_density)
       }
       
       # Sample points along the curve
@@ -175,3 +175,16 @@ points_from_svg <- function(svg_str, total_points=100, equidistant=TRUE) {
   do.call(rbind, list_of_points)
 }
 '
+
+# A helper function to calculate the distance to the points before and after
+# in a polygonal line representing an SVG curve.
+average_distances <- function(coords) {
+  if (length(coords) < 3) {
+    return(rep(0.1, length(coords)/2)) # Dealing with one-row matrices
+  }
+  diffs <- diff(matrix(as.numeric(rbind(coords[2,], coords, coords[nrow(coords)-1,])), ncol=2))
+  distances <- sqrt(diffs[, 1]^2 + diffs[, 2]^2)
+  
+  distance_average <- (distances[-length(distances)] + distances[-1]) / 2
+  return(distance_average)
+}

@@ -636,12 +636,20 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     
     points1 <- list()
     points2 <- list()
+    massa <- list()
+    massb <- list()
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
-      points1 <- rbind(points1, points_from_svg(svg_string, 10, spaced=FALSE))
+      new_points <- points_from_svg(svg_string, 50, spaced=TRUE)
+      points1 <- rbind(points1, new_points)
+      if (type == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
+        massa <- c(massa, average_distances(new_points))
     }
     for (svg_string in svg_strings2) {
-      points2 <- rbind(points2, points_from_svg(svg_string, 10, spaced=FALSE))
+      new_points <- points_from_svg(svg_string, 50, spaced=TRUE)
+      points2 <- rbind(points2, new_points)
+      if (type == "pcweighted")
+        massb <- c(massb, average_distances(new_points))
     }
     
     points1 <- matrix(unlist(points1), ncol = 2)
@@ -672,16 +680,11 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     fact2 <- sqrt(sca1/sca2)/upfact
     
     if (type=="pcweighted") { 
-      # Let's try weighing by distances to nearest neighbors
-      # I'm not sure whether weighting before or after rescaling makes more
-      # sense. A priori I would have thought afterwards makes more sense,
-      # but beforehand tends to produce more similar results to the other
-      # methods based on fivebetas.
-      nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
-      nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
-      
-      massa <- nn_dists1/sum(nn_dists1)
-      massb <- nn_dists2/sum(nn_dists2)
+      # Instead we could also use a global nearest neighbors:
+      # nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
+      # nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
+      massa <- unlist(massa)
+      massb <- unlist(massb)
     } else {
       massa <- rep(1, length(points1)/2)
       massb <- rep(1, length(points2)/2)
@@ -699,7 +702,6 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     
     massa <- massa/sum(massa)
     massb <- massb/sum(massb)
-    
     # We transform to a weighted transport::points object.
     a <- transport::wpp(matrix(points1, length(points1)/2), massa)
     b <- transport::wpp(matrix(points2, length(points2)/2), massb)
