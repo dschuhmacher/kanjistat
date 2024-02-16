@@ -175,10 +175,12 @@ ddd <- function() { kanjistat::dstrokedit[243,] }
 #' @encoding UTF-8
 #'
 #' @format
-#' Sparse matrices containing in each row the distances between a key kanji and ten of its nearest neighbors.<br>
+#' Symmetric sparse matrices containing distances between a key kanji, its ten nearest neighbors and
+#' possibly some other close kanji.<br>
 #' For `dstrokedit`, these are the stroke edit distances according to Yencken and Baldwin (2008).<br>
 #' For `dyehli`, these are the bag-of-radicals distances according to Yeh and Li (2002).
-## Both are an instance of the S4 class `dsCMatrix` with 2133 rows and 2133 columns.
+#' Both are an instance of the S4 class `dsCMatrix` (symmetric sparse matrices in _column_-compressed format)
+#' with 2133 rows and 2133 columns.
 #' 
 #' All pre-2010 jouyou kanji that are also post-2010
 #' jouyou kanji are included. The indices are those from [`kbase`].
@@ -201,15 +203,20 @@ ddd <- function() { kanjistat::dstrokedit[243,] }
 #' Linguistics (Coling 2008)*, pp. 1041-1048.
 #' 
 #' @examples
-#' # Look up characters with smallest stroke edit distance to 部.
+#' # Find index for kanji 部
 #' bu_index <- match("部", kbase$kanji)
+#' 
+#' # Look up available stroke edit distances for 部.
 #' non_zero <- which(dstrokedit[bu_index,] != 0)
-#' rbind(kbase[non_zero,]$kanji, dstrokedit[non_zero,bu_index])
+#' sed <- dstrokedit[non_zero, bu_index]
+#' names(sed) <- kbase[non_zero,]$kanji
+#' sort(sed)
 #'
-#' # Look up characters with smallest bag-of-radicals distance to 部.
-#' bu_index <- match("部", kbase$kanji)
+#' # Look up available bag-of-radicals distance for 部.
 #' non_zero <- which(dyehli[bu_index,] != 0)
-#' rbind(kbase[non_zero,]$kanji, dyehli[non_zero,bu_index])
+#' bord <- dyehli[non_zero, bu_index]
+#' names(bord) <- kbase[non_zero,]$kanji
+#' sort(bord)
 #'
 #' @name distdata
 NULL
