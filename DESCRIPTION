@@ -1,7 +1,7 @@
 Package: kanjistat
 Type: Package
 Title: A Statistical Framework for the Analysis of Japanese Kanji Characters
-Version: 0.10.0.9104
+Version: 0.10.0.9105
 Date: 2024-02-16
 Authors@R: c( person("Dominic", "Schuhmacher", email = "dominic.schuhmacher@mathematik.uni-goettingen.de", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7079-6313")),
               person("Lennart", "Finke", email = "l.finke@stud.uni-goettingen.de", role = "aut", comment = c(ORCID = "0009-0003-6908-314X")) )
