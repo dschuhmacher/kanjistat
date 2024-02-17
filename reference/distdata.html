@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0.9105</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
     <p>Symmetric sparse matrices containing distances between a key kanji, its ten nearest neighbors and
 possibly some other close kanji.<br>
 For <code>dstrokedit</code>, these are the stroke edit distances according to Yencken and Baldwin (2008).<br>
-For <code>dyehli</code>, these are the bag-of-radicals distances according to Yeh and Li (2002).
+For <code>dyehli</code>, these are the bag-of-radicals distances according to Yeh and Li (2002).<br>
 Both are an instance of the S4 class <code>dsCMatrix</code> (symmetric sparse matrices in <em>column</em>-compressed format)
 with 2133 rows and 2133 columns.</p>
 <p>All pre-2010 jouyou kanji that are also post-2010
@@ -104,7 +104,7 @@ Linguistics (Coling 2008)</em>, pp. 1041-1048.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       常       竜       郊       歯       蛮       郭 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.454545 0.454545 0.454545 0.500000 0.500000 0.545455 </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Look up available bag-of-radicals distance for 部.</span></span></span>
+<span class="r-in"><span><span class="co"># Look up available bag-of-radicals distances for 部.</span></span></span>
 <span class="r-in"><span><span class="va">non_zero</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">dyehli</span><span class="op">[</span><span class="va">bu_index</span>,<span class="op">]</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">bord</span> <span class="op">&lt;-</span> <span class="va">dyehli</span><span class="op">[</span><span class="va">non_zero</span>, <span class="va">bu_index</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bord</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">kbase</span><span class="op">[</span><span class="va">non_zero</span>,<span class="op">]</span><span class="op">$</span><span class="va">kanji</span></span></span>
