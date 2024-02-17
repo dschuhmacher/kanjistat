@@ -11,7 +11,7 @@
 Symmetric sparse matrices containing distances between a key kanji, its ten nearest neighbors and
 possibly some other close kanji.\if{html}{\out{<br>}}
 For \code{dstrokedit}, these are the stroke edit distances according to Yencken and Baldwin (2008).\if{html}{\out{<br>}}
-For \code{dyehli}, these are the bag-of-radicals distances according to Yeh and Li (2002).
+For \code{dyehli}, these are the bag-of-radicals distances according to Yeh and Li (2002).\if{html}{\out{<br>}}
 Both are an instance of the S4 class \code{dsCMatrix} (symmetric sparse matrices in \emph{column}-compressed format)
 with 2133 rows and 2133 columns.
 
@@ -44,7 +44,7 @@ sed <- dstrokedit[non_zero, bu_index]
 names(sed) <- kbase[non_zero,]$kanji
 sort(sed)
 
-# Look up available bag-of-radicals distance for 部.
+# Look up available bag-of-radicals distances for 部.
 non_zero <- which(dyehli[bu_index,] != 0)
 bord <- dyehli[non_zero, bu_index]
 names(bord) <- kbase[non_zero,]$kanji
