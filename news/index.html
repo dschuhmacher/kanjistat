@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0.9105</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,19 @@
       <small>Source: <a href="https://github.com/dschuhmacher/kanjistat/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="development version" id="kanjistat-development-version">kanjistat (development version)<a class="anchor" aria-label="anchor" href="#kanjistat-development-version"></a></h2>
+<ul><li>Lennart Finke is now a co-author.</li>
+</ul><div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li><p>Function <code>kanjidist</code> accepts two new <code>type</code> arguments “pc” and “pcweighted” for computing component distances based on (weighted) point clouds rather than bitmap images.</p></li>
+<li><p>Data sets <code>dstrokedit</code> and <code>dyehli</code> added with stroke edit and Yeh-Li (bag-of-radicals) distances between Jouyou kanji and (usually a bit more than) their closest ten neighbors. Based on the PhD thesis by Lars Yencken (2010).</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="user-visible-changes-development-version">User visible changes<a class="anchor" aria-label="anchor" href="#user-visible-changes-development-version"></a></h3>
+<ul><li>Previously, function <code>kanjimat</code> cut off part of the kanji under the default setting <code>marging = 0</code> on Windows. The algorithm for setting the effective margin in the bitmap representation has been improved.</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.0" id="kanjistat-0100-2024-01-01">kanjistat 0.10.0 (2024-01-01)<a class="anchor" aria-label="anchor" href="#kanjistat-0100-2024-01-01"></a></h2>
 <div class="section level3">
@@ -94,7 +107,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Dominic Schuhmacher.</p>
+  <p></p><p>Developed by Dominic Schuhmacher, Lennart Finke.</p>
 </div>
 
 <div class="pkgdown-footer-right">

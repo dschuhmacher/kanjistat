@@ -16,7 +16,7 @@ ratio) plus the (relative unbalanced) Wasserstein distance between the registere
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0.9105</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@ ratio) plus the (relative unbalanced) Wasserstein distance between the registere
 <span>  compo_seg_depth2 <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  p <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  C <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rtt"</span>, <span class="st">"unbalanced"</span>, <span class="st">"balanced"</span><span class="op">)</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rtt"</span>, <span class="st">"unbalanced"</span>, <span class="st">"balanced"</span>, <span class="st">"pc"</span>, <span class="st">"pcweighted"</span><span class="op">)</span>,</span>
 <span>  size <span class="op">=</span> <span class="fl">48</span>,</span>
 <span>  lwd <span class="op">=</span> <span class="fl">2.5</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -106,7 +106,9 @@ in the two images are interpreted as mass. The total masses can be very differen
 be disposed of at cost <code>C^p</code> per unit. <code>"rtt"</code> is computationally the same, but the final
 distance is divided by the maximum of the total ink in each kanji to the (1/p). <code>"balanced"</code>
 means the pixel values are normalized so that both images have the same total mass 1. Everything has
-to be transported, i.e.\ disposal of mass is not allowed.</p></dd>
+to be transported, i.e.\ disposal of mass is not allowed. <code>"pc"</code> computes points from
+SVG and then maps between those. <code>"pcweighted"</code> additionally assigns a weight proportional
+to the nearest neighbor to each point.</p></dd>
 
 
 <dt>size</dt>
@@ -687,7 +689,7 @@ ArXiv Preprint, <a href="https://doi.org/10.48550/arXiv.2304.02493" class="exter
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Dominic Schuhmacher.</p>
+  <p></p><p>Developed by Dominic Schuhmacher, Lennart Finke.</p>
 </div>
 
 <div class="pkgdown-footer-right">
