@@ -50,3 +50,6 @@ src/*o
 *.so.*
 *.dylib
 docs
+
+# (temporary)
+*.csv

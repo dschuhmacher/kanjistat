@@ -1,6 +1,7 @@
 test_that("construct well-formed single kanjimat object", {
   skip_on_cran() # not automatically done, since not a snapshot test, but one which is rather flaky
   skip_on_ci()
+  skip_on_os("windows")
   skip_if_not(capabilities("cairo")) # kanjimat_ref_fuji.rds was constructed with cairo
   expect_equal( kanjimat(kanji = "藤", family = "wqy-microhei", size = 64), kanjimat_ref_fuji,
                 ignore_attr = c("kanjistat_version", "Rversion", "platform") )
@@ -11,6 +12,7 @@ test_that("construct well-formed single kanjimat object", {
 test_that("construct well-formed list of multiple kanjimat objects", {
   skip_on_cran() # not automatically done, since not a snapshot test, but one which is rather flaky
   skip_on_ci()
+  skip_on_os("windows")
   skip_if_not(capabilities("cairo")) # kanjimat_ref_fuji.rds was constructed with cairo
   currentlist <- kanjimat(kanji = "鶏処藤", family = "wqy-microhei", size = 64)
   
@@ -31,8 +33,9 @@ test_that("construct well-formed list of multiple kanjimat objects", {
 
 
 test_that("plot kanjimat object", {
-  skip_on_cran() 
+  skip_on_cran()
   skip_on_ci()
+  skip_on_os("windows")
   skip_if_not(capabilities("cairo"))
   kanjimat_to_png <- function(kanji) {
     path <- tempfile("fuji", fileext = ".png")

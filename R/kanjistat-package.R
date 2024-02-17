@@ -1,4 +1,4 @@
-#' @importFrom graphics image lines par text
+#' @importFrom graphics image lines par strheight strwidth text
 #' @importFrom grDevices dev.new dev.off gray hcl.colors pdf png svg tiff
 #' @importFrom methods hasArg is
 #' @importFrom stats approx setNames
@@ -6,6 +6,8 @@
 # non-standard packages (tidyverse), frequently used functions only (otherwise call with ::)  
 #' @importFrom purrr attr_getter chuck list_flatten pluck pluck<-
 #' @importFrom stringr str_sub
+#' @importFrom RANN nn2
+#' @importClassesFrom Matrix dsCMatrix
 NULL
 
 ## usethis namespace: start
@@ -81,9 +83,11 @@ NULL
 #' @name kanjidata
 NULL
 
+#' @format NULL
 #' @rdname kanjidata
 "kbase"
 
+#' @format NULL
 #' @rdname kanjidata
 "kmorph"
 
@@ -112,8 +116,8 @@ NULL
 #'
 #' All of them are in handwriting style fonts.
 #' \code{fivetrees1} is in a Kyoukasho font (schoolbook style),
-#' \code{fivetrees2} is in a Kaisho font (regular script calligraphy font)
-#' \code{fivetrees3} is in a Gyousho font (semi-cursive calligraphy font)
+#' \code{fivetrees2} is in a Kaisho font (regular script calligraphy font),
+#' \code{fivetrees3} is in a Gyousho font (semi-cursive calligraphy font).
 #' 
 #' @source The list has been generated with the function \code{\link{kanjimat}} using the Mac OS
 #' pre-installed YuKyokasho font (fivetrees1), as well as the freely available fonts nagayama_kai
@@ -163,3 +167,64 @@ NULL
 #'   
 # warnings are no problems for R CMD check
 "fivebetas"
+
+ddd <- function() { kanjistat::dstrokedit[243,] }
+
+#' Precomputed kanji distances
+#'
+#' @encoding UTF-8
+#'
+#' @format
+#' Symmetric sparse matrices containing distances between a key kanji, its ten nearest neighbors and
+#' possibly some other close kanji.<br>
+#' For `dstrokedit`, these are the stroke edit distances according to Yencken and Baldwin (2008).<br>
+#' For `dyehli`, these are the bag-of-radicals distances according to Yeh and Li (2002).
+#' Both are an instance of the S4 class `dsCMatrix` (symmetric sparse matrices in _column_-compressed format)
+#' with 2133 rows and 2133 columns.
+#' 
+#' All pre-2010 jouyou kanji that are also post-2010
+#' jouyou kanji are included. The indices are those from [`kbase`].
+#' 
+#' @source 
+#' Datasets from <https://lars.yencken.org/datasets>, made available under the
+#' Creative Commons Attribution 3.0 Unported licence.
+#' 
+#' Computed as part of *Yencken, Lars (2010) 
+#' [Orthographic support for passing the reading hurdle in Japanese](https://lars.yencken.org/papers/phd-thesis.pdf). 
+#' PhD Thesis, University of Melbourne, Melbourne, Australia*.
+#' 
+#' @references Yeh, Su-Ling 
+#' and Li, Jing-Ling (2002). Role of structure and component in judgements of 
+#' visual similarity of Chinese characters. *Journal of Experimental Psychology: 
+#' Human Perception and Performance*, **28**(4), 933–947.
+#' 
+#' Yencken, Lars, & Baldwin, Timothy (2008). Measuring and predicting orthographic associations:
+#' Modelling the similarity of Japanese kanji. In: *Proceedings of the 22nd International Conference on Computational
+#' Linguistics (Coling 2008)*, pp. 1041-1048.
+#' 
+#' @examples
+#' # Find index for kanji 部
+#' bu_index <- match("部", kbase$kanji)
+#' 
+#' # Look up available stroke edit distances for 部.
+#' non_zero <- which(dstrokedit[bu_index,] != 0)
+#' sed <- dstrokedit[non_zero, bu_index]
+#' names(sed) <- kbase[non_zero,]$kanji
+#' sort(sed)
+#'
+#' # Look up available bag-of-radicals distance for 部.
+#' non_zero <- which(dyehli[bu_index,] != 0)
+#' bord <- dyehli[non_zero, bu_index]
+#' names(bord) <- kbase[non_zero,]$kanji
+#' sort(bord)
+#'
+#' @name distdata
+NULL
+
+#' @format NULL
+#' @rdname distdata
+"dstrokedit"
+
+#' @format NULL
+#' @rdname distdata
+"dyehli"

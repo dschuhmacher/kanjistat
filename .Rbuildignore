@@ -6,3 +6,4 @@
 ^man_alt$
 ^pkgdown$
 ^\.github$
+^data-raw$
