@@ -1,3 +1,19 @@
+# kanjistat (development version)
+
+* Lennart Finke is now a co-author.
+
+## New features
+
+* Function `kanjidist` accepts two new `type` arguments "pc" and "pcweighted" for computing component distances based on (weighted) point clouds rather than bitmap images.
+
+* Data sets `dstrokedit` and `dyehli` added with stroke edit and Yeh-Li (bag-of-radicals) distances between Jouyou kanji and (usually a bit more than) their closest ten neighbors. Based on the PhD thesis by Lars Yencken (2010).
+
+## User visible changes
+
+* Previously, function `kanjimat` cut off part of the kanji under the default setting `marging = 0` on Windows. The algorithm for setting the effective margin in the bitmap representation has been improved.
+
+-------------------------------
+
 # kanjistat 0.10.0 (2024-01-01)
 
 ## New feature

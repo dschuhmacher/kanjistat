@@ -8,9 +8,12 @@
 \alias{dyehli}
 \title{Precomputed kanji distances}
 \format{
-Sparse matrices containing in each row the distances between a key kanji and ten of its nearest neighbors.\if{html}{\out{<br>}}
+Symmetric sparse matrices containing distances between a key kanji, its ten nearest neighbors and
+possibly some other close kanji.\if{html}{\out{<br>}}
 For \code{dstrokedit}, these are the stroke edit distances according to Yencken and Baldwin (2008).\if{html}{\out{<br>}}
-For \code{dyehli}, these are the bag-of-radicals distances according to Yeh and Li (2002).
+For \code{dyehli}, these are the bag-of-radicals distances according to Yeh and Li (2002).\if{html}{\out{<br>}}
+Both are an instance of the S4 class \code{dsCMatrix} (symmetric sparse matrices in \emph{column}-compressed format)
+with 2133 rows and 2133 columns.
 
 All pre-2010 jouyou kanji that are also post-2010
 jouyou kanji are included. The indices are those from \code{\link{kbase}}.
@@ -32,15 +35,20 @@ dyehli
 Precomputed kanji distances
 }
 \examples{
-# Look up characters with smallest stroke edit distance to 部.
+# Find index for kanji 部
 bu_index <- match("部", kbase$kanji)
-non_zero <- which(dstrokedit[bu_index,] != 0)
-rbind(kbase[non_zero,]$kanji, dstrokedit[non_zero,bu_index])
 
-# Look up characters with smallest bag-of-radicals distance to 部.
-bu_index <- match("部", kbase$kanji)
+# Look up available stroke edit distances for 部.
+non_zero <- which(dstrokedit[bu_index,] != 0)
+sed <- dstrokedit[non_zero, bu_index]
+names(sed) <- kbase[non_zero,]$kanji
+sort(sed)
+
+# Look up available bag-of-radicals distances for 部.
 non_zero <- which(dyehli[bu_index,] != 0)
-rbind(kbase[non_zero,]$kanji, dyehli[non_zero,bu_index])
+bord <- dyehli[non_zero, bu_index]
+names(bord) <- kbase[non_zero,]$kanji
+sort(bord)
 
 }
 \references{

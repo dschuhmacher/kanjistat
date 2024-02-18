@@ -1,3 +1,7 @@
+Data from https://lars.yencken.org/datasets/kanji-confusion
+as part of
+Yencken, Lars (2010) Orthographic support for passing the reading hurdle in Japanese. PhD Thesis, University of Melbourne, Melbourne, Australia
+made available under a Creative Commons Attribution 3.0 Unported license
 
 ```{r}
 # We depend on dendextend->ggplot2->mgcv->Matrix, so no need to install.
@@ -23,7 +27,9 @@ csvToSparseMatrix <- function(file) {
         colKey <- elements[i]
         value <- 1 - as.numeric(elements[i + 1])
         if (value == 0) {
-          value <- 1e-9
+          value <- 1e-6 
+          # smallest value represented explicitly (without scientific notation)
+          # for the default setting of 7 in options("digits")
         }
         rowIndex <- match(rowKey, kanjistat::kbase$kanji)
         colIndex <- match(colKey, kanjistat::kbase$kanji)
@@ -62,11 +68,16 @@ csvToSparseMatrix <- function(file) {
 }
 
 # Create the sparse matrix
-dstrokedit <- csvToSparseMatrix("jyouyou_strokeEditDistance.csv")
+# File paths relative to data-raw not project root (which is ok if present file was double-clicked)
+dstrokedit <- csvToSparseMatrix("jyouyou__strokeEditDistance.csv")
 dyehli <- csvToSparseMatrix("jyouyou__yehAndLiRadical.csv")
+digest::digest(dstrokedit, algo="sha256") == "34381068e6e52bcef5ea76f121910556e37a51f37072b056437be1a42d58fcc7"
+digest::digest(dyehli, algo="sha256") == "8f68cd9f98750b087fa091d2e9c80abe5dbbd101e4f8d7cf0dab22c26e0a8520"
+#  kanjistat v0.11.0, 240216 
 
 save(dstrokedit, file="../data/dstrokedit.rda", compress="xz")
 save(dyehli, file="../data/dyehli.rda", compress="xz")   
+
 ```
 
 ```{r}
