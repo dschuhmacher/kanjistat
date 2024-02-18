@@ -194,7 +194,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
   }
 
   level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
-  useele <- TRUE     # if true the element attribute is kanjivec is used and dist is set to 0 if it is a match. 
+  useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
     # Currently this uses only a strict comparison, e.g. the "left and right betas" are not the same.
   exmatchdist <- 0.06  # dist below this value (for 2 components) is considered "excellent".
     # Currently the only effect is a warning if the kanjiVG elements match, but the rtt distance is larger than
@@ -272,7 +272,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     ele2 <- str_sub(ele2, 1, 1)
     if (useele && ele1 == ele2 && ele1 != "g" && ele1 != "") { # not sure any more if == in the last one may happen
       if (dist > exmatchdist) warning("elements in kanjiVG data are the same, but dist of bitmaps is substanial for ", ele1, " and ", ele2)
-        dist <- 0.000001  
+      dist <- 0.000001  
     }
         
     dist <- min(C, dist) # recall that dist is only guaranteed to be <= 2^(1/p)*C
