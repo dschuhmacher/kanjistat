@@ -30,7 +30,7 @@ cubic_bezier_arc_length <- function(p0, p1, p2, p3, num_points = 100) {
 # Parses a string of SVG curves, as they occur in kanjivec, to a list.
 # For a complete specification of SVG commands, see
 # https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#path_commands
-parse_svg_path <- function(path) {
+parse_svg_path <- function(path, offset=c(0,0), factor=c(1,1)) {
   # Insert delimiter before negative numbers
   path <- gsub("-", ",-", path)
   
@@ -50,6 +50,12 @@ parse_svg_path <- function(path) {
     # SVG follows a different convention from R, so we should negate the y-coordinates. 
     params[seq(2, length(params), by = 2)] <- -params[seq(2, length(params), by = 2)]
     
+    # Rescaling X
+    params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)] + offset[1])*factor[1]
+    # Rescaling Y
+    params[seq(2, length(params), by = 2)] <- (params[seq(2, length(params), by = 2)] + offset[2])*factor[2]
+    
+    
     list(command = cmd_letter, params = params)
   })
   
@@ -66,8 +72,8 @@ adjust_relative_points <- function(relative_points, current_point) {
 # returns a point cloud as a 2xn matrix described by that SVG string.
 # If spaced, a boolean, is true, the number of points per curve will be divided
 # by the length of the curve.
-points_from_svg <- function(svg_str, point_density, spaced) {
-  parsed_path <- parse_svg_path(svg_str)
+points_from_svg <- function(svg_str, point_density, spaced, offset=c(0,0), factor=c(1,1)) {
+  parsed_path <- parse_svg_path(svg_str, offset=offset, factor=factor)
   list_of_points <- list()
   current_point <- c(0, 0)
   # Iterate through each command
@@ -95,8 +101,7 @@ points_from_svg <- function(svg_str, point_density, spaced) {
         # Determine the number of points based on arc length
         arc_length <- cubic_bezier_arc_length(p0, p1, p2, p3)
         num_points <- max(1, floor(arc_length * point_density))
-      }
-      else {
+      } else {
         num_points <- max(2, point_density)
       }
       

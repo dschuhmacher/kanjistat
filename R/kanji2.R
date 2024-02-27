@@ -631,29 +631,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     svg_strings2 <- sapply(s2, function(x) attr(x, "d"))
     
     # This simply uses the precomputed points
-    # points1 = do.call(rbind, s1)
-    # points2 = do.call(rbind, s2)
-    
-    points1 <- list()
-    points2 <- list()
-    massa <- list()
-    massb <- list()
-    # In case we want to control the number of points, we reconstruct from SVG like so:
-    for (svg_string in svg_strings1) {
-      new_points <- points_from_svg(svg_string, 50, spaced=TRUE)
-      points1 <- rbind(points1, new_points)
-      if (type == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
-        massa <- c(massa, average_distances(new_points))
-    }
-    for (svg_string in svg_strings2) {
-      new_points <- points_from_svg(svg_string, 50, spaced=TRUE)
-      points2 <- rbind(points2, new_points)
-      if (type == "pcweighted")
-        massb <- c(massb, average_distances(new_points))
-    }
-    
-    points1 <- matrix(unlist(points1), ncol = 2)
-    points2 <- matrix(unlist(points2), ncol = 2)
+    points1 = do.call(rbind, s1)
+    points2 = do.call(rbind, s2)
     
     min_x <- min(points1[, 1])
     max_x <- max(points1[, 1])
@@ -678,6 +657,37 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     
     fact1 <- sqrt(sca2/sca1)/upfact  
     fact2 <- sqrt(sca1/sca2)/upfact
+    '
+    rescaled_points <- matrix(nrow = nrow(points1), ncol = ncol(points1))
+    rescaled_points[, 1] <- (points1[, 1] - min1[1]) * fact1[1] # Rescale x
+    rescaled_points[, 2] <- (points1[, 2] - min1[2]) * fact1[2] # Rescale y
+    points1 <- rescaled_points
+    
+    rescaled_points <- matrix(nrow = nrow(points2), ncol = ncol(points2))
+    rescaled_points[, 1] <- (points2[, 1] - min2[1]) * fact2[1] 
+    rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
+    points2 <- rescaled_points'
+    
+    points1 <- list()
+    points2 <- list()
+    massa <- list()
+    massb <- list()
+    # In case we want to control the number of points, we reconstruct from SVG like so:
+    for (svg_string in svg_strings1) {
+      new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min1, factor=fact1)
+      points1 <- rbind(points1, new_points)
+      if (type == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
+        massa <- c(massa, average_distances(new_points))
+    }
+    for (svg_string in svg_strings2) {
+      new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min2, factor=fact2)
+      points2 <- rbind(points2, new_points)
+      if (type == "pcweighted")
+        massb <- c(massb, average_distances(new_points))
+    }
+    
+    points1 <- matrix(unlist(points1), ncol = 2)
+    points2 <- matrix(unlist(points2), ncol = 2)
     
     if (type=="pcweighted") { 
       # Instead we could also use a global nearest neighbors:
@@ -690,16 +700,6 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
       massb <- rep(1, length(points2)/2)
     }
     
-    rescaled_points <- matrix(nrow = nrow(points1), ncol = ncol(points1))
-    rescaled_points[, 1] <- (points1[, 1] - min1[1]) * fact1[1] # Rescale x
-    rescaled_points[, 2] <- (points1[, 2] - min1[2]) * fact1[2] # Rescale y
-    points1 <- rescaled_points
-    
-    rescaled_points <- matrix(nrow = nrow(points2), ncol = ncol(points2))
-    rescaled_points[, 1] <- (points2[, 1] - min2[1]) * fact2[1] 
-    rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
-    points2 <- rescaled_points
-    
     massa <- massa/sum(massa)
     massb <- massb/sum(massb)
     # We transform to a weighted transport::points object.
@@ -711,9 +711,9 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     res <- as.list(transport::wasserstein(a,b, method="networkflow"))
     
     # For debugging, we might want to have a look at the point clouds:
-    # plot(points1, cex=0.5*massa*length(points1), asp=1)
-    # plot(points2, cex=0.5*massb*length(points2), asp=1)
-    # title(res[1])
+    plot(points1, cex=0.5*massa*length(points1), asp=1)
+    plot(points2, cex=0.5*massb*length(points2), asp=1)
+    title(res[1])
   } else {
     # Here, bitmaps are used for optimal transport:
     
