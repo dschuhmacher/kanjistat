@@ -1,0 +1,124 @@
+This is code to import the pooled distance data from Yencken and Baldwin (2008). (https://lars.yencken.org/papers/coling-2008.pdf)
+
+The original files can be downloaded from https://lars.yencken.org/datasets/kanji-confusion.
+
+```{r}
+# install.packages("R.utils")
+# install.packages("tidyverse")
+library(R.utils)
+library(yaml)
+library(tidyverse)
+
+file_path <- "poolexp_judgements.yaml.gz"
+
+connection <- gzfile(file_path, "r")
+yaml_text <- readLines(connection, warn = FALSE) 
+close(connection) 
+
+
+yaml_data_list <- list() 
+current_doc <- ""
+
+for (line in yaml_text) {
+  if (startsWith(line, "---")) {
+    if (current_doc != "") {
+      yaml_data_list[[length(yaml_data_list) + 1]] <- yaml.load(current_doc)
+    }
+    current_doc <- ""
+  } else {
+    current_doc <- paste0(current_doc, line, "\n")
+  }
+}
+
+
+if (current_doc != "") {
+   yaml_data_list[[length(yaml_data_list) + 1]] <- yaml.load(current_doc)
+}
+
+
+process_doc <- function(doc) {
+  tibble(
+    pivot = doc$pivot,
+    selected = doc$selected,
+    distractors = paste(doc$distractors, collapse = ", ")
+  )
+}
+
+
+pooled_similarity <- lapply(yaml_data_list, process_doc) %>% bind_rows()
+
+
+save(pooled_similarity, file="../data/dpooledsimilarity.rda", compress="xz")   
+```
+
+
+```{r}
+kanjiToKvec <- function(kan) {
+  # Assuming a kanjivec object as returned by kanjistat::kanjivec loaded as kvec, get a kanjivec object from the string.
+  # In case the index is out of bounds, we return the first kanji and alert.
+  results <- lapply(kan, function(x) {
+    index <- match(x, kbase$kanji)
+    if (index > length(kvec) || index < 1) {
+      index <- 1
+      print(c(x, " was out of bounds for kvec database."))
+    }
+    kvec[[index]] 
+  })
+}
+
+
+pooled_distance_benchmark <- function(distance, sample_size) {
+  # Tests the provided distance function on the Yencken and Baldwin (2008)
+  # Pooled distance Experiment Data. For each distractor the distance to the
+  # pivot character is computed. The rank to the given distance of the most 
+  # similar kanji according to the human evaluators (can be more than one) is
+  # then compared.
+  # The input function should be curried with anonymous functions in such a way
+  # that it accepts two single kanji and nothing else as outputs.
+  # The benchmark will do around 5*sample_size comparisons.
+  
+  file_path <- "../data/dpooledsimilarity.rda"
+  load(file_path)  # Load the RData file
+  
+  df <- pooled_similarity
+  df <- pooled_similarity[sample(nrow(df), sample_size), ]
+  df$distractors <- lapply(1:nrow(df), function(i) {strsplit(df$distractors[i], ", ")[[1]]})
+  
+  # Calculate distance and rank (assuming 'df' is the loaded dataframe)
+  df$distances <- lapply(1:nrow(df), function(i) {
+  unlist(lapply(kanjiToKvec(df$distractors[[i]]), function(x) {
+     distance(k1=x, k2=kanjiToKvec(df$pivot[i])[[1]])  
+   }))
+})
+  
+  df$distance_rank <- lapply(1:nrow(df), function(i) {rank(df$distances[[i]], ties.method = "max")})
+  df$selected_indices <- lapply(1:nrow(df), function(i) {which(df$distractors[[i]] == df$selected[i])})
+  
+  df$first_selected_rank <- NA  # Create a column to store results
+
+  for (i in 1:nrow(df)) {
+    if (length(df$selected_indices[[i]]) > 0) {  # Check if selected_indices is not empty
+      first_index <- df$selected_indices[[i]][1]  # Get the first element
+      df$first_selected_rank[i] <- df$distance_rank[[i]][first_index] 
+    } 
+  }
+  
+  df
+}
+
+#print(kanjiToKvec(c("放", "方", "施", "旋","族")))
+results <- pooled_distance_benchmark(kanjidist, 100)
+
+df <- results
+
+df$distractors
+df$selected
+df$distances
+df$distance_rank
+df
+```
+
+```{r}
+hist(results$first_selected_rank)
+```
+
