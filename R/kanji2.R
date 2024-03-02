@@ -629,7 +629,6 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
   if (type=="pc" || type=="pcweighted") {
     svg_strings1 <- sapply(s1, function(x) attr(x, "d"))
     svg_strings2 <- sapply(s2, function(x) attr(x, "d"))
-    
     # This simply uses the precomputed points
     # points1 = do.call(rbind, s1)
     # points2 = do.call(rbind, s2)

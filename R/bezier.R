@@ -106,7 +106,52 @@ points_from_svg <- function(svg_str, point_density, spaced) {
       
       # Add curve points to the list and update the current point
       list_of_points <- c(list_of_points, list(t(curve_points)))
+      previous_control_point <- p2
       current_point <- p3
+    } else if (command$command == "S" || command$command == "s") {
+      # Smooth Cubic Bézier command
+      p0 <- current_point
+      
+      if (command$command == "S") {
+        # 'S' -> Absolute coordinates
+        # Reflect previous control point for smooth transition
+        if (length(previous_control_point) > 0) {
+          p1 <- current_point+(current_point - previous_control_point)
+        } else {
+          # Assume a starting control point at current_point
+          p1 = current_point
+        }
+        
+        p2 <- command$params[1:2]
+        p3 <- command$params[3:4]
+      } else {
+        # 's' -> Relative coordinates
+        # Reflect previous control point for smooth transition
+        if (length(previous_control_point) > 0) {
+          p1 <- current_point+(current_point - previous_control_point)
+        } else {
+          # Assume a starting control point at current_point 
+          p1 = current_point
+        }
+        
+        p2 <- adjust_relative_points(command$params[1:2], current_point)
+        p3 <- adjust_relative_points(command$params[3:4], current_point)
+      }
+      if (spaced) {
+        # Determine the number of points based on arc length
+        arc_length <- cubic_bezier_arc_length(p0, p1, p2, p3)
+        num_points <- max(1, floor(arc_length * point_density))
+      }
+      else {
+        num_points <- max(2, point_density)
+      }
+      
+      t_values <- seq(1/(2*num_points),(2*num_points-1)/(2*num_points), length.out = num_points)
+      curve_points <- sapply(t_values, function(t) cubic_bezier_point(t, p0, p1, p2, p3))
+      list_of_points <- c(list_of_points, list(t(curve_points)))
+      # Keep track for the next 'S' or 's' command
+      previous_control_point <- p2
+      
     } # Let's hope that no other SVG commands are used.
   }
   
