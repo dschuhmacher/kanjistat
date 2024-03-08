@@ -668,38 +668,31 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
     points2 <- rescaled_points'
     
-    points1 <- list()
-    points2 <- list()
-    massa <- list()
-    massb <- list()
+    points1 <- matrix(0, 0, 2)
+    points2 <- matrix(0, 0, 2)
+    massa <- numeric()
+    massb <- numeric()
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
       new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min1, factor=fact1)
       points1 <- rbind(points1, new_points)
       if (type == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
         massa <- c(massa, average_distances(new_points))
+      else
+        massa <- rep(1, length(points1)/2)
     }
     for (svg_string in svg_strings2) {
       new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min2, factor=fact2)
       points2 <- rbind(points2, new_points)
       if (type == "pcweighted")
         massb <- c(massb, average_distances(new_points))
+      else
+        massb <- rep(1, length(points2)/2)
     }
-    
-    points1 <- matrix(unlist(points1), ncol = 2)
-    points2 <- matrix(unlist(points2), ncol = 2)
-    
-    if (type=="pcweighted") { 
-      # Instead we could also use a global nearest neighbors:
-      # nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
-      # nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
-      massa <- unlist(massa)
-      massb <- unlist(massb)
-    } else {
-      massa <- rep(1, length(points1)/2)
-      massb <- rep(1, length(points2)/2)
-    }
-    
+    # Instead we could also use global nearest neighbors:
+    # nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
+    # nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
+
     massa <- massa/sum(massa)
     massb <- massb/sum(massb)
     # We transform to a weighted transport::points object.
@@ -708,12 +701,16 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     ink1 <- length(points1)
     ink2 <- length(points2)
 
-    res <- as.list(transport::wasserstein(a,b, method="networkflow"))
+    res <- transport::transport(a,b, output="all", method="networkflow")
     
     # For debugging, we might want to have a look at the point clouds:
-    plot(points1, cex=0.5*massa*length(points1), asp=1)
-    plot(points2, cex=0.5*massb*length(points2), asp=1)
-    title(res[1])
+    # plot(points1, cex=0.5*massa*length(points1), asp=1)
+    # plot(points2, cex=0.5*massb*length(points2), asp=1)
+    # DS: cex proportional to sqrt(massa), sqrt(massb) is more appropriate
+    # human brains usually judge importance by area not ba diameter
+    # the following command does this (among other things)
+    transport::plot.wpp(a,b,res)
+    res <- as.list(res)
   } else {
     # Here, bitmaps are used for optimal transport:
     
