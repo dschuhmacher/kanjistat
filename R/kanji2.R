@@ -701,7 +701,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     ink1 <- length(points1)
     ink2 <- length(points2)
 
-    res <- transport::transport(a,b, output="all", method="networkflow")
+    res <- transport::transport(a,b, fullreturn=TRUE, method="networkflow")
     
     # For debugging, we might want to have a look at the point clouds:
     # plot(points1, cex=0.5*massa*length(points1), asp=1)
@@ -709,8 +709,9 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     # DS: cex proportional to sqrt(massa), sqrt(massb) is more appropriate
     # human brains usually judge importance by area not ba diameter
     # the following command does this (among other things)
-    transport::plot.wpp(a,b,res)
-    res <- as.list(res)
+    transport::plot.wpp(a,b,res$default)
+    title(res$cost)
+    res <- as.list(res$cost)
   } else {
     # Here, bitmaps are used for optimal transport:
     
