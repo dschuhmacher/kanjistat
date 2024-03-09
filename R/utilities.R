@@ -364,3 +364,29 @@ strokelength <- function(smat) {
   length <- sum(apply(dcoord, 1, \(d) {sqrt(d[1]^2 + d[2]^2)}))
   length
 }
+
+# A utility function to export the output of kanjidistmat for display in an
+# external web application, in JSON format.
+# klist is a list of kvec objects, filename the save destination and type the
+# distance type used in kanjidistmat.
+export_distmat_json <- function(klist, filename, type) {
+  library(jsonlite)
+  distmat <- kanjidistmat(klist, type=type)
+  chars <- unlist(lapply(klist, function (x) {x$char}))
+  
+  # Reformat to upper triangular matrix
+  upper_tri <- list()
+  for (k in 1:(nrow(distmat)-1)) {
+    upper_tri <- c(upper_tri, list(distmat[k,(k+1):ncol(distmat)]))
+  }
+  
+  distmat[row(distmat) < col(distmat)]
+  
+
+  data_list <- list(distances = as.list(upper_tri), characters = chars)
+  
+
+  json_data <- toJSON(data_list, pretty = TRUE)
+  
+  write(json_data, file = filename)
+}
