@@ -10,7 +10,8 @@ kanjidistmat(
   compo_seg_depth = 3,
   p = 1,
   C = 0.2,
-  type = c("rtt", "unbalanced", "balanced", "pc", "pcweighted"),
+  approx = c("grid", "pc", "pcweighted"),
+  type = c("rtt", "unbalanced", "balanced"),
   size = 48,
   lwd = 2.5,
   verbose = FALSE
@@ -24,7 +25,7 @@ kanjidistmat(
 \item{compo_seg_depth}{integer \eqn{\geq 1}. Specifies for all kanji the
 deepest level included for component matching. If 1, only the kanji itself is used.}
 
-\item{p, C, type, size, lwd, verbose}{the same as for the function \code{\link{kanjidist}}.}
+\item{p, C, type, approx, size, lwd, verbose}{the same as for the function \code{\link{kanjidist}}.}
 }
 \value{
 A matrix of dimension \code{length(klist)} x \code{length(klist2)} having
