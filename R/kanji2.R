@@ -128,15 +128,19 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' to the \code{p}-th power (which is compensated by taking the \code{p}-th root after summation).
 #' @param C the penalty for extra mass if \code{type} is \code{"rtt"} or \code{"unbalanced"}, i.e.
 #' we add  \code{C^p} per unit of extra mass (before applying the \code{p}-th root).
-#' @param type the type of Wasserstein distance used for matching components based on bitmaps drawn
-#' from the stroke information in \code{k1} and \code{k2}. \code{"unbalanced"} means the pixel values
-#' in the two images are interpreted as mass. The total masses can be very different. Extra mass can
-#' be disposed of at cost \code{C^p} per unit. \code{"rtt"} is computationally the same, but the final
-#' distance is divided by the maximum of the total ink in each kanji to the (1/p). \code{"balanced"}
-#' means the pixel values are normalized so that both images have the same total mass 1. Everything has
-#' to be transported, i.e.\ disposal of mass is not allowed. \code{"pc"} computes points from
-#' SVG and then maps between those. \code{"pcweighted"} additionally assigns a weight proportional
-#' to the nearest neighbor to each point.
+#' @param approx what kind of approximation is used for matching components. If this is \code{"grid"}, 
+#' a bitmap (raster image) is used, otherwise lines are approximated by more freely spaced points.
+#' For \code{"pc"} (point cloud) each point has the same weight and points are placed in a (more or
+#' less) equidistant way. For \code{"pcweighted"} points are further apart along straight lines and
+#' around the center of the Bezier curves that describe the strokes. The weights of the points are
+#' then (more or less) proportional to the amount of ink (stroke length) they represent.
+#' @param type the type of Wasserstein distance used for matching components based on the grid or
+#' point cloud approximation chosen. \code{"unbalanced"} means the weights (pixel values
+#' if `approx = "grid`) are interpreted as mass. The total masses in two components be very different.
+#' Extra mass can be disposed of at cost \code{C^p} per unit. \code{"rtt"} is computationally the same,
+#' but the final distance is divided by the maximum of the total ink (sum of weights) in each component
+#' to the 1/p. \code{"balanced"} means the weights are normalized so that both images have the same
+#' total mass 1. Everything has to be transported, i.e.\ disposal of mass is not allowed. 
 #' @param size side length of the bitmaps used for matching components.
 #' @param lwd  linewidth for drawing the components in these bitmaps.
 #' @param verbose logical. Whether to print detailed information on the cost for all pairs of
@@ -163,7 +167,7 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' 
 #' @references Dominic Schuhmacher (2023).\cr
 #'             Distance maps between Japanese kanji characters based on hierarchical optimal transport.\cr
-#'             ArXiv Preprint, \doi{10.48550/arXiv.2304.02493}
+#'             ArXiv, \doi{10.48550/arXiv.2304.02493}
 #'
 #' @return The kanji distance, a non-negative number.
 #' @export
@@ -181,7 +185,8 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #'   \donttest{kanjidist(fivebetas[[4]], fivebetas[[5]], size=64, lwd=3.2, verbose=TRUE)}
 #' } 
 kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2,
-                         type=c("rtt", "unbalanced", "balanced", "pc", "pcweighted"), size=48, lwd=2.5, verbose=FALSE) {  
+                      approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
+                      size=48, lwd=2.5, verbose=FALSE) {
   stopifnot(is(k1, "kanjivec") && is(k2, "kanjivec"))
   type <- match.arg(type)
   if (k1$char == k2$char) return(0) 
@@ -210,7 +215,10 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
   # on data that is suitable for the task we want kanjidist to fulfill.
   stopifnot(isTRUE(all.equal(distfact+transfact+scalefact+distortfact,1)))
   
-  allcosts <- all_compcosts(k1, k2, compo_seg_depth1, compo_seg_depth2, p, C, type, size, lwd, precompute=FALSE)
+  allcosts <- all_compcosts(k1=k1, k2=k2,
+                            compo_seg_depth1=compo_seg_depth1, compo_seg_depth2=compo_seg_depth2,
+                            p=p, C=C, approx=approx, type=type,
+                            size=size, lwd=lwd, precompute=FALSE)
 
   lseq1 <- seq_len(min(compo_seg_depth1, length(k1$ncompos)))
   lseq2 <- seq_len(min(compo_seg_depth2, length(k2$ncompos)))
@@ -377,7 +385,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #' @param klist2 an optional second list of \code{\link{kanjimat}} objects.
 #' @param compo_seg_depth integer \eqn{\geq 1}. Specifies for all kanji the 
 #' deepest level included for component matching. If 1, only the kanji itself is used.
-#' @param p,C,type,size,lwd,verbose the same as for the function \code{\link{kanjidist}}.
+#' @param p,C,type,approx,size,lwd,verbose the same as for the function \code{\link{kanjidist}}.
 #'
 #' @section Warning:
 #'
@@ -398,7 +406,8 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #' kanjidistmat(fivebetas)
 #' }
 kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
-                    type=c("rtt", "unbalanced", "balanced", "pc", "pcweighted"), size=48, lwd=2.5, verbose=FALSE) {
+                  approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
+                  size=48, lwd=2.5, verbose=FALSE) {
   stopifnot( is.list(klist) )
   stopifnot( all(sapply(klist, \(x) is(x, "kanjivec"))) )
   type <- match.arg(type)
@@ -422,7 +431,7 @@ kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
     ll <- lapply(1:N, \(x) {temp[x,]})
     dd <- sapply(ll, \(x) {kanjidist(klist[[x[1]]], klist2[[x[2]]],
                                      compo_seg_depth1=compo_seg_depth, compo_seg_depth2=compo_seg_depth,
-                                     p=p, C=C, type=type, size=size, lwd=lwd, verbose=verbose)})
+                                     p=p, C=C, approx=approx, type=type, size=size, lwd=lwd, verbose=verbose)})
     dmat <- matrix(dd, n, n2)
   }
   
@@ -549,12 +558,14 @@ compoweights_ink <- function(kanji, compo_seg_depth=4, relative=TRUE, tricklelos
 # have same stroke order *and* all the points of drawing it would be in the same order; i.e. if assignment
 # is not close to identity, there could be an additional penalty, say)
 all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C=0.2,
-                          type=c("rtt", "unbalanced", "balanced", "pc", "pcweighted"), size=48, lwd=2.5, precompute=FALSE) {
+                          approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"), 
+                          size=48, lwd=2.5, precompute=FALSE) {
   #recommended combinations:
   # size=32, lwd=1.8 (noticable loss in quality, but still ok)
   # size=48, lwd=2.5
   # size=64, lwd=3.2
   # size=128, lwd=5.6 (if you must; this is very slow)
+  approx <- match.arg(approx)
   type <- match.arg(type)
 
   ncompos1 <- k1$ncompos
@@ -589,7 +600,7 @@ all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C
         temp <- component_cost_prec(bitstats1, bitstats2, which1=c(l1, i1), which2=c(l2, i2), p=p, C=C, type=type, output = "distplus")
       } else {
         temp <- component_cost(k1, k2, which1=c(l1, i1), which2=c(l2, i2), size=size, lwd=lwd,
-                               p=p, C=C, type=type, output = "distplus")
+                               p=p, C=C, approx=approx, type=type, output = "distplus")
       }
       pluck(res, r1, r2) <- temp
     }
@@ -616,7 +627,9 @@ all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C
 # the plus in distplus is for total ink of the two kanji and their shift vector, scaling and
 # distortion rates.
 component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.5, p=1, C=0.2,
-                           type=c("rtt", "unbalanced", "balanced", "pc", "pcweighted"), output=c("distplus","all")) {
+                           approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
+                           output=c("distplus","all")) {
+  approx <- match.arg(approx)
   type <- match.arg(type)
   output <- match.arg(output)
   
@@ -626,7 +639,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
   s1 <- get_strokes_compo(k1, which1)
   s2 <- get_strokes_compo(k2, which2)
   
-  if (type=="pc" || type=="pcweighted") {
+  if (approx=="pc" || approx=="pcweighted") {
     svg_strings1 <- sapply(s1, function(x) attr(x, "d"))
     svg_strings2 <- sapply(s2, function(x) attr(x, "d"))
     
@@ -668,38 +681,34 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
     points2 <- rescaled_points'
     
-    points1 <- list()
-    points2 <- list()
-    massa <- list()
-    massb <- list()
+    points1 <- matrix(0, 0, 2)
+    points2 <- matrix(0, 0, 2)
+    mass1 <- numeric()
+    mass2 <- numeric()
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
       new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min1, factor=fact1)
       points1 <- rbind(points1, new_points)
-      if (type == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
-        massa <- c(massa, average_distances(new_points))
+      if (approx == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
+        mass1 <- c(mass1, average_distances(new_points))
+      else
+        mass1 <- rep(1, length(points1)/2)
     }
     for (svg_string in svg_strings2) {
       new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min2, factor=fact2)
       points2 <- rbind(points2, new_points)
-      if (type == "pcweighted")
-        massb <- c(massb, average_distances(new_points))
+      if (approx == "pcweighted")
+        mass2 <- c(mass2, average_distances(new_points))
+      else
+        mass2 <- rep(1, length(points2)/2)
     }
-    
-    points1 <- matrix(unlist(points1), ncol = 2)
-    points2 <- matrix(unlist(points2), ncol = 2)
-    
-    if (type=="pcweighted") { 
-      # Instead we could also use a global nearest neighbors:
-      # nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
-      # nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
-      massa <- unlist(massa)
-      massb <- unlist(massb)
-    } else {
-      massa <- rep(1, length(points1)/2)
-      massb <- rep(1, length(points2)/2)
-    }
-    
+    # Instead we could also use global nearest neighbors:
+    # nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
+    # nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
+
+    '
+    massa <- mass1
+    massb <- mass2
     massa <- massa/sum(massa)
     massb <- massb/sum(massb)
     # We transform to a weighted transport::points object.
@@ -707,13 +716,44 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     b <- transport::wpp(matrix(points2, length(points2)/2), massb)
     ink1 <- length(points1)
     ink2 <- length(points2)
-
-    res <- as.list(transport::wasserstein(a,b, method="networkflow"))
+    res <- transport::transport(a,b, fullreturn=TRUE, method="networkflow")'
+    
+    ink1 <- sum(mass1)
+    ink2 <- sum(mass2)
+    output <- ifelse(output=="distplus", "dist", output)
+    
+    if (type == "unbalanced") {
+      a <- transport::wpp(points1, mass1)
+      b <- transport::wpp(points2, mass2)
+      res <- as.list(unbalanced_wpp(a, b, p=p, C=C, output=output))   
+      # argument output does not do anything yet
+    } else if (type == "rtt") {
+      a <- transport::wpp(points1, mass1)
+      b <- transport::wpp(points2, mass2)
+      res <- as.list(unbalanced_wpp(a, b, p=p, C=C, output=output))
+      res[[1]] <- res[[1]]/max(ink1, ink2)^(1/p) # instead we could just divide massa, massb above by max(ink1, ink2)^(1/p) (same result, not clear which is preferable)
+    } else if (type == "balanced") {
+      a <- transport::wpp(points1, mass1/ink1)
+      b <- transport::wpp(points2, mass2/ink2)
+      res <- as.list(unbalanced_wpp(a, b, p=p, output=output))
+      # essentially the same as transport::transport.wpp, but the latter does not directly return the dist
+      # and the output is in a bit a different format
+      # @file-acomplaint: resulting distance coincides with commented-out 
+      # transport::transport above (currently line 706)
+    }
     
     # For debugging, we might want to have a look at the point clouds:
-    plot(points1, cex=0.5*massa*length(points1), asp=1)
-    plot(points2, cex=0.5*massb*length(points2), asp=1)
-    title(res[1])
+    # plot(points1, cex=0.5*massa*length(points1), asp=1)
+    # plot(points2, cex=0.5*massb*length(points2), asp=1)
+    # DS: cex proportional to sqrt(massa), sqrt(massb) is more appropriate
+    # human brains usually judge importance by area not ba diameter
+    # the following command does this (among other things)
+    
+    # @file-acomplaint: the following only works (i.e. shows the transport plan) for
+    # if res was obtained by transport::transport.wpp 
+    'transport::plot.wpp(a,b,res$default)
+    title(res$cost)
+    res <- as.list(res$cost)'
   } else {
     # Here, bitmaps are used for optimal transport:
     
