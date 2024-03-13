@@ -12,6 +12,8 @@ NULL
 
 ## usethis namespace: start
 #' @importFrom lifecycle badge
+#' @importFrom Rcpp sourceCpp
+#' @useDynLib kanjistat, .registration = TRUE
 ## usethis namespace: end
 NULL
 

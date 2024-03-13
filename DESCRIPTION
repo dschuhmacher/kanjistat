@@ -1,8 +1,8 @@
 Package: kanjistat
 Type: Package
 Title: A Statistical Framework for the Analysis of Japanese Kanji Characters
-Version: 0.11.0.9110
-Date: 2024-03-10
+Version: 0.11.0.9111
+Date: 2024-03-13
 Authors@R: c( person("Dominic", "Schuhmacher", email = "dominic.schuhmacher@mathematik.uni-goettingen.de", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7079-6313")),
               person("Lennart", "Finke", email = "l.finke@stud.uni-goettingen.de", role = "aut", comment = c(ORCID = "0009-0003-6908-314X")) )
 Maintainer: Dominic Schuhmacher <dominic.schuhmacher@mathematik.uni-goettingen.de>
@@ -30,7 +30,8 @@ Imports:
     stringr,
     transport,
     xml2,
-    lifecycle
+    lifecycle,
+    Rcpp
 Suggests:
     dplyr,
     knitr,
@@ -47,3 +48,5 @@ RoxygenNote: 7.3.1
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
+LinkingTo: 
+    Rcpp
