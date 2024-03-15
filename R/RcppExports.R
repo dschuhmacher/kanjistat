@@ -9,3 +9,7 @@ cubic_bezier_curve_cpp <- function(t, p0, p1, p2, p3) {
     .Call(`_kanjistat_cubic_bezier_curve_cpp`, t, p0, p1, p2, p3)
 }
 
+cubic_bezier_spaced_curve_cpp <- function(num_points, p0, p1, p2, p3) {
+    .Call(`_kanjistat_cubic_bezier_spaced_curve_cpp`, num_points, p0, p1, p2, p3)
+}
+

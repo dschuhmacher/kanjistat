@@ -11,12 +11,12 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // cubic_bezier_point_cpp
-NumericVector cubic_bezier_point_cpp(double t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
+NumericVector cubic_bezier_point_cpp(float t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
 RcppExport SEXP _kanjistat_cubic_bezier_point_cpp(SEXP tSEXP, SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP, SEXP p3SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type t(tSEXP);
+    Rcpp::traits::input_parameter< float >::type t(tSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p0(p0SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p2(p2SEXP);
@@ -40,10 +40,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cubic_bezier_spaced_curve_cpp
+NumericMatrix cubic_bezier_spaced_curve_cpp(int num_points, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
+RcppExport SEXP _kanjistat_cubic_bezier_spaced_curve_cpp(SEXP num_pointsSEXP, SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP, SEXP p3SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type num_points(num_pointsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p0(p0SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p2(p2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p3(p3SEXP);
+    rcpp_result_gen = Rcpp::wrap(cubic_bezier_spaced_curve_cpp(num_points, p0, p1, p2, p3));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kanjistat_cubic_bezier_point_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_point_cpp, 5},
     {"_kanjistat_cubic_bezier_curve_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_cpp, 5},
+    {"_kanjistat_cubic_bezier_spaced_curve_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_spaced_curve_cpp, 5},
     {NULL, NULL, 0}
 };
 
