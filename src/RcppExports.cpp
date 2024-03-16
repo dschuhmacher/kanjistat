@@ -40,18 +40,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cubic_bezier_spaced_curve_cpp
-NumericMatrix cubic_bezier_spaced_curve_cpp(int num_points, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
-RcppExport SEXP _kanjistat_cubic_bezier_spaced_curve_cpp(SEXP num_pointsSEXP, SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP, SEXP p3SEXP) {
+// cubic_bezier_curve_eqspaced_cpp
+NumericMatrix cubic_bezier_curve_eqspaced_cpp(float density, int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
+RcppExport SEXP _kanjistat_cubic_bezier_curve_eqspaced_cpp(SEXP densitySEXP, SEXP nSEXP, SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP, SEXP p3SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type num_points(num_pointsSEXP);
+    Rcpp::traits::input_parameter< float >::type density(densitySEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p0(p0SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p2(p2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p3(p3SEXP);
-    rcpp_result_gen = Rcpp::wrap(cubic_bezier_spaced_curve_cpp(num_points, p0, p1, p2, p3));
+    rcpp_result_gen = Rcpp::wrap(cubic_bezier_curve_eqspaced_cpp(density, n, p0, p1, p2, p3));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -59,7 +60,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_kanjistat_cubic_bezier_point_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_point_cpp, 5},
     {"_kanjistat_cubic_bezier_curve_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_cpp, 5},
-    {"_kanjistat_cubic_bezier_spaced_curve_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_spaced_curve_cpp, 5},
+    {"_kanjistat_cubic_bezier_curve_eqspaced_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_eqspaced_cpp, 6},
     {NULL, NULL, 0}
 };
 

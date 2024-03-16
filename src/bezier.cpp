@@ -7,7 +7,7 @@ using namespace Rcpp;
  * between 0 and 100, while the kvec point clouds are normalised between 0 and 1, which we reproduce here. */
 // [[Rcpp::export]]
 NumericVector cubic_bezier_point_cpp (float t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
-  return pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3;
+  return (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3)/100;
 }
 
 // [[Rcpp::export]]
@@ -21,7 +21,9 @@ NumericMatrix cubic_bezier_curve_cpp (NumericVector t, NumericVector p0, Numeric
   return res;
 }
 
-NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
+// An alternative way to calculate the arc length with an integral over 
+// derivatives, which did not work so well. Marked for deletion.
+NumericVector cubic_bezier_arc_lengths_riemann(int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
   NumericMatrix der(n,2); 
   
   for (int i = 0; i < n; i++) {
@@ -42,7 +44,9 @@ NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1
   return lengths;
 }
 
-NumericVector cubic_bezier_arc_lengths2(int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
+// Calculating a running vector with length n of a cubic Bézier curve at
+// uniformly sampled time points.
+NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
   NumericMatrix points(n,2); 
   
   for (float i = 0.; i < n; i++) {
@@ -62,12 +66,17 @@ NumericVector cubic_bezier_arc_lengths2(int n, NumericVector p0, NumericVector p
 }
 
 // Adapted from https://gamedev.stackexchange.com/questions/5373/moving-ships-between-two-planets-along-a-bezier-missing-some-equations-for-acce/5427#5427
+// density represents a spatial point density. I assume we do not need to expose
+// a way to get an exact number of points instead? In any case, the length of
+// the curve is only known inside this function, so for now we implement it like
+// this.
+// n is the number of samples used for binary search and interpolation.
 // [[Rcpp::export]]
-NumericMatrix cubic_bezier_spaced_curve_cpp (int num_points, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
-  int n = 50;
-  
-  NumericVector lengths = cubic_bezier_arc_lengths2(n, p0, p1, p2, p3);
+NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
+  NumericVector lengths = cubic_bezier_arc_lengths(n, p0, p1, p2, p3);
   float total_length = lengths[n-1];
+  
+  int num_points = 2 + static_cast<int>(25 * density * total_length);
   NumericMatrix out(num_points,2);
   for (float i = 0.; i < num_points; i++) {
     float target_length = total_length * i / (num_points-1);

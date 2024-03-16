@@ -686,7 +686,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     mass2 <- numeric()
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
-      new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min1, factor=fact1)
+      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, offset=-min1, factor=fact1)
       points1 <- rbind(points1, new_points)
       if (approx == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
         mass1 <- c(mass1, average_distances(new_points))
@@ -694,7 +694,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
         mass1 <- rep(1, length(points1)/2)
     }
     for (svg_string in svg_strings2) {
-      new_points <- points_from_svg(svg_string, 50, spaced=TRUE, offset=-min2, factor=fact2)
+      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, offset=-min2, factor=fact2)
       points2 <- rbind(points2, new_points)
       if (approx == "pcweighted")
         mass2 <- c(mass2, average_distances(new_points))
@@ -742,8 +742,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     }
     
     # For debugging, we might want to have a look at the point clouds:
-    # plot(points1, cex=0.5*massa*length(points1), asp=1)
-    # plot(points2, cex=0.5*massb*length(points2), asp=1)
+    # plot(points1, asp=1)
+    # plot(points2, asp=1)
     # DS: cex proportional to sqrt(massa), sqrt(massb) is more appropriate
     # human brains usually judge importance by area not ba diameter
     # the following command does this (among other things)
