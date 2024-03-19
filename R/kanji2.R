@@ -742,8 +742,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     }
     
     # For debugging, we might want to have a look at the point clouds:
-    # plot(points1, asp=1)
-    # plot(points2, asp=1)
+    plot(points1, asp=1)
+    plot(points2, asp=1)
     # DS: cex proportional to sqrt(massa), sqrt(massb) is more appropriate
     # human brains usually judge importance by area not ba diameter
     # the following command does this (among other things)

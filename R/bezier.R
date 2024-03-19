@@ -76,8 +76,11 @@ points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), fac
   parsed_path <- parse_svg_path(svg_str, offset=offset, factor=factor)
   list_of_points <- list()
   current_point <- c(0, 0)
+  k <- 0
+  
   # Iterate through each command
   for (command in parsed_path) {
+    k <- k + 1
     if (command$command == "M") {
       # The 'Move' command sets the current point
       current_point <- command$params
@@ -100,8 +103,11 @@ points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), fac
       if (eqspaced) {
         curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
       } else {
-        # Change this...
-        curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
+        curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
+      }
+      
+      if (k != length(parsed_path)) {
+        curve_points <- curve_points[-nrow(curve_points), ] 
       }
       
       # Add curve points to the list and update the current point
@@ -116,7 +122,7 @@ points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), fac
         # 'S' -> Absolute coordinates
         # Reflect previous control point for smooth transition
         if (length(previous_control_point) > 0) {
-          p1 <- current_point+(current_point - previous_control_point)
+          p1 <- current_point + (current_point - previous_control_point)
         } else {
           # Assume a starting control point at current_point
           p1 = current_point
@@ -128,7 +134,7 @@ points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), fac
         # 's' -> Relative coordinates
         # Reflect previous control point for smooth transition
         if (length(previous_control_point) > 0) {
-          p1 <- current_point+(current_point - previous_control_point)
+          p1 <- current_point + (current_point - previous_control_point)
         } else {
           # Assume a starting control point at current_point 
           p1 = current_point
@@ -139,10 +145,13 @@ points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), fac
       }
       
       if (eqspaced) {
-        curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 10, p0, p1, p2, p3)
+        curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
       } else {
-        # Change this...
-        curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 10, p0, p1, p2, p3)
+        curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
+      }
+      
+      if (k != length(parsed_path)) {
+        curve_points <- curve_points[-nrow(curve_points), ] 
       }
       
       list_of_points <- c(list_of_points, list(curve_points))
