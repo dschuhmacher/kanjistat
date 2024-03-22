@@ -418,7 +418,7 @@ kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
     ll <- lapply(1:dim(temp)[2], \(x) {temp[,x]})
     dd <- sapply(ll, \(x) {kanjidist(klist[[x[1]]], klist[[x[2]]],
                                      compo_seg_depth1=compo_seg_depth, compo_seg_depth2=compo_seg_depth,
-                                     p=p, C=C, type=type, size=size, lwd=lwd, verbose=verbose)})
+                                     p=p, C=C, approx=approx, type=type, size=size, lwd=lwd, verbose=verbose)})
     dmat <- matrix(0, n, n)
     dmat[t(temp)] <- dd
     dmat <- dmat + t(dmat)
@@ -669,16 +669,6 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     
     fact1 <- sqrt(sca2/sca1)/upfact  
     fact2 <- sqrt(sca1/sca2)/upfact
-    '
-    rescaled_points <- matrix(nrow = nrow(points1), ncol = ncol(points1))
-    rescaled_points[, 1] <- (points1[, 1] - min1[1]) * fact1[1] # Rescale x
-    rescaled_points[, 2] <- (points1[, 2] - min1[2]) * fact1[2] # Rescale y
-    points1 <- rescaled_points
-    
-    rescaled_points <- matrix(nrow = nrow(points2), ncol = ncol(points2))
-    rescaled_points[, 1] <- (points2[, 1] - min2[1]) * fact2[1] 
-    rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
-    points2 <- rescaled_points'
     
     points1 <- matrix(0, 0, 2)
     points2 <- matrix(0, 0, 2)
@@ -686,7 +676,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     mass2 <- numeric()
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
-      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, offset=-min1, factor=fact1)
+      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, factor=fact1)
       points1 <- rbind(points1, new_points)
       if (approx == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
         mass1 <- c(mass1, average_distances(new_points))
@@ -694,7 +684,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
         mass1 <- rep(1, length(points1)/2)
     }
     for (svg_string in svg_strings2) {
-      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, offset=-min2, factor=fact2)
+      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, factor=fact2)
       points2 <- rbind(points2, new_points)
       if (approx == "pcweighted")
         mass2 <- c(mass2, average_distances(new_points))
@@ -704,7 +694,41 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     # Instead we could also use global nearest neighbors:
     # nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
     # nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
-
+    
+    min_x <- min(points1[, 1])
+    max_x <- max(points1[, 1])
+    min_y <- min(points1[, 2])
+    max_y <- max(points1[, 2])
+    min1 <- c(min_x, min_y)
+    max1 <- c(max_x, max_y)
+    min_x <- min(points2[, 1])
+    max_x <- max(points2[, 1])
+    min_y <- min(points2[, 2])
+    max_y <- max(points2[, 2])
+    min2 <- c(min_x, min_y)
+    max2 <- c(max_x, max_y)    
+    
+    cen1 <- (min1 + max1) / 2
+    sca1 <- max1-min1           # 2D extension
+    cen2 <- (min2 + max2) / 2
+    sca2 <- max2-min2
+    
+    meansca <- sqrt(sca1*sca2)
+    upfact <- max(meansca)
+    
+    fact1 <- sqrt(sca2/sca1)/upfact  
+    fact2 <- sqrt(sca1/sca2)/upfact
+    
+    rescaled_points <- matrix(nrow = nrow(points1), ncol = ncol(points1))
+    rescaled_points[, 1] <- (points1[, 1] - min1[1]) * fact1[1] # Rescale x
+    rescaled_points[, 2] <- (points1[, 2] - min1[2]) * fact1[2] # Rescale y
+    points1 <- rescaled_points
+    
+    rescaled_points <- matrix(nrow = nrow(points2), ncol = ncol(points2))
+    rescaled_points[, 1] <- (points2[, 1] - min2[1]) * fact2[1] 
+    rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
+    points2 <- rescaled_points
+    
     '
     massa <- mass1
     massb <- mass2
@@ -742,17 +766,17 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     }
     
     # For debugging, we might want to have a look at the point clouds:
-    plot(points1, asp=1)
-    plot(points2, asp=1)
+    # plot(points1, asp=1, cex=0.33*sqrt(length(points1)*mass1))
+    # plot(points2, asp=1, cex=0.33*sqrt(length(points2)*mass2))
     # DS: cex proportional to sqrt(massa), sqrt(massb) is more appropriate
     # human brains usually judge importance by area not ba diameter
     # the following command does this (among other things)
     
     # @file-acomplaint: the following only works (i.e. shows the transport plan) for
     # if res was obtained by transport::transport.wpp 
-    'transport::plot.wpp(a,b,res$default)
-    title(res$cost)
-    res <- as.list(res$cost)'
+    # transport::plot.wpp(a,b,res$default)
+    # title(res$cost)
+    # res <- as.list(res$cost)
   } else {
     # Here, bitmaps are used for optimal transport:
     

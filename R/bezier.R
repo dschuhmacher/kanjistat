@@ -30,7 +30,7 @@ cubic_bezier_arc_length <- function(p0, p1, p2, p3, num_points = 100) {
 # Parses a string of SVG curves, as they occur in kanjivec, to a list.
 # For a complete specification of SVG commands, see
 # https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#path_commands
-parse_svg_path <- function(path, offset=c(0,0), factor=c(1,1)) {
+parse_svg_path <- function(path, factor) {
   # Insert delimiter before negative numbers
   path <- gsub("-", ",-", path)
   
@@ -40,22 +40,25 @@ parse_svg_path <- function(path, offset=c(0,0), factor=c(1,1)) {
   path <- gsub("([A-Za-z]),", "\\1", path)
   commands <- unlist(strsplit(path, " "))
   commands <- commands[commands != ""] # Remove empty elements
-  
+
   # Extract parameters
   parsed_commands <- lapply(commands, function(cmd) {
     cmd_letter <- substr(cmd, 1, 1)
     params <- strsplit(substr(cmd, 2, nchar(cmd)), "[ ,]")[[1]]
     params <- as.numeric(params)
     
-    # SVG follows a different convention from R, so we should negate the y-coordinates. 
-    params[seq(2, length(params), by = 2)] <- -params[seq(2, length(params), by = 2)]
+    # Check for relative commands to determine wheter to use offset
+    off <- offset
+    if (grepl("[a-z]", cmd_letter)) {
+      off <- c(0,0)
+    }
     
     # Rescaling X
-    params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)] + offset[1])*factor[1]
+    params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)]) * factor[1]
     # Rescaling Y
-    params[seq(2, length(params), by = 2)] <- (params[seq(2, length(params), by = 2)] + offset[2])*factor[2]
+    params[seq(2, length(params), by = 2)] <- -(params[seq(2, length(params), by = 2)]) * factor[2]
     
-    
+
     list(command = cmd_letter, params = params)
   })
   
@@ -72,8 +75,8 @@ adjust_relative_points <- function(relative_points, current_point) {
 # returns a point cloud as a 2xn matrix described by that SVG string.
 # If spaced, a boolean, is true, the number of points per curve will be divided
 # by the length of the curve.
-points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), factor=c(1,1)) {
-  parsed_path <- parse_svg_path(svg_str, offset=offset, factor=factor)
+points_from_svg <- function(svg_str, point_density, eqspaced, factor) {
+  parsed_path <- parse_svg_path(svg_str, factor=factor)
   list_of_points <- list()
   current_point <- c(0, 0)
   k <- 0
@@ -105,11 +108,7 @@ points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), fac
       } else {
         curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
       }
-      
-      if (k != length(parsed_path)) {
-        curve_points <- curve_points[-nrow(curve_points), ] 
-      }
-      
+      curve_points <- curve_points
       # Add curve points to the list and update the current point
       list_of_points <- c(list_of_points, list(curve_points))
       previous_control_point <- p2
@@ -149,11 +148,7 @@ points_from_svg <- function(svg_str, point_density, eqspaced, offset=c(0,0), fac
       } else {
         curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
       }
-      
-      if (k != length(parsed_path)) {
-        curve_points <- curve_points[-nrow(curve_points), ] 
-      }
-      
+      curve_points <- curve_points
       list_of_points <- c(list_of_points, list(curve_points))
       # Keep track for the next 'S' or 's' command
       previous_control_point <- p2
