@@ -47,7 +47,7 @@ parse_svg_path <- function(path, factor) {
     params <- strsplit(substr(cmd, 2, nchar(cmd)), "[ ,]")[[1]]
     params <- as.numeric(params)
     
-    # Check for relative commands to determine wheter to use offset
+    # Check for relative commands to determine whether to use offset
     off <- offset
     if (grepl("[a-z]", cmd_letter)) {
       off <- c(0,0)
