@@ -370,7 +370,9 @@ strokelength <- function(smat) {
 # klist is a list of kvec objects, filename the save destination and type the
 # distance type used in kanjidistmat.
 export_distmat_json <- function(klist, filename, type) {
-  library(jsonlite)
+  if (!requireNamespace("jsonlite", quietly = TRUE)) {
+    stop("package 'jsonlite' is required for this function.")
+  }
   distmat <- kanjidistmat(klist, type=type)
   chars <- unlist(lapply(klist, function (x) {x$char}))
   
@@ -386,7 +388,7 @@ export_distmat_json <- function(klist, filename, type) {
   data_list <- list(distances = as.list(upper_tri), characters = chars)
   
 
-  json_data <- toJSON(data_list, pretty = TRUE)
+  json_data <- jsonlite::toJSON(data_list, pretty = TRUE)
   
   write(json_data, file = filename)
 }

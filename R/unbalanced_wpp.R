@@ -1,12 +1,6 @@
-## unbalanced transport for wpp objects
-## (prototype; in the long run this will go into the transport package; with more functionality)
-##
-## CRAN will not accept functions from transport that aren't exported although
-## R CMD check --as-cran seems to pass in this respect
-
-# argument output does currently nothing, threads may or may not do something
-# default C minimal so that no cutoffs take place under the assumtion that points in R^2
-# not sure if something goes wrong if not all entries of a are positive
+# Has been moved to transport package (method wpp for generic unbalanced)
+# keep a copy for time being
+if (FALSE) {
 unbalanced_wpp <- function(a, b, p = 1, C = 1/sqrt(2), output = c("dist", "all", "rawres"), threads=1) {
   stopifnot(is(a, "wpp") && is(b, "wpp"))
   if (a$dimension < 2) stop("dimension must be >=2")
@@ -44,6 +38,6 @@ unbalanced_wpp <- function(a, b, p = 1, C = 1/sqrt(2), output = c("dist", "all",
   
   return(rawres$dist^(1/p)) # recall that rawres$dist is actually the p-th power of the unbalanced Wasserstein dist
 }
-
+}
 
 
