@@ -748,35 +748,26 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     if (type == "unbalanced") {
       a <- transport::wpp(points1, mass1)
       b <- transport::wpp(points2, mass2)
-      res <- as.list(unbalanced_wpp(a, b, p=p, C=C, output=output))   
-      # argument output does not do anything yet
+      res <- as.list(transport::unbalanced(a, b, p=p, C=C, output=output))   
     } else if (type == "rtt") {
       a <- transport::wpp(points1, mass1)
       b <- transport::wpp(points2, mass2)
-      res <- as.list(unbalanced_wpp(a, b, p=p, C=C, output=output))
+      res <- as.list(transport::unbalanced(a, b, p=p, C=C, output=output))
       res[[1]] <- res[[1]]/max(ink1, ink2)^(1/p) # instead we could just divide massa, massb above by max(ink1, ink2)^(1/p) (same result, not clear which is preferable)
     } else if (type == "balanced") {
       a <- transport::wpp(points1, mass1/ink1)
       b <- transport::wpp(points2, mass2/ink2)
-      res <- as.list(unbalanced_wpp(a, b, p=p, output=output))
+      res <- as.list(transport::unbalanced(a, b, p=p, output=output))
       # essentially the same as transport::transport.wpp, but the latter does not directly return the dist
       # and the output is in a bit a different format
-      # @file-acomplaint: resulting distance coincides with commented-out 
-      # transport::transport above (currently line 706)
     }
     
-    # For debugging, we might want to have a look at the point clouds:
-    # plot(points1, asp=1, cex=0.33*sqrt(length(points1)*mass1))
-    # plot(points2, asp=1, cex=0.33*sqrt(length(points2)*mass2))
-    # DS: cex proportional to sqrt(massa), sqrt(massb) is more appropriate
-    # human brains usually judge importance by area not ba diameter
-    # the following command does this (among other things)
-    
-    # @file-acomplaint: the following only works (i.e. shows the transport plan) for
-    # if res was obtained by transport::transport.wpp 
-    # transport::plot.wpp(a,b,res$default)
-    # title(res$cost)
-    # res <- as.list(res$cost)
+    # For debugging:
+    # temp <- transport::unbalanced(a, b, p=p, C=C, output="all")
+    # plot(temp)  # if that does not work transport::plot.ut_wpp
+    # plot(temp, what="trans")
+    # plot(temp, what="extra")
+    # temp$dist
   } else {
     # Here, bitmaps are used for optimal transport:
     
