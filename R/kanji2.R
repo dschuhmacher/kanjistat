@@ -729,18 +729,6 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
     points2 <- rescaled_points
     
-    '
-    massa <- mass1
-    massb <- mass2
-    massa <- massa/sum(massa)
-    massb <- massb/sum(massb)
-    # We transform to a weighted transport::points object.
-    a <- transport::wpp(matrix(points1, length(points1)/2), massa)
-    b <- transport::wpp(matrix(points2, length(points2)/2), massb)
-    ink1 <- length(points1)
-    ink2 <- length(points2)
-    res <- transport::transport(a,b, fullreturn=TRUE, method="networkflow")'
-    
     ink1 <- sum(mass1)
     ink2 <- sum(mass2)
     output <- ifelse(output=="distplus", "dist", output)
