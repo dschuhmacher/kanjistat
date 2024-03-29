@@ -642,7 +642,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
   if (approx=="pc" || approx=="pcweighted") {
     svg_strings1 <- sapply(s1, function(x) attr(x, "d"))
     svg_strings2 <- sapply(s2, function(x) attr(x, "d"))
-    # This simply uses the precomputed points
+    # This simply uses the precomputed points, namely to compute fact1, fact2
+    # without creating the point clouds from Bézier curves twice.
     points1 = do.call(rbind, s1)
     points2 = do.call(rbind, s2)
     
@@ -659,9 +660,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     min2 <- c(min_x, min_y)
     max2 <- c(max_x, max_y)    
     
-    cen1 <- (min1 + max1) / 2
     sca1 <- max1-min1           # 2D extension
-    cen2 <- (min2 + max2) / 2
     sca2 <- max2-min2
     
     meansca <- sqrt(sca1*sca2)
