@@ -247,7 +247,7 @@ samplekan <- function(set = c("kyouiku", "jouyou", "jinmeiyou", "kanjidic"), siz
       # (14 is to make sure we can even cover even 100+ strokes, which is not necessary at the moment)
       # (has to come *after* the loop because flatten might adapt id of some li[[i]] to that of its only child)
     } else {  # # we're at a leaf
-      path_d <- attr(li, "d")   # we save this because the following code remove it
+      path_d <- attr(li, "d")   # we save this because the following code removes it
       id <- attr(li, "id")
       type <- attr(li, "type")
       path_list <- parse_svg_path_d(path_d)
@@ -364,6 +364,15 @@ strokelength <- function(smat) {
   length <- sum(apply(dcoord, 1, \(d) {sqrt(d[1]^2 + d[2]^2)}))
   length
 }
+
+
+# transform each point x in a (n x 2)-matrix by diag(a) %*% x + b
+rescale_points <- function(pointmat, a=c(1,1), b=c(0,0)) {
+  pointmat[,1] <- a[1] * pointmat[,1] + b[1]
+  pointmat[,2] <- a[2] * pointmat[,2] + b[2]
+  pointmat
+}
+
 
 # A utility function to export the output of kanjidistmat for display in an
 # external web application, in JSON format.

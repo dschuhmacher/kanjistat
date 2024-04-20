@@ -7,7 +7,7 @@ using namespace Rcpp;
  * between 0 and 100, while the kvec point clouds are normalised between 0 and 1, which we reproduce here. */
 // [[Rcpp::export]]
 NumericVector cubic_bezier_point_cpp (float t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
-  return (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3)/100;
+  return (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3);
 }
 
 // [[Rcpp::export]]
@@ -28,7 +28,7 @@ NumericVector cubic_bezier_arc_lengths_riemann(int n, NumericVector p0, NumericV
   
   for (int i = 0; i < n; i++) {
     float t = i/n;
-    der(i,_) = (3 * pow(1 - t, 2) * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * pow(t, 2) * (p3 - p2))/100;
+    der(i,_) = (3 * pow(1 - t, 2) * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * pow(t, 2) * (p3 - p2));
   }
     
   
@@ -51,7 +51,7 @@ NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1
   
   for (float i = 0.; i < n; i++) {
     float t = i/(n-1);
-    points(i,_) = (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3)/100;
+    points(i,_) = (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3);
   }
   
   NumericVector lengths(n);
@@ -71,44 +71,50 @@ NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1
 // the curve is only known inside this function, so for now we implement it like
 // this.
 // n is the number of samples used for binary search and interpolation.
+// it seems n is typically even smaller than num_points, so the binary search within a loop is a bit questionable
 // [[Rcpp::export]]
 NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
   NumericVector lengths = cubic_bezier_arc_lengths(n, p0, p1, p2, p3);
   float total_length = lengths[n-1];
+  Rcpp::Rcout << "l0 " << lengths[0] << "\n";
+  Rcpp::Rcout << "l1 " << lengths[1] << "\n";
+  Rcpp::Rcout << total_length << "\n";
   
-  int num_points = 2 + static_cast<int>(25 * density * total_length);
+  int num_points = 2 + static_cast<int>(density * total_length);
+  Rcpp::Rcout << num_points << "\n";
   NumericMatrix out(num_points,2);
   for (float i = 0.; i < num_points; i++) {
     float target_length = total_length * i / (num_points-1);
+    Rcpp::Rcout << "t" << target_length << " ";
     int low = 0;
-    int high = n;
+    int high = n-1;
     int k = 0;
     float t = 0;
     // Next, a binary search to determine closest indices to desired length:
-    while (low < high) {
-      k = low + ((high - low) / 2);
-      if (lengths[k] < target_length) {
-        low = k + 1;
+    while (low + 1 < high) {
+      k = (low + high) / 2;
+      // k = low + ((high - low) / 2); // was the same  (truncation considered)
+      if (lengths[k] <= target_length) {
+        low = k;
       } else {
         high = k;
       }
     }
-    if (lengths[k] > target_length) {
-      k--;
-    }
+    // low = index of largest of the original sample point smaller-equal to i-th (current) eqspaced point 
+    Rcpp::Rcout << low << "+++" << lengths[low] << " ";
 
-    float length_before = lengths[k];
-    if (length_before == target_length) {
-      t = k / n;
-    } else { // We interpolate linearly between the two closest points.
-      t = (k + (target_length - length_before) / (lengths[k + 1] - length_before)) / n;
-    }
+    float length_before = lengths[low];
+    t = (low + (target_length - length_before) / (lengths[low + 1] - length_before)) / (n-1);
+    Rcpp::Rcout << t << "  ";
     
-    out(i,_) = (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3)/100;
+    out(i,_) = (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3);
   }
   
   return out;
 }
+
+
+
 
 /* Of course the above could be more intuitively written via matrix multiplication. However, there is
  * no such functionality in standard Rcpp. If we need linear algebra stuff more than once we should

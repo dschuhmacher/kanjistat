@@ -1,15 +1,13 @@
 # Functions in this file deal with Bézier curves, specifically for generating point clouds from SVG data.
 
 # Point on a cubic Bézier curve. Numerical stability could be improved with a Horner scheme.
-# The scaling factor one hundreth is due to the fact that the kvec SVG commands assume a range
-# between 0 and 100, while the kvec point clouds are normalised between 0 and 1, which we reproduce here.
 cubic_bezier_point <- function(t, p0, p1, p2, p3) {
-  ((1 - t)^3 * p0 + 3 * (1 - t)^2 * t * p1 + 3 * (1 - t) * t^2 * p2 + t^3 * p3)/100
+  ((1 - t)^3 * p0 + 3 * (1 - t)^2 * t * p1 + 3 * (1 - t) * t^2 * p2 + t^3 * p3)
 }
 
 # Spatial derivative in curve time for a cubic Bézier curve
 cubic_bezier_derivative <- function(t, p0, p1, p2, p3) {
-  (3 * (1 - t)^2 * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * t^2 * (p3 - p2))/100
+  (3 * (1 - t)^2 * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * t^2 * (p3 - p2))
 }
 
 # Euclidean differential Arc Length of a Cubic Bézier curve
@@ -30,29 +28,28 @@ cubic_bezier_arc_length <- function(p0, p1, p2, p3, num_points = 100) {
 # Parses a string of SVG curves, as they occur in kanjivec, to a list.
 # For a complete specification of SVG commands, see
 # https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#path_commands
-parse_svg_path <- function(path, factor) {
-  # Insert delimiter before negative numbers
+parse_svg_path <- function(path) {
+  # Insert comma before negative numbers
   path <- gsub("-", ",-", path)
   
-  # Insert delimiter
+  # Insert space before MmLlHhVvCcSsQqTtAaZz
   path <- gsub("([MmLlHhVvCcSsQqTtAaZz])", " \\1", path)
-  # Remove a comma before a negative number as the first parameter of an SVG command
+  # Remove a comma before a negative number if it is first parameter of an SVG command
   path <- gsub("([A-Za-z]),", "\\1", path)
-  commands <- unlist(strsplit(path, " "))
+  commands <- stringr::str_split_1(path, " ")
   commands <- commands[commands != ""] # Remove empty elements
 
   # Extract parameters
   parsed_commands <- lapply(commands, function(cmd) {
     cmd_letter <- substr(cmd, 1, 1)
-    params <- strsplit(substr(cmd, 2, nchar(cmd)), "[ ,]")[[1]]
+    params <- stringr::str_split_1(stringr::str_sub(cmd, 2), "[ ,]")
     params <- as.numeric(params)
     
     # Rescaling X
-    params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)]) * factor[1]
+    # params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)]) * factor[1]
     # Rescaling Y
-    params[seq(2, length(params), by = 2)] <- -(params[seq(2, length(params), by = 2)]) * factor[2]
+    # params[seq(2, length(params), by = 2)] <- -(params[seq(2, length(params), by = 2)]) * factor[2]
     
-
     list(command = cmd_letter, params = params)
   })
   
@@ -67,20 +64,23 @@ adjust_relative_points <- function(relative_points, current_point) {
 
 # Given an SVG string and a parameter adjusting the number of points, 
 # returns a point cloud as a 2xn matrix described by that SVG string.
-# If spaced, a boolean, is true, the number of points per curve will be divided
+# If eqspaced, a boolean, is true, the number of points per curve will be divided
 # by the length of the curve.
-points_from_svg <- function(svg_str, point_density, eqspaced, factor) {
-  parsed_path <- parse_svg_path(svg_str, factor=factor)
-  list_of_points <- list()
-  current_point <- c(0, 0)
-  k <- 0
+# We expect strings with an M in the beginning and a number of CcSc afterwards
+# otherwise the behaviour of the following function is a bit strange ...
+points_from_svg <- function(svg_str, point_density, eqspaced) {
+  # DS to do: we need factor back, but not for parse_svg_path
+  parsed_path <- parse_svg_path(svg_str)
+  # list_of_points <- list()
+  # current_point <- c(0, 0)  # DS: removed to ensure the function fails if something is weird with the string
   
   # Iterate through each command
   for (command in parsed_path) {
-    k <- k + 1
-    if (command$command == "M") {
-      # The 'Move' command sets the current point
+    if (command$command == "M") { # to do Move makes first point rest does without first point, maybe shift last point to real last point
+      # The 'Move' command sets the current point *and* a first point of the list
+      # (although this is not strictly what the M says, it allows us to easily do without (quasi-)double points
       current_point <- command$params
+      list_of_points <- list(current_point)   # is matrix and direct cbind really slower here?
     } else if (command$command == "C" || command$command == "c") {
       # The "Cubic Bézier" command draws the eponymous curve
       p0 <- current_point
@@ -102,9 +102,8 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factor) {
       } else {
         curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
       }
-      curve_points <- curve_points
-      # Add curve points to the list and update the current point
-      list_of_points <- c(list_of_points, list(curve_points))
+      # Add curve points to the list (removing the point at the beginning, which we already have) and update the current point
+      list_of_points <- c(list_of_points, list(curve_points[-1,]))
       previous_control_point <- p2
       current_point <- p3
     } else if (command$command == "S" || command$command == "s") {
@@ -137,13 +136,15 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factor) {
         p3 <- adjust_relative_points(command$params[3:4], current_point)
       }
       
-      if (eqspaced) {
+      if (eqspaced) { # das scaling /100 /109 ist egal wir skalieren am Ende ohnehin aufgrund der Komponenten
+                      # evtl. wollen wir das auf einer bestimmten Skala haben und 1- sollte ausgeglichen werden
+                      # daher einmal /100 einmal nicht nicht wichtig
         curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
       } else {
         curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
       }
       curve_points <- curve_points
-      list_of_points <- c(list_of_points, list(curve_points))
+      list_of_points <- c(list_of_points, list(curve_points[-1,]))
       # Keep track for the next 'S' or 's' command
       previous_control_point <- p2
       

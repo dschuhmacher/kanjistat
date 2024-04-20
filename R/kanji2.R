@@ -675,7 +675,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     mass2 <- numeric()
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
-      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, factor=fact1)
+      new_points <- points_from_svg(svg_string, 1/2, eqspaced=TRUE)
+      new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
       points1 <- rbind(points1, new_points)
       if (approx == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
         mass1 <- c(mass1, average_distances(new_points))
@@ -683,7 +684,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
         mass1 <- rep(1, length(points1)/2)
     }
     for (svg_string in svg_strings2) {
-      new_points <- points_from_svg(svg_string, 1, eqspaced=TRUE, factor=fact2)
+      new_points <- points_from_svg(svg_string, 1/2, eqspaced=TRUE)
+      new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
       points2 <- rbind(points2, new_points)
       if (approx == "pcweighted")
         mass2 <- c(mass2, average_distances(new_points))
@@ -750,8 +752,10 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     }
     
     # For debugging:
-    # temp <- transport::unbalanced(a, b, p=p, C=C, output="all")
-    # plot(temp)  # if that does not work transport::plot.ut_wpp
+    a <- transport::wpp(points1, mass1)
+    b <- transport::wpp(points2, mass2)
+    temp <- transport::unbalanced(a, b, p=p, C=C, output="all")
+    plot(temp)  # if that does not work transport::plot.ut_wpp
     # plot(temp, what="trans")
     # plot(temp, what="extra")
     # temp$dist
