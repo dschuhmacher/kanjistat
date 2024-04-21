@@ -81,76 +81,74 @@ points_from_svg <- function(svg_str, point_density, eqspaced) {
       # (although this is not strictly what the M says, it allows us to easily do without (quasi-)double points
       current_point <- command$params
       list_of_points <- list(current_point)   # is matrix and direct cbind really slower here?
-    } else if (command$command == "C" || command$command == "c") {
-      # The "Cubic Bézier" command draws the eponymous curve
-      p0 <- current_point
+    } else {
+      if (command$command == "C" || command$command == "c") {
+        # The "Cubic Bézier" command draws the eponymous curve
+        p0 <- current_point
       
-      if (command$command == "C") {
-        # 'C' -> Absolute Coordinates
-        p1 <- command$params[1:2]
-        p2 <- command$params[3:4]
-        p3 <- command$params[5:6]
-      } else {
-        # 'c' -> Relative Coordinates
-        p1 <- adjust_relative_points(command$params[1:2], current_point)
-        p2 <- adjust_relative_points(command$params[3:4], current_point)
-        p3 <- adjust_relative_points(command$params[5:6], current_point)
-      }
-      
+        if (command$command == "C") {
+          # 'C' -> Absolute Coordinates
+          p1 <- command$params[1:2]
+          p2 <- command$params[3:4]
+          p3 <- command$params[5:6]
+        } else {
+          # 'c' -> Relative Coordinates
+          p1 <- adjust_relative_points(command$params[1:2], current_point)
+          p2 <- adjust_relative_points(command$params[3:4], current_point)
+          p3 <- adjust_relative_points(command$params[5:6], current_point)
+        }
+      } else if (command$command == "S" || command$command == "s") {
+        # Smooth Cubic Bézier command
+        p0 <- current_point
+        
+        if (command$command == "S") {
+          # 'S' -> Absolute coordinates
+          # Reflect previous control point for smooth transition
+          if (length(previous_control_point) > 0) {
+            p1 <- current_point + (current_point - previous_control_point)
+          } else {
+            # Assume a starting control point at current_point
+            p1 = current_point
+          }
+          
+          p2 <- command$params[1:2]
+          p3 <- command$params[3:4]
+        } else {
+          # 's' -> Relative coordinates
+          # Reflect previous control point for smooth transition
+          if (length(previous_control_point) > 0) {
+            p1 <- current_point + (current_point - previous_control_point)
+          } else {
+            # Assume a starting control point at current_point 
+            p1 = current_point
+          }
+          
+          p2 <- adjust_relative_points(command$params[1:2], current_point)
+          p3 <- adjust_relative_points(command$params[3:4], current_point)
+        }
+
+      } # Let's hope that no other SVG commands are used.
+    
       if (eqspaced) {
         curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
       } else {
-        curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
+        d <- p3 - p0
+        approxlen <- sqrt(d[1]^2 + d[2]^2)
+        numpoints <- 2 + round(point_density * approxlen);  # to match bezier.cpp l.83, but with 2+ instead
+                                # of 1+ to slightly help the short very curved lines, where we get the length
+                                # very wrong with our approximate method (creates slight inefficiency for 
+                                # short but more or less straight lines)
+        curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=numpoints), p0, p1, p2, p3)
       }
       # Add curve points to the list (removing the point at the beginning, which we already have) and update the current point
       list_of_points <- c(list_of_points, list(curve_points[-1,]))
-      previous_control_point <- p2
-      current_point <- p3
-    } else if (command$command == "S" || command$command == "s") {
-      # Smooth Cubic Bézier command
-      p0 <- current_point
-      
-      if (command$command == "S") {
-        # 'S' -> Absolute coordinates
-        # Reflect previous control point for smooth transition
-        if (length(previous_control_point) > 0) {
-          p1 <- current_point + (current_point - previous_control_point)
-        } else {
-          # Assume a starting control point at current_point
-          p1 = current_point
-        }
-        
-        p2 <- command$params[1:2]
-        p3 <- command$params[3:4]
-      } else {
-        # 's' -> Relative coordinates
-        # Reflect previous control point for smooth transition
-        if (length(previous_control_point) > 0) {
-          p1 <- current_point + (current_point - previous_control_point)
-        } else {
-          # Assume a starting control point at current_point 
-          p1 = current_point
-        }
-        
-        p2 <- adjust_relative_points(command$params[1:2], current_point)
-        p3 <- adjust_relative_points(command$params[3:4], current_point)
-      }
-      
-      if (eqspaced) { # das scaling /100 /109 ist egal wir skalieren am Ende ohnehin aufgrund der Komponenten
-                      # evtl. wollen wir das auf einer bestimmten Skala haben und 1- sollte ausgeglichen werden
-                      # daher einmal /100 einmal nicht nicht wichtig
-        curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
-      } else {
-        curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=floor(10*point_density)), p0, p1, p2, p3)
-      }
-      curve_points <- curve_points
-      list_of_points <- c(list_of_points, list(curve_points[-1,]))
       # Keep track for the next 'S' or 's' command
       previous_control_point <- p2
-      
-    } # Let's hope that no other SVG commands are used.
+      current_point <- p3 
+      # DS: last line was only there for C and c in versions prior to 24/04/21 but I think this was a mistake
+    }
   }
-  
+    
   do.call(rbind, list_of_points)
 }
 

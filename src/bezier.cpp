@@ -3,8 +3,8 @@
 using namespace Rcpp;
 
 /* Point on a cubic Bézier curve. Numerical stability could be improved with a Horner scheme.
- * The scaling factor one hundreth is due to the fact that the kvec SVG commands assume a range
- * between 0 and 100, while the kvec point clouds are normalised between 0 and 1, which we reproduce here. */
+ * DS: This should also improve the speed considerably (even only replacing pow by corresponding 
+ * multiple products should) */
 // [[Rcpp::export]]
 NumericVector cubic_bezier_point_cpp (float t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
   return (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3);
@@ -80,7 +80,8 @@ NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVect
   Rcpp::Rcout << "l1 " << lengths[1] << "\n";
   Rcpp::Rcout << total_length << "\n";
   
-  int num_points = 2 + static_cast<int>(density * total_length);
+  int num_points = 1 + R::fround(density * total_length, 0);
+  // int num_points = 2 + static_cast<int>(density * total_length);
   Rcpp::Rcout << num_points << "\n";
   NumericMatrix out(num_points,2);
   for (float i = 0.; i < num_points; i++) {

@@ -1,7 +1,8 @@
 test_that("construct well-formed single kanjivec object", {
   skip_on_cran() # not automatically done, since not a snapshot test, but one which is rather flaky
-  expect_equal( kanjivec(kanji = "藤", database="_data_and_more_snaps/", flatten="intelligent", simplify=TRUE), kanjivec_ref_fuji,
-                ignore_attr = c("call", "kanjistat_version") ) 
+  expect_equal( kanjivec(kanji = "藤", database="_data_and_more_snaps/", flatten="intelligent",
+                         bezier_discr="svgparser", simplify=TRUE), 
+                kanjivec_ref_fuji, ignore_attr = c("call", "kanjistat_version") ) 
   # res <- kanjivec(kanji = "藤", flatten="intelligent", simplify=TRUE)
   # saveRDS(res, "kanjivec_ref_fuji.rds")
   # kanjivec_ref_fuji is readRDS'ed in helper.R
@@ -12,7 +13,8 @@ test_that("construct well-formed single kanjivec object", {
 
 test_that("construct well-formed list of multiple kanjivec objects", {
   skip_on_cran() # not automatically done, since not a snapshot test, but one which is rather flaky
-  currentlist <- kanjivec(kanji = "藤藤藤", database="_data_and_more_snaps/", flatten="intelligent", simplify=TRUE)
+  currentlist <- kanjivec(kanji = "藤藤藤", database="_data_and_more_snaps/", flatten="intelligent",
+                          bezier_discr="svgparser", simplify=TRUE)
     # should still give list of length 3
   expect_type(currentlist, "list")
   expect_length(currentlist, 3)
@@ -32,10 +34,10 @@ test_that("construct well-formed list of multiple kanjivec objects", {
 
 test_that("stroketree and strokedend produced with various options of flatten in kanjivec", {
   skip_on_cran() # not automatically done, since not a snapshot test, but one which is rather flaky
-  current_all <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten=TRUE, simplify=TRUE)
-  current_inner <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten="inner", simplify=TRUE)
-  current_outer <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten="leaves", simplify=TRUE)
-  current_none <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten=FALSE, simplify=TRUE)
+  current_all <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten=TRUE, bezier_discr="svgparser", simplify=TRUE)
+  current_inner <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten="inner", bezier_discr="svgparser", simplify=TRUE)
+  current_outer <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten="leaves", bezier_discr="svgparser", simplify=TRUE)
+  current_none <- kanjivec(kanji = "郵", database="_data_and_more_snaps/", flatten=FALSE, bezier_discr="svgparser", simplify=TRUE)
   # stroketrees
   expect_equal( current_all$stroketree, treedend_ref_yuumail$stroketree_all)
   expect_equal( current_inner$stroketree, treedend_ref_yuumail$stroketree_inner)

@@ -190,8 +190,9 @@ samplekan <- function(set = c("kyouiku", "jouyou", "jinmeiyou", "kanjidic"), siz
 # of sublists and instead of innermost empty lists (at the leaves) we put interpolations of the strokes (given as Bézier3-
 # curves in the d argument)
 # The main work is done with code from the non-CRAN package svgparser v0.1.2 (MIT license, see svgparser_lite.R)
-# Code had to be extracted because kanjistat wants to be a CRAN package when it's big...
-.kanjivg_to_list <- function(xml, padhex, char, flatten_inner=TRUE, flatten_leaves=TRUE) {  # padhex and char are for verification purposes
+# Code had to be extracted because it seems otherwise kanjistat cannot be on CRAN
+.kanjivg_to_list <- function(xml, padhex, char, bezier_discr = c("svgparser", "eqtimed", "eqspaced"),
+                             flatten_inner = TRUE, flatten_leaves = TRUE) {  # padhex and char are for verification purposes
   # check if everything is ok with xml
   # (it is not impossible that some of the kanjivg-files do not pass these tests!)
   if (!is(xml,"xml_document")) {
@@ -207,15 +208,18 @@ samplekan <- function(set = c("kyouiku", "jouyou", "jinmeiyou", "kanjidic"), siz
          "; expected ", paste0("kvg:", padhex), ", ", char)
   }
   
+  bezier_discr <- match.arg(bezier_discr)
+  eqspaced <- (bezier_discr == "eqspaced")  
   strokelist <- xml2::as_list(strokes)
   #str(strokelist, give.attr=FALSE)
   
   # the following subfunction goes through the list created by xml2::as_list depth first and 
   # fixes "nodes" and "leaves" in the way we want to.
-  # We expect the kanjivg data to be such that every leaf is in fact an empty list (otherwise print the contents and stop)
-  # 230120: The Bezier curves are still clearly visible in the stroke data and it is really
-  #          a bit unfortunate that actually the beginning and end of each curve share a point
-  #         (and it seems each B-curve is encoded with exactly 30 points)
+  # We expect the kanjivg data to be such that every leaf is in fact an empty list (otherwise print the contents and stop).
+  #
+  # if bezier_discr = "svgparser", the code for the "classic" 2023 kanjivec format is used; in particular
+  # there are (somewhat unfortunate) repetitions of points at the beginning and end of connected Bezier curves;
+  # also the rational of svgparser is that each B-curve is encoded with exactly 30 points)
   fix_xml_list <- function(li, root = FALSE) {
     if (!is.list(li)) {
       print(li)
@@ -250,12 +254,17 @@ samplekan <- function(set = c("kyouiku", "jouyou", "jinmeiyou", "kanjidic"), siz
       path_d <- attr(li, "d")   # we save this because the following code removes it
       id <- attr(li, "id")
       type <- attr(li, "type")
-      path_list <- parse_svg_path_d(path_d)
-      points_df <- path_list_to_df(path_list, state=list(x=0,y=0,npoints=30))
-      # npoints is how many interpolation points per bezier segment. 30 is the default for svgparser:::read_svg
-      x <- points_df$x/109
-      y <- 1-points_df$y/109
-      li <- cbind(x[-1],y[-1])    # the first coordinates are from the move instruction, hence the same as the second coords.
+      if (bezier_discr == "svgparser") {
+        path_list <- parse_svg_path_d(path_d)
+        points_df <- path_list_to_df(path_list, state=list(x=0,y=0,npoints=30))
+        # npoints is how many interpolation points per bezier segment. 30 is the default for svgparser:::read_svg
+        x <- points_df$x/109
+        y <- 1-points_df$y/109
+        li <- cbind(x[-1],y[-1])    # the first coordinates are from the move instruction, hence the same as the second coords.
+      } else {
+        li <- points_from_svg(path_d, 1/2, eqspaced=eqspaced)
+        li <- rescale_points(li, a=c(1,-1)/109, b=c(0,1))
+      }
       attr(li, "id") <- id
       attr(li, "type") <- type
       attr(li, "d") <- path_d # we save the original Bézier curve as attribute
