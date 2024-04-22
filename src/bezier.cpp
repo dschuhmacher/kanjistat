@@ -19,29 +19,6 @@ NumericMatrix cubic_bezier_curve_cpp (NumericVector t, NumericVector p0, Numeric
   return res;
 }
 
-// An alternative way to calculate the arc length with an integral over 
-// derivatives, which did not work so well. Marked for deletion.
-NumericVector cubic_bezier_arc_lengths_riemann(int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
-  NumericMatrix der(n,2); 
-  
-  for (int i = 0; i < n; i++) {
-    float t = i/n;
-    der(i,_) = (3 * pow(1 - t, 2) * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * pow(t, 2) * (p3 - p2));
-  }
-    
-  
-  // A Riemann Sum over the speed values. We might want to try Simpson's rule?
-  NumericVector lengths(n);
-  lengths(0) = 0;
-  float length = 0;
-  for (int i = 1; i < n; i++) {
-    length += pow(pow(der(i, 0), 2) + pow(der(i, 1), 2), 0.5);
-    lengths(i) = length;
-  }
-  
-  return lengths;
-}
-
 // Calculating a running vector with length n of a cubic Bézier curve at
 // uniformly sampled time points.
 NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
@@ -106,13 +83,11 @@ NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVect
     t = (low + (target_length - length_before) / (lengths[low + 1] - length_before)) / (n-1);
     Rcpp::Rcout << t << "  ";
     
-    out(i,_) = (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3);
+    out(i,_) = p0 + t*(-3*p0+3*p1+ t*(3*p0-6*p1+3*p2+ t*(-p0+3*p1-3*p2+p3)));
   }
   
   return out;
 }
-
-
 
 
 /* Of course the above could be more intuitively written via matrix multiplication. However, there is
