@@ -51,17 +51,17 @@ NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1
 NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
   NumericVector lengths = cubic_bezier_arc_lengths(n, p0, p1, p2, p3);
   float total_length = lengths[n-1];
-  Rcpp::Rcout << "l0 " << lengths[0] << "\n";
-  Rcpp::Rcout << "l1 " << lengths[1] << "\n";
-  Rcpp::Rcout << total_length << "\n";
+  // Rcout << "l0 " << lengths[0] << "\n";
+  // Rcout << "l1 " << lengths[1] << "\n";
+  // Rcout << total_length << "\n";
   
   int num_points = 1 + R::fround(density * total_length, 0);
   // int num_points = 2 + static_cast<int>(density * total_length);
-  Rcpp::Rcout << num_points << "\n";
+  // Rcout << num_points << "\n";
   NumericMatrix out(num_points,2);
   for (float i = 0.; i < num_points; i++) {
     float target_length = total_length * i / (num_points-1);
-    Rcpp::Rcout << "t" << target_length << " ";
+    // Rcout << "t" << target_length << " ";
     int low = 0;
     int high = n-1;
     int k = 0;
@@ -77,22 +77,14 @@ NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVect
       }
     }
     // low = index of largest of the original sample point smaller-equal to i-th (current) eqspaced point 
-    Rcpp::Rcout << low << "+++" << lengths[low] << " ";
+    // Rcout << low << "+++" << lengths[low] << " ";
 
     float length_before = lengths[low];
     t = (low + (target_length - length_before) / (lengths[low + 1] - length_before)) / (n-1);
-    Rcpp::Rcout << t << "  ";
+    // Rcout << t << "  ";
     
     out(i,_) = p0 + t*(-3*p0+3*p1+ t*(3*p0-6*p1+3*p2+ t*(-p0+3*p1-3*p2+p3)));
   }
   
   return out;
 }
-
-
-/* Of course the above could be more intuitively written via matrix multiplication. However, there is
- * no such functionality in standard Rcpp. If we need linear algebra stuff more than once we should
- * (also) use RcppArmadillo, which allows for intuitive linear algebra syntax in C++; see
- * https://cran.r-project.org/web/packages/RcppArmadillo/vignettes/RcppArmadillo-intro.pdf
- */
-

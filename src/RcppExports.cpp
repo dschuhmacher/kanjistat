@@ -56,11 +56,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// match_diagonal_trafo
+List match_diagonal_trafo(NumericMatrix points1, NumericMatrix points2);
+RcppExport SEXP _kanjistat_match_diagonal_trafo(SEXP points1SEXP, SEXP points2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type points1(points1SEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type points2(points2SEXP);
+    rcpp_result_gen = Rcpp::wrap(match_diagonal_trafo(points1, points2));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_kanjistat_cubic_bezier_point_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_point_cpp, 5},
     {"_kanjistat_cubic_bezier_curve_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_cpp, 5},
     {"_kanjistat_cubic_bezier_curve_eqspaced_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_eqspaced_cpp, 6},
+    {"_kanjistat_match_diagonal_trafo", (DL_FUNC) &_kanjistat_match_diagonal_trafo, 2},
     {NULL, NULL, 0}
 };
 

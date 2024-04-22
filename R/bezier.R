@@ -28,7 +28,7 @@ cubic_bezier_arc_length <- function(p0, p1, p2, p3, num_points = 100) {
 # Parses a string of SVG curves, as they occur in kanjivec, to a list.
 # For a complete specification of SVG commands, see
 # https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#path_commands
-parse_svg_path <- function(path) {
+parse_svg_path <- function(path, factors=c(1,1)) {
   # Insert comma before negative numbers
   path <- gsub("-", ",-", path)
   
@@ -45,10 +45,11 @@ parse_svg_path <- function(path) {
     params <- stringr::str_split_1(stringr::str_sub(cmd, 2), "[ ,]")
     params <- as.numeric(params)
     
+    # params <- rescale_points(params, a=factors)
     # Rescaling X
-    # params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)]) * factor[1]
+    params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)]) * factors[1]
     # Rescaling Y
-    # params[seq(2, length(params), by = 2)] <- -(params[seq(2, length(params), by = 2)]) * factor[2]
+    params[seq(2, length(params), by = 2)] <- (params[seq(2, length(params), by = 2)]) * factors[2]
     
     list(command = cmd_letter, params = params)
   })
@@ -68,9 +69,9 @@ adjust_relative_points <- function(relative_points, current_point) {
 # by the length of the curve.
 # We expect strings with an M in the beginning and a number of CcSc afterwards
 # otherwise the behaviour of the following function is a bit strange ...
-points_from_svg <- function(svg_str, point_density, eqspaced) {
+points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) {
   # DS to do: we need factor back, but not for parse_svg_path
-  parsed_path <- parse_svg_path(svg_str)
+  parsed_path <- parse_svg_path(svg_str, factors)
   # list_of_points <- list()
   # current_point <- c(0, 0)  # DS: removed to ensure the function fails if something is weird with the string
   

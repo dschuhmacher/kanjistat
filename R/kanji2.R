@@ -638,98 +638,62 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
 
   s1 <- get_strokes_compo(k1, which1)
   s2 <- get_strokes_compo(k2, which2)
+  points1 = do.call(rbind, s1)
+  points2 = do.call(rbind, s2)
+  mparams <- match_diagonal_trafo(points1, points2)
+  ffact1 <- mparams$fact1*0.95  # originally done in order not to miss mass spilled outside the unit square if approx="grid
+  ffact2 <- mparams$fact2*0.95
   
   if (approx=="pc" || approx=="pcweighted") {
     svg_strings1 <- sapply(s1, function(x) attr(x, "d"))
     svg_strings2 <- sapply(s2, function(x) attr(x, "d"))
-    # This simply uses the precomputed points, namely to compute fact1, fact2
-    # without creating the point clouds from Bézier curves twice.
-    points1 = do.call(rbind, s1)
-    points2 = do.call(rbind, s2)
     
-    min_x <- min(points1[, 1])
-    max_x <- max(points1[, 1])
-    min_y <- min(points1[, 2])
-    max_y <- max(points1[, 2])
-    min1 <- c(min_x, min_y)
-    max1 <- c(max_x, max_y)
-    min_x <- min(points2[, 1])
-    max_x <- max(points2[, 1])
-    min_y <- min(points2[, 2])
-    max_y <- max(points2[, 2])
-    min2 <- c(min_x, min_y)
-    max2 <- c(max_x, max_y)    
-    
-    sca1 <- max1-min1           # 2D extension
-    sca2 <- max2-min2
-    
-    meansca <- sqrt(sca1*sca2)
-    upfact <- max(meansca)
-    
-    fact1 <- sqrt(sca2/sca1)/upfact  
-    fact2 <- sqrt(sca1/sca2)/upfact
-    
+    # Use fact1,fact2 from precomputed points in kanjivec objects
+    # to find the right scaling for the strokes. Then compute
+    # point cloud discretizations directly for scaled Bézier curves
+ 
     points1 <- matrix(0, 0, 2)
     points2 <- matrix(0, 0, 2)
-    mass1 <- numeric()
-    mass2 <- numeric()
+    if (approx == "pcweighted") {
+      mass1 <- numeric()
+      mass2 <- numeric()
+    }
+    
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
-      new_points <- points_from_svg(svg_string, 1/2, eqspaced=TRUE)
-      new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
+      new_points <- points_from_svg(svg_string, 109/2, eqspaced=TRUE, factors=ffact1/109*c(1,-1))
+        # 0.95 is for consistency of the parameters with the approx="grid" case
+        # there it was to make sure that (essentially) no mass is lost, when discretizing to the grid
+        # new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
       points1 <- rbind(points1, new_points)
       if (approx == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
         mass1 <- c(mass1, average_distances(new_points))
-      else
-        mass1 <- rep(1, length(points1)/2)
     }
     for (svg_string in svg_strings2) {
-      new_points <- points_from_svg(svg_string, 1/2, eqspaced=TRUE)
-      new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
+      new_points <- points_from_svg(svg_string, 109/2, eqspaced=TRUE, factors=ffact2/109*c(1,-1))
+        # 0.95 is for consistency of the parameters with the approx="grid" case
+        # there it was to make sure that (essentially) no mass is lost, when discretizing to the grid
+        # new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
       points2 <- rbind(points2, new_points)
       if (approx == "pcweighted")
         mass2 <- c(mass2, average_distances(new_points))
-      else
-        mass2 <- rep(1, length(points2)/2)
     }
-    # Instead we could also use global nearest neighbors:
+    # Instead of average_distances we could also use global nearest neighbors:
     # nn_dists1 <- nn2(points1, points1, k=2)$nn.dists[,2]
     # nn_dists2 <- nn2(points2, points2, k=2)$nn.dists[,2]
+    if (approx == "pc") {
+      mass1 <- rep(1, dim(points1)[1])
+      mass2 <- rep(1, dim(points2)[1])
+    }
     
-    min_x <- min(points1[, 1])
-    max_x <- max(points1[, 1])
-    min_y <- min(points1[, 2])
-    max_y <- max(points1[, 2])
-    min1 <- c(min_x, min_y)
-    max1 <- c(max_x, max_y)
-    min_x <- min(points2[, 1])
-    max_x <- max(points2[, 1])
-    min_y <- min(points2[, 2])
-    max_y <- max(points2[, 2])
-    min2 <- c(min_x, min_y)
-    max2 <- c(max_x, max_y)    
-    
-    cen1 <- (min1 + max1) / 2
-    sca1 <- max1-min1           # 2D extension
-    cen2 <- (min2 + max2) / 2
-    sca2 <- max2-min2
-    
-    meansca <- sqrt(sca1*sca2)
-    upfact <- max(meansca)
-    
-    fact1 <- sqrt(sca2/sca1)/upfact  
-    fact2 <- sqrt(sca1/sca2)/upfact
-    
-    rescaled_points <- matrix(nrow = nrow(points1), ncol = ncol(points1))
-    rescaled_points[, 1] <- (points1[, 1] - min1[1]) * fact1[1] # Rescale x
-    rescaled_points[, 2] <- (points1[, 2] - min1[2]) * fact1[2] # Rescale y
-    points1 <- rescaled_points
-    
-    rescaled_points <- matrix(nrow = nrow(points2), ncol = ncol(points2))
-    rescaled_points[, 1] <- (points2[, 1] - min2[1]) * fact2[1] 
-    rescaled_points[, 2] <- (points2[, 2] - min2[2]) * fact2[2]
-    points2 <- rescaled_points
-    
+    points1 <- rescale_points(points1, b = ffact1 * (c(0,1) - mparams$cen1) + c(0.5,0.5))
+    points2 <- rescale_points(points2, b = ffact2 * (c(0,1) - mparams$cen2) + c(0.5,0.5))
+    #
+    # visual checking of alignment:
+    # plot(points1, xlim=c(0,1), ylim=c(0,1), asp=1, cex=0.5)
+    # points(points2, col=3, xlim=c(0,1), ylim=c(0,1), asp=1, cex=0.5)
+    # rect(0.025,0.025,0.975,0.975)
+
     ink1 <- sum(mass1)
     ink2 <- sum(mass2)
     output <- ifelse(output=="distplus", "dist", output)
@@ -752,42 +716,19 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     }
     
     # For debugging:
-    a <- transport::wpp(points1, mass1)
-    b <- transport::wpp(points2, mass2)
-    temp <- transport::unbalanced(a, b, p=p, C=C, output="all")
-    plot(temp)  # if that does not work transport::plot.ut_wpp
+    # a <- transport::wpp(points1, mass1)
+    # b <- transport::wpp(points2, mass2)
+    # temp <- transport::unbalanced(a, b, p=p, C=C, output="all")
+    # plot(temp)  # if that does not work transport::plot.ut_wpp
     # plot(temp, what="trans")
     # plot(temp, what="extra")
-    # temp$dist
+    # temp$dist/max(ink1,ink2)
+    
   } else {
     # Here, bitmaps are used for optimal transport:
     
-    # location and scale based on min/max dimension of stroke info is extreme but
-    # not considerably worse than anything else and much more efficient than 
-    # creating a bitmap first points of all strokes in a single matrix
-    mat1 <- do.call(rbind, s1)
-    mat2 <- do.call(rbind, s2)
-    min1 <- apply(mat1, 2, min)   
-    max1 <- apply(mat1, 2, max)
-    min2 <- apply(mat2, 2, min)
-    max2 <- apply(mat2, 2, max)
-    cen1 <- (min1 + max1) / 2
-    sca1 <- max1-min1           # 2D extension
-    cen2 <- (min2 + max2) / 2
-    sca2 <- max2-min2
-    meansca <- sqrt(sca1*sca2)  # this is still 2D of course.
-    # The geometric mean is nicer here because going from ele1 to ele2 (the elements given
-    # by which) we can multiply twice by sqrt(sca2/sca1) and arrive after the first multipl. at the mean
-    # and after the second multipl. at ele2. In contrast to, say, the arithmetic mean this operation
-    # is consistent with the natural penalty of sca2/sca1 we return below.
-    upfact <- max(meansca) # this is one way of doing it meaning if the aspect ratio is not "the same
-                           # way round" for both kanji we do not make the kanji the same aspect ratio in the end
-                           # the other way would be instead of fact1, fact2 below to set both directions to size 1
-    fact1 <- sqrt(sca2/sca1)/upfact  
-    fact2 <- sqrt(sca1/sca2)/upfact  
-    
-    s1_scaled <- lapply(s1, \(x) { (x - matrix(cen1, nrow(x), 2, byrow = TRUE))*matrix(fact1, nrow(x), 2, byrow = TRUE)*0.95 + matrix(0.5, nrow(x), 2) })
-    s2_scaled <- lapply(s2, \(x) { (x - matrix(cen2, nrow(x), 2, byrow = TRUE))*matrix(fact2, nrow(x), 2, byrow = TRUE)*0.95 + matrix(0.5, nrow(x), 2) })
+    s1_scaled <- lapply(s1, \(x) { (x - matrix(mparams$cen1, nrow(x), 2, byrow = TRUE))*matrix(ffact1, nrow(x), 2, byrow = TRUE) + matrix(0.5, nrow(x), 2) })
+    s2_scaled <- lapply(s2, \(x) { (x - matrix(mparams$cen2, nrow(x), 2, byrow = TRUE))*matrix(ffact2, nrow(x), 2, byrow = TRUE) + matrix(0.5, nrow(x), 2) })
     bm1 <- strokelist_to_bitmap(s1_scaled, size=size, lwd=lwd)
     bm2 <- strokelist_to_bitmap(s2_scaled, size=size, lwd=lwd)
     # transport::matimage(bm1, asp=1) # For debugging, we can print the matrices
@@ -823,9 +764,10 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
   ele2 <- pluck(compos2, !!! which2, 1)
   description <- list(elements=c(ele1,ele2), which=c(paste(which1, collapse=""), paste(which2, collapse="")))
   
-  cursca1 <- sca1/max(sca1)
-  cursca2 <- sca2/max(sca2)
-  res <- c(description, res, list(ink1=ink1, ink2=ink2, reltrans=cen2-cen1, scar=sca2/sca1, distort=cursca2/cursca1))
+  cursca1 <- mparams$sca1/max(mparams$sca1)
+  cursca2 <- mparams$sca2/max(mparams$sca2)
+  res <- c(description, res, list(ink1=ink1, ink2=ink2, reltrans=mparams$cen2-mparams$cen1, 
+                                  scar=mparams$sca2/mparams$sca1, distort=cursca2/cursca1))
   # this is ink after up-scaling; not much good, since we scale differently in x and y direction differently.
   # It is not possible to get a more or less exact number for the ink before scaling unless we do another plot, which
   # seems overkill)
