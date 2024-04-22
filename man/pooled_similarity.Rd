@@ -6,7 +6,11 @@
 \alias{pooled_similarity}
 \title{Precomputed kanji distances}
 \format{
-To be filled
+A dataframe containing kanji similarity judgments by 3 "native or native-like"
+speakers of Japanese. For each row, the pivot kanji was compared to a list of
+potential distractors. From the distractors, the subjects selected one
+character which they found particularly easy to confuse with the pivot. For
+the exact methodology, see the original study referenced below.
 }
 \source{
 Datasets from \url{https://lars.yencken.org/datasets}, made available under the
@@ -23,7 +27,8 @@ pooled_similarity
 Precomputed kanji distances
 }
 \examples{
-# To do
+# Get kanji characters that were found to be easily confused with 大.
+pooled_similarity[pooled_similarity$selected == "大", ]$pivot
 
 }
 \references{
