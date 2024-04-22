@@ -2,12 +2,10 @@
   
 using namespace Rcpp;
 
-/* Point on a cubic Bézier curve. Numerical stability could be improved with a Horner scheme.
- * DS: This should also improve the speed considerably (even only replacing pow by corresponding 
- * multiple products should) */
+// Point on a cubic Bézier curve.
 // [[Rcpp::export]]
 NumericVector cubic_bezier_point_cpp (float t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
-  return (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3);
+  return p0 + t*(-3*p0+3*p1+ t*(3*p0-6*p1+3*p2+ t*(-p0+3*p1-3*p2+p3)));
 }
 
 // [[Rcpp::export]]
@@ -15,8 +13,8 @@ NumericMatrix cubic_bezier_curve_cpp (NumericVector t, NumericVector p0, Numeric
   int n = t.length();
   NumericMatrix res(n,2); // (much) faster than appending stuff
   
-  for (int i = 0; i < n; i++)
-    res(i,_) = pow(1 - t[i], 3) * p0 + 3 * pow(1 - t[i], 2) * t[i] * p1 + 3 * (1 - t[i]) * pow(t[i], 2) * p2 + pow(t[i], 3) * p3;
+  for (int i = 0; i < n; i++) // The Horner scheme for pow(1 - t[i], 3) * p0 + 3 * pow(1 - t[i], 2) * t[i] * p1 + 3 * (1 - t[i]) * pow(t[i], 2) * p2 + pow(t[i], 3) * p3;
+    res(i,_) = p0 + t[i]*(-3*p0+3*p1+ t[i]*(3*p0-6*p1+3*p2+ t[i]*(-p0+3*p1-3*p2+p3)));
   
   return res;
 }
@@ -51,7 +49,7 @@ NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1
   
   for (float i = 0.; i < n; i++) {
     float t = i/(n-1);
-    points(i,_) = (pow(1 - t, 3) * p0 + 3 * pow(1 - t, 2) * t * p1 + 3 * (1 - t) * pow(t, 2) * p2 + pow(t, 3) * p3);
+    points(i,_) = p0 + t*(-3*p0+3*p1+ t*(3*p0-6*p1+3*p2+ t*(-p0+3*p1-3*p2+p3)));
   }
   
   NumericVector lengths(n);
