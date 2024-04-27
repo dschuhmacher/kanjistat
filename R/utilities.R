@@ -262,7 +262,7 @@ samplekan <- function(set = c("kyouiku", "jouyou", "jinmeiyou", "kanjidic"), siz
         y <- 1-points_df$y/109
         li <- cbind(x[-1],y[-1])    # the first coordinates are from the move instruction, hence the same as the second coords.
       } else {
-        li <- points_from_svg(path_d, 1/2, eqspaced=eqspaced)
+        li <- points_from_svg(path_d, 50/109, eqspaced=eqspaced)
         li <- rescale_points(li, a=c(1,-1)/109, b=c(0,1))
       }
       attr(li, "id") <- id

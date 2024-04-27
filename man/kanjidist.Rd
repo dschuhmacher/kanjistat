@@ -15,6 +15,7 @@ kanjidist(
   type = c("rtt", "unbalanced", "balanced"),
   size = 48,
   lwd = 2.5,
+  density = 30,
   verbose = FALSE
 )
 }
@@ -46,9 +47,11 @@ but the final distance is divided by the maximum of the total ink (sum of weight
 to the 1/p. \code{"balanced"} means the weights are normalized so that both images have the same
 total mass 1. Everything has to be transported, i.e.\ disposal of mass is not allowed.}
 
-\item{size}{side length of the bitmaps used for matching components.}
+\item{size}{side length of the bitmaps used for matching components (if \verb{approx = "grid}).}
 
-\item{lwd}{linewidth for drawing the components in these bitmaps.}
+\item{lwd}{linewidth for drawing the components in these bitmaps (if \verb{approx = "grid}).}
+
+\item{density}{approximate number of discretization points per unit line length (if \verb{approx != "grid})}
 
 \item{verbose}{logical. Whether to print detailed information on the cost for all pairs of
 components and the final matching.}

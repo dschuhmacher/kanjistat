@@ -133,7 +133,6 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c
                      save=FALSE, overwrite=FALSE, simplify=TRUE) {
   
   bezier_discr <- match.arg(bezier_discr)
-  if (length(bezier_discr) != 1) stop("Multiple bezier_discr arguments not yet implemented")
   callstring <- paste(deparse(sys.call(), width.cutoff = 100L), collapse = "")
   
   if (is.null(database)) {

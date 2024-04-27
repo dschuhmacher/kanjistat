@@ -5,7 +5,7 @@ using namespace Rcpp;
 // Point on a cubic Bézier curve.
 // [[Rcpp::export]]
 NumericVector cubic_bezier_point_cpp (float t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3) {
-  return p0 + t*(-3*p0+3*p1+ t*(3*p0-6*p1+3*p2+ t*(-p0+3*p1-3*p2+p3)));
+  return p0 + t*(-3*p0 + 3*p1 + t*(3*p0 - 6*p1 + 3*p2 + t*(-p0 + 3*p1 - 3*p2 + p3)));
 }
 
 // [[Rcpp::export]]
@@ -14,7 +14,7 @@ NumericMatrix cubic_bezier_curve_cpp (NumericVector t, NumericVector p0, Numeric
   NumericMatrix res(n,2); // (much) faster than appending stuff
   
   for (int i = 0; i < n; i++) // The Horner scheme for pow(1 - t[i], 3) * p0 + 3 * pow(1 - t[i], 2) * t[i] * p1 + 3 * (1 - t[i]) * pow(t[i], 2) * p2 + pow(t[i], 3) * p3;
-    res(i,_) = p0 + t[i]*(-3*p0+3*p1+ t[i]*(3*p0-6*p1+3*p2+ t[i]*(-p0+3*p1-3*p2+p3)));
+    res(i,_) = p0 + t[i]*(-3*p0 + 3*p1 + t[i]*(3*p0 - 6*p1 + 3*p2 + t[i]*(-p0 + 3*p1 - 3*p2 + p3)));
   
   return res;
 }
@@ -26,7 +26,7 @@ NumericVector cubic_bezier_arc_lengths(int n, NumericVector p0, NumericVector p1
   
   for (float i = 0.; i < n; i++) {
     float t = i/(n-1);
-    points(i,_) = p0 + t*(-3*p0+3*p1+ t*(3*p0-6*p1+3*p2+ t*(-p0+3*p1-3*p2+p3)));
+    points(i,_) = p0 + t*(-3*p0 + 3*p1 + t*(3*p0 - 6*p1 + 3*p2 + t*(-p0 + 3*p1 - 3*p2 + p3)));
   }
   
   NumericVector lengths(n);
@@ -58,6 +58,8 @@ NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVect
   int num_points = 1 + R::fround(density * total_length, 0);
   // int num_points = 2 + static_cast<int>(density * total_length);
   // Rcout << num_points << "\n";
+  // the algo below makes most sense if n >> num_points, whereas we have
+  // n \approx num_points at best: I guess linear search for all points should be faster(?)
   NumericMatrix out(num_points,2);
   for (float i = 0.; i < num_points; i++) {
     float target_length = total_length * i / (num_points-1);
@@ -83,7 +85,7 @@ NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVect
     t = (low + (target_length - length_before) / (lengths[low + 1] - length_before)) / (n-1);
     // Rcout << t << "  ";
     
-    out(i,_) = p0 + t*(-3*p0+3*p1+ t*(3*p0-6*p1+3*p2+ t*(-p0+3*p1-3*p2+p3)));
+    out(i,_) = p0 + t*(-3*p0 + 3*p1 + t*(3*p0 - 6*p1 + 3*p2 + t*(-p0 + 3*p1 - 3*p2 + p3)));
   }
   
   return out;

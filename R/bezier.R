@@ -132,6 +132,11 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) 
     
       if (eqspaced) {
         curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
+          # 25 "check points" is fully sufficient (so let's keep this hard wired):
+          # when point_density is just around 20-30, the
+          # computed theoretical distance between different strokes will vary a lot due to rounding
+          # (so errors in no of check point is not seen), when point_density is high (e.g. 100),
+          # the distances turn pretty perfect even with only 25 check points.
       } else {
         d <- p3 - p0
         approxlen <- sqrt(d[1]^2 + d[2]^2)
@@ -157,12 +162,15 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) 
 # A helper function to calculate the distance to the points before and after
 # in a polygonal line representing an SVG curve.
 average_distances <- function(coords) {
-  if (length(coords) < 3) {
-    return(rep(0.1, length(coords)/2)) # Dealing with one-row matrices
+  n <- dim(coords)[1]
+  if (n < 2) {
+    return(rep(0.1, n/2)) # Dealing with one-row matrices
   }
-  diffs <- diff(matrix(as.numeric(rbind(coords[2,], coords, coords[nrow(coords)-1,])), ncol=2))
+  diffs <- diff(coords)
   distances <- sqrt(diffs[, 1]^2 + diffs[, 2]^2)
   
-  distance_average <- (distances[-length(distances)] + distances[-1]) / 2
+  distance_average <- (distances[-(n-1)] + distances[-1]) / 2
+  distance_average <- c(distances[1]/2, distance_average, distances[n-1]/2)
+  # except for the /2 in the previous line, this code does the same as the old code
   return(distance_average)
 }

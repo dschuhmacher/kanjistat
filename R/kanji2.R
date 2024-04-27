@@ -141,8 +141,9 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' but the final distance is divided by the maximum of the total ink (sum of weights) in each component
 #' to the 1/p. \code{"balanced"} means the weights are normalized so that both images have the same
 #' total mass 1. Everything has to be transported, i.e.\ disposal of mass is not allowed. 
-#' @param size side length of the bitmaps used for matching components.
-#' @param lwd  linewidth for drawing the components in these bitmaps.
+#' @param size side length of the bitmaps used for matching components (if `approx = "grid`).
+#' @param lwd  linewidth for drawing the components in these bitmaps (if `approx = "grid`).
+#' @param density approximate number of discretization points per unit line length (if `approx != "grid`)
 #' @param verbose logical. Whether to print detailed information on the cost for all pairs of
 #' components and the final matching.  
 #'
@@ -186,7 +187,7 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' } 
 kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2,
                       approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
-                      size=48, lwd=2.5, verbose=FALSE) {
+                      size=48, lwd=2.5, density=30, verbose=FALSE) {
   stopifnot(is(k1, "kanjivec") && is(k2, "kanjivec"))
   type <- match.arg(type)
   if (k1$char == k2$char) return(0) 
@@ -197,7 +198,14 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     if (any(abs(p-ptemp) > 1e-6)) warning("q = ", q[abs(p-ptemp) > 1e-6], " is substantially out of range for logi2C") 
     1/(1+((p0/(1-p0))*(1-p)/p)^a)
   }
-
+  
+  logi2Cplus <- function(q, a=2, p0=0.5, CC=0.2) {  
+    ptemp <- q/CC
+    p <- pmax(0,pmin(1,ptemp))
+    if (any(abs(p-ptemp) > 1e-6)) warning("q = ", q[abs(p-ptemp) > 1e-6], " is substantially out of range for logi2C") 
+    1/(1+(p0/(1-p0))*((1-p)/p)^a)
+  }
+  
   level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
   useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
     # Currently this uses only a strict comparison, e.g. the "left and right betas" are not the same.
@@ -218,7 +226,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
   allcosts <- all_compcosts(k1=k1, k2=k2,
                             compo_seg_depth1=compo_seg_depth1, compo_seg_depth2=compo_seg_depth2,
                             p=p, C=C, approx=approx, type=type,
-                            size=size, lwd=lwd, precompute=FALSE)
+                            size=size, lwd=lwd, density=density, precompute=FALSE)
 
   lseq1 <- seq_len(min(compo_seg_depth1, length(k1$ncompos)))
   lseq2 <- seq_len(min(compo_seg_depth2, length(k2$ncompos)))
@@ -385,7 +393,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #' @param klist2 an optional second list of \code{\link{kanjimat}} objects.
 #' @param compo_seg_depth integer \eqn{\geq 1}. Specifies for all kanji the 
 #' deepest level included for component matching. If 1, only the kanji itself is used.
-#' @param p,C,type,approx,size,lwd,verbose the same as for the function \code{\link{kanjidist}}.
+#' @param p,C,type,approx,size,lwd,density,verbose the same as for the function \code{\link{kanjidist}}.
 #'
 #' @section Warning:
 #'
@@ -407,7 +415,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #' }
 kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
                   approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
-                  size=48, lwd=2.5, verbose=FALSE) {
+                  size=48, lwd=2.5, density=30, verbose=FALSE) {
   stopifnot( is.list(klist) )
   stopifnot( all(sapply(klist, \(x) is(x, "kanjivec"))) )
   type <- match.arg(type)
@@ -559,7 +567,7 @@ compoweights_ink <- function(kanji, compo_seg_depth=4, relative=TRUE, tricklelos
 # is not close to identity, there could be an additional penalty, say)
 all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C=0.2,
                           approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"), 
-                          size=48, lwd=2.5, precompute=FALSE) {
+                          size=48, lwd=2.5, density=30, precompute=FALSE) {
   #recommended combinations:
   # size=32, lwd=1.8 (noticable loss in quality, but still ok)
   # size=48, lwd=2.5
@@ -599,7 +607,7 @@ all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C
       if (precompute) {
         temp <- component_cost_prec(bitstats1, bitstats2, which1=c(l1, i1), which2=c(l2, i2), p=p, C=C, type=type, output = "distplus")
       } else {
-        temp <- component_cost(k1, k2, which1=c(l1, i1), which2=c(l2, i2), size=size, lwd=lwd,
+        temp <- component_cost(k1, k2, which1=c(l1, i1), which2=c(l2, i2), size=size, lwd=lwd, density=density,
                                p=p, C=C, approx=approx, type=type, output = "distplus")
       }
       pluck(res, r1, r2) <- temp
@@ -626,7 +634,7 @@ all_compcosts <- function(k1, k2, compo_seg_depth1=4, compo_seg_depth2=4, p=1, C
 
 # the plus in distplus is for total ink of the two kanji and their shift vector, scaling and
 # distortion rates.
-component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.5, p=1, C=0.2,
+component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.5, density=30, p=1, C=0.2,
                            approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
                            output=c("distplus","all")) {
   approx <- match.arg(approx)
@@ -661,7 +669,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     
     # In case we want to control the number of points, we reconstruct from SVG like so:
     for (svg_string in svg_strings1) {
-      new_points <- points_from_svg(svg_string, 109/2, eqspaced=TRUE, factors=ffact1/109*c(1,-1))
+      new_points <- points_from_svg(svg_string, point_density=density, eqspaced=TRUE, factors=ffact1/109*c(1,-1))
         # 0.95 is for consistency of the parameters with the approx="grid" case
         # there it was to make sure that (essentially) no mass is lost, when discretizing to the grid
         # new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
@@ -670,7 +678,7 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
         mass1 <- c(mass1, average_distances(new_points))
     }
     for (svg_string in svg_strings2) {
-      new_points <- points_from_svg(svg_string, 109/2, eqspaced=TRUE, factors=ffact2/109*c(1,-1))
+      new_points <- points_from_svg(svg_string, point_density=density, eqspaced=TRUE, factors=ffact2/109*c(1,-1))
         # 0.95 is for consistency of the parameters with the approx="grid" case
         # there it was to make sure that (essentially) no mass is lost, when discretizing to the grid
         # new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
