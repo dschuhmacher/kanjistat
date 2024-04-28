@@ -39,7 +39,7 @@ if (current_doc != "") {
 process_doc <- function(doc) {
   tibble(
     pivot = doc$pivot,
-    selected = doc$selected,
+    selected = paste(doc$selected, collapse = ", "),
     distractors = paste(doc$distractors, collapse = ", ")
   )
 }
@@ -92,7 +92,7 @@ pooled_distance_benchmark <- function(distance, sample_size) {
 })
   
   df$distance_rank <- lapply(1:nrow(df), function(i) {rank(df$distances[[i]], ties.method = "max")})
-  df$selected_indices <- lapply(1:nrow(df), function(i) {which(df$distractors[[i]] == df$selected[i])})
+  df$selected_indices <- lapply(1:nrow(df), function(i) {which(df$distractors[[i]] %in% strsplit(df$selected[i], ", ")[[1]])})
   
   df$first_selected_rank <- NA  # Create a column to store results
 
@@ -105,7 +105,6 @@ pooled_distance_benchmark <- function(distance, sample_size) {
   
   df
 }
-
 #print(kanjiToKvec(c("放", "方", "施", "旋","族")))
 results <- pooled_distance_benchmark(kanjidist, 100)
 
@@ -117,6 +116,26 @@ df$distances
 df$distance_rank
 df
 ```
+```{r}
+df$selected_indices <- lapply(1:nrow(df), function(i) {which(df$distractors[[i]] %in% strsplit(df$selected[i], ", ")[[1]])})
+
+a <- c(1, 2, 3, 4, 5) # Example array a
+b <- c(2, 4, 6, 8, 10) # Example array b
+
+# Find indices in b where its elements appear in a
+indices <- which(df$distractors[[2]] %in% strsplit(df$selected[2], ", ")[[1]])
+indices
+```
+
+
+```{r}
+lapply(1:length(df[1,]$distractors), function(i) {df[1,]$distractors[k] %in% df[1,]$selected})
+
+df[[1,]]$distractors[1] %in% df[1,]$selected
+
+df[1,]$distractors[[1]][[1]] %in% df[1,]$selected[[1]]
+```
+
 
 ```{r}
 hist(results$first_selected_rank)
