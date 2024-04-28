@@ -3,8 +3,6 @@ This is code to import the pooled distance data from Yencken and Baldwin (2008).
 The original files can be downloaded from https://lars.yencken.org/datasets/kanji-confusion.
 
 ```{r}
-# install.packages("R.utils")
-# install.packages("tidyverse")
 library(R.utils)
 library(yaml)
 library(tidyverse)
@@ -66,6 +64,16 @@ kanjiToKvec <- function(kan) {
   })
 }
 
+jaccard_index <- function(array1, array2) {
+  # Convert arrays to sets
+  set1 <- unique(array1)
+  set2 <- unique(array2)
+  
+  intersection <- length(intersect(set1, set2))
+  union <- length(union(set1, set2))
+  
+  return(intersection / union)
+}
 
 pooled_distance_benchmark <- function(distance, sample_size) {
   # Tests the provided distance function on the Yencken and Baldwin (2008)
@@ -103,28 +111,25 @@ pooled_distance_benchmark <- function(distance, sample_size) {
     } 
   }
   
+  df$jaccard <- lapply(1:nrow(df), function (i) {jaccard_index(order(df$distances[[i]])[1:length(df$selected_indices[[i]])], df$selected_indices[[i]])})
+
+  
   df
 }
-#print(kanjiToKvec(c("放", "方", "施", "旋","族")))
 results <- pooled_distance_benchmark(kanjidist, 100)
 
 df <- results
 
-df$distractors
-df$selected
-df$distances
-df$distance_rank
-df
+hist(unlist(df$jaccard))
 ```
+
 ```{r}
-df$selected_indices <- lapply(1:nrow(df), function(i) {which(df$distractors[[i]] %in% strsplit(df$selected[i], ", ")[[1]])})
+df$jaccard <- lapply(1:nrow(df), function (i) {jaccard_index(order(df$distances[[i]])[1:length(df$selected_indices[[i]])], df$selected_indices[[i]])})
 
-a <- c(1, 2, 3, 4, 5) # Example array a
-b <- c(2, 4, 6, 8, 10) # Example array b
+jaccard_index(order(df$distances[[5]])[1:length(df$selected_indices[[5]])],df$selected_indices[[5]])
 
-# Find indices in b where its elements appear in a
-indices <- which(df$distractors[[2]] %in% strsplit(df$selected[2], ", ")[[1]])
-indices
+order(df$distances[[5]])
+df$jaccard[[5]]
 ```
 
 
