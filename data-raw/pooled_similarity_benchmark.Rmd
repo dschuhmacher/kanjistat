@@ -6,33 +6,39 @@ The original files can be downloaded from https://lars.yencken.org/datasets/kanj
 library(R.utils)
 library(yaml)
 library(tidyverse)
+library(kanjistat)
 
 file_path <- "poolexp_judgements.yaml.gz"
 
-connection <- gzfile(file_path, "r")
-yaml_text <- readLines(connection, warn = FALSE) 
-close(connection) 
-
-
-yaml_data_list <- list() 
-current_doc <- ""
-
-for (line in yaml_text) {
-  if (startsWith(line, "---")) {
-    if (current_doc != "") {
-      yaml_data_list[[length(yaml_data_list) + 1]] <- yaml.load(current_doc)
+load_yaml <- function (fp) {
+  connection <- gzfile(fp, "r")
+  yaml_text <- readLines(connection, warn = FALSE) 
+  close(connection) 
+  
+  
+  yaml_data_list <- list() 
+  current_doc <- ""
+  
+  for (line in yaml_text) {
+    if (startsWith(line, "---")) {
+      if (current_doc != "") {
+        yaml_data_list[[length(yaml_data_list) + 1]] <- yaml.load(current_doc)
+      }
+      current_doc <- ""
+    } else {
+      current_doc <- paste0(current_doc, line, "\n")
     }
-    current_doc <- ""
-  } else {
-    current_doc <- paste0(current_doc, line, "\n")
   }
+  
+  
+  if (current_doc != "") {
+     yaml_data_list[[length(yaml_data_list) + 1]] <- yaml.load(current_doc)
+  }
+  
+  yaml_data_list
 }
 
-
-if (current_doc != "") {
-   yaml_data_list[[length(yaml_data_list) + 1]] <- yaml.load(current_doc)
-}
-
+yaml_data_list <- load_yaml(file_path)
 
 process_doc <- function(doc) {
   tibble(
@@ -123,26 +129,91 @@ df <- results
 hist(unlist(df$jaccard))
 ```
 
+Next, we load data from [Yencken and Baldwin (2006)](https://lars.yencken.org/papers/iccpol-2006.pdf).
+
 ```{r}
-df$jaccard <- lapply(1:nrow(df), function (i) {jaccard_index(order(df$distances[[i]])[1:length(df$selected_indices[[i]])], df$selected_indices[[i]])})
+# Using the loading function from above to process participant data.
+participants <- load_yaml("kanjiexp_participants.yaml.gz")
 
-jaccard_index(order(df$distances[[5]])[1:length(df$selected_indices[[5]])],df$selected_indices[[5]])
+process_doc <- function(doc) {
+  tibble(
+    id = doc$id,
+    ability = doc$ability,
+    comment = doc$comment,
+    firstLanguage = doc$firstLanguage,
+    numResponses = doc$numResponses,
+    numKanji = doc$numKanji,
+    kanjiSetId = doc$kanjiSetId,
+    languageGroup = doc$languageGroup,
+    startTime = parse_datetime(doc$startTime),
+    finishTime = parse_datetime(doc$finishTime),
+    stimulusSet = doc$stimulusSet
+    
+  )
+}
 
-order(df$distances[[5]])
-df$jaccard[[5]]
+participants <- lapply(participants, process_doc) %>% bind_rows()
+
+# We now select a subset of participant ids, in this case Japanese learners 
+# whose first languages does not use Hanzi/Kanji/Hanja. This is done with
+# the language group field, which is also used in the original study. 
+JSL_IDs <- filter(participants, participants["languageGroup"] == "JSL")[["id"]]
+```
+```{r}
+judgements <- load_yaml("kanjiexp_judgements.yaml.gz")
+
+process_doc <- function(doc) {
+  tibble(
+    k1 = doc$kanjiA,
+    k2 = doc$kanjiB,
+    id = doc$participantId,
+    value = doc$value
+  )
+}
+
+judgements <- lapply(judgements, process_doc) %>% bind_rows()
+
+filtered <- filter(judgements, judgements[["id"]] %in% JSL_IDs)
+```
+
+We add a computed similarity as a column and compute Spearman's rho.
+
+```{r}
+# This takes in two chars, as an example a (not so useful) function returning the stroke edit distance if available
+stroke_edit_distance <- function(k1,k2) {
+  k1 <- match(k1, kbase$kanji)
+  k2 <- match(k2, kbase$kanji)
+  
+  if (k1 < nrow(dstrokedit) && k2 < nrow(dstrokedit)) {
+    if (dstrokedit[k1, k2] == 0) {
+      NA
+    } else {
+      dstrokedit[k1, k2]
+    }
+  } else {
+    NA
+  }
+} 
+
+# We want to use our kanji distance
+kanjistat_distance <- function(k1,k2) {
+  k1 <- match(k1, kbase$kanji)
+  k2 <- match(k2, kbase$kanji)
+  
+  kanjidist(k1, k2)
+} 
+```
+We have to sample for now because kanjidist is computationally expensive
+
+```{r}
+sampled <- filtered[sample(nrow(filtered), size=100), ]
+
+# We compute our distance for the pairs
+sampled$kanjistat <- lapply(1:nrow(filtered), function(i) {kanjistat_distance(filtered$k1[[i]], filtered$k2[[i]])})
+
+sampled$kanjistat
 ```
 
 
-```{r}
-lapply(1:length(df[1,]$distractors), function(i) {df[1,]$distractors[k] %in% df[1,]$selected})
 
-df[[1,]]$distractors[1] %in% df[1,]$selected
-
-df[1,]$distractors[[1]][[1]] %in% df[1,]$selected[[1]]
-```
-
-
-```{r}
-hist(results$first_selected_rank)
-```
 
