@@ -173,6 +173,9 @@ process_doc <- function(doc) {
 
 judgements <- lapply(judgements, process_doc) %>% bind_rows()
 
+# We invert the similarity judgement on a scale from 0-4 to a distance judgment 0-1
+judgements$value <- 1 - judgements$value / 4
+
 filtered <- filter(judgements, judgements[["id"]] %in% JSL_IDs)
 ```
 
@@ -195,23 +198,40 @@ stroke_edit_distance <- function(k1,k2) {
   }
 } 
 
-# We want to use our kanji distance
+# We use our kanji distance, assuming kvec is loaded.
+# 
 kanjistat_distance <- function(k1,k2) {
   k1 <- match(k1, kbase$kanji)
   k2 <- match(k2, kbase$kanji)
   
-  kanjidist(k1, k2)
-} 
+  if (k1 > length(kvec) || k2 > length(kvec)) {
+    return(NA)
+  }
+
+  k1 <- kvec[[k1]]
+  k2 <- kvec[[k2]]
+  
+  kanjidist(k1, k2, approx="pcweighted")
+}
+
 ```
-We have to sample for now because kanjidist is computationally expensive
+We have to sample for now because kanjidist is computationally expensive.
 
 ```{r}
 sampled <- filtered[sample(nrow(filtered), size=100), ]
 
 # We compute our distance for the pairs
-sampled$kanjistat <- lapply(1:nrow(filtered), function(i) {kanjistat_distance(filtered$k1[[i]], filtered$k2[[i]])})
+sampled$kanjistat <- lapply(1:nrow(sampled), function(i) {kanjistat_distance(sampled$k1[[i]], sampled$k2[[i]])})
+sampled$kanjistat <- as.numeric(sampled$kanjistat)
 
-sampled$kanjistat
+# This dataset contains many non-joyo kanji, so we 
+# TODO: We should use kvec for non-joyo kanji instead of filtering them out, probably.
+sampled <- sampled[!is.na(sampled$kanjistat), ]
+
+# Lastly we compute the rank correlation
+rho <- cor(sampled$kanjistat, sampled$value, method = "spearman")
+
+print(rho)
 ```
 
 
