@@ -12,6 +12,11 @@
 #' @param flatten logical. Should nodes that are only-children be fused with their parents?
 #'        Alternatively one of the strings "intelligent", "inner" or "leaves". Although the first is the default
 #'        it is experimental and the precise meaning will change in the future; see details.
+#' @param bezier_discr character. How to discretize the Bézier curves describing the strokes. If
+#'        "svgparser" (the only option available prior to kanjistat 0.12.0), code from the non-CRAN package svgparser 
+#'        is used for discretizing at equal time steps. The new choices "eqtimed" and "eqspaced" discretize
+#'        into fewer points (and allow for more customization underneath). The former creates discretization
+#'        points at equal time steps, the latter at equal distance steps (to a good approximation).
 #' @param save logical or character. If FALSE return the (list of) kanjivec object(s). Otherwise save the result
 #' as an rds file in the working directory (as kvecsave.rds) or under the file path provided.
 #' @param overwrite logical. If FALSE return an error (before any computations are done) if the designated 
@@ -118,7 +123,7 @@
 #' 
 #' @seealso \code{\link{plot.kanjivec}}, \code{\link{str.kanjivec}}
 #' 
-kanjivec <- function(kanji, database=NULL, flatten="intelligent", 
+kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c("svgparser", "eqtimed", "eqspaced"),
                      # default for flatten went from TRUE in 2022, to FALSE in Jan 2023
                      # to "intelligent" in Feb 2023 (about when components and veins where
                      # added to kanjivec objects)
@@ -126,6 +131,8 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent",
                      # of the KanjiVG structure when plotting with type="dend", but in
                      # complicated kanji with many split components plots are confusing.
                      save=FALSE, overwrite=FALSE, simplify=TRUE) {
+  
+  bezier_discr <- match.arg(bezier_discr)
   callstring <- paste(deparse(sys.call(), width.cutoff = 100L), collapse = "")
   
   if (is.null(database)) {
@@ -196,7 +203,8 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent",
     # it seems using paste0 rather than filepath is the easiest way(?) to account for the fact
     # that the user might have a another path separator than "/" on her system (does that exist?? apparently not even under windows)
     # but that when loading data from kanjivg on github we have to use "/".
-    res1$stroketree <- .kanjivg_to_list(xmldat, padhex=padhex, char=kan1, flatten_inner=flatten_inner, flatten_leaves=flatten_leaves)
+    res1$stroketree <- .kanjivg_to_list(xmldat, padhex=padhex, char=kan1, bezier_discr = bezier_discr,
+                                        flatten_inner=flatten_inner, flatten_leaves=flatten_leaves)
     if (flatten == "intelligent") {
       res1$stroketree <- flatten_intel(res1$stroketree)
     }

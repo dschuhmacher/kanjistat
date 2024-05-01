@@ -1,15 +1,13 @@
 # Functions in this file deal with Bézier curves, specifically for generating point clouds from SVG data.
 
 # Point on a cubic Bézier curve. Numerical stability could be improved with a Horner scheme.
-# The scaling factor one hundreth is due to the fact that the kvec SVG commands assume a range
-# between 0 and 100, while the kvec point clouds are normalised between 0 and 1, which we reproduce here.
 cubic_bezier_point <- function(t, p0, p1, p2, p3) {
-  ((1 - t)^3 * p0 + 3 * (1 - t)^2 * t * p1 + 3 * (1 - t) * t^2 * p2 + t^3 * p3)/100
+  ((1 - t)^3 * p0 + 3 * (1 - t)^2 * t * p1 + 3 * (1 - t) * t^2 * p2 + t^3 * p3)
 }
 
 # Spatial derivative in curve time for a cubic Bézier curve
 cubic_bezier_derivative <- function(t, p0, p1, p2, p3) {
-  (3 * (1 - t)^2 * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * t^2 * (p3 - p2))/100
+  (3 * (1 - t)^2 * (p1 - p0) + 6 * (1 - t) * t * (p2 - p1) + 3 * t^2 * (p3 - p2))
 }
 
 # Euclidean differential Arc Length of a Cubic Bézier curve
@@ -30,26 +28,27 @@ cubic_bezier_arc_length <- function(p0, p1, p2, p3, num_points = 100) {
 # Parses a string of SVG curves, as they occur in kanjivec, to a list.
 # For a complete specification of SVG commands, see
 # https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#path_commands
-parse_svg_path <- function(path) {
-  # Insert delimiter before negative numbers
+parse_svg_path <- function(path, factors=c(1,1)) {
+  # Insert comma before negative numbers
   path <- gsub("-", ",-", path)
   
-  # Insert delimiter
+  # Insert space before MmLlHhVvCcSsQqTtAaZz
   path <- gsub("([MmLlHhVvCcSsQqTtAaZz])", " \\1", path)
-  # Remove a comma before a negative number as the first parameter of an SVG command
+  # Remove a comma before a negative number if it is first parameter of an SVG command
   path <- gsub("([A-Za-z]),", "\\1", path)
-  commands <- unlist(strsplit(path, " "))
+  commands <- stringr::str_split_1(path, " ")
   commands <- commands[commands != ""] # Remove empty elements
-  
+
   # Extract parameters
   parsed_commands <- lapply(commands, function(cmd) {
     cmd_letter <- substr(cmd, 1, 1)
-    params <- strsplit(substr(cmd, 2, nchar(cmd)), "[ ,]")[[1]]
-    params <- as.numeric(params)
-    
-    # SVG follows a different convention from R, so we should negate the y-coordinates. 
-    params[seq(2, length(params), by = 2)] <- -params[seq(2, length(params), by = 2)]
-    
+    params <- stringr::str_split_1(stringr::str_sub(cmd, 2), "[ ,]")
+    params <- matrix(as.numeric(params), ncol=2, byrow=TRUE)
+    # Rescaling X
+    params[,1] <- params[,1] * factors[1]
+    # Rescaling Y
+    params[,2] <- params[,2] * factors[2]
+
     list(command = cmd_letter, params = params)
   })
   
@@ -57,121 +56,119 @@ parse_svg_path <- function(path) {
 }
 
 # A function for keeping track of relative points given a current point
-adjust_relative_points <- function(relative_points, current_point) {
-  adjusted_points <- matrix(relative_points, ncol = 2, byrow = TRUE) + current_point
-  return(as.vector(adjusted_points))
-}
+# adjust_relative_points <- function(relative_points, current_point) {
+#    adjusted_points <- relative_points + current_point
+#  return(adjusted_points))
+# }
 
 # Given an SVG string and a parameter adjusting the number of points, 
 # returns a point cloud as a 2xn matrix described by that SVG string.
-# If spaced, a boolean, is true, the number of points per curve will be divided
+# If eqspaced, a boolean, is true, the number of points per curve will be divided
 # by the length of the curve.
-points_from_svg <- function(svg_str, point_density, spaced) {
-  parsed_path <- parse_svg_path(svg_str)
-  list_of_points <- list()
-  current_point <- c(0, 0)
+# We expect strings with an M in the beginning and a number of CcSc afterwards
+# otherwise the behaviour of the following function is a bit strange ...
+points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) {
+  # DS to do: we need factor back, but not for parse_svg_path
+  parsed_path <- parse_svg_path(svg_str, factors)
+  # list_of_points <- list()
+  # current_point <- c(0, 0)  # DS: removed to ensure the function fails if something is weird with the string
+  
   # Iterate through each command
   for (command in parsed_path) {
-    if (command$command == "M") {
-      # The 'Move' command sets the current point
+    if (command$command == "M") { # to do Move makes first point rest does without first point, maybe shift last point to real last point
+      # The 'Move' command sets the current point *and* a first point of the list
+      # (although this is not strictly what the M says, it allows us to easily do without (quasi-)double points
       current_point <- command$params
-    } else if (command$command == "C" || command$command == "c") {
-      # The "Cubic Bézier" command draws the eponymous curve
-      p0 <- current_point
+      list_of_points <- list(current_point)   # is matrix and direct cbind really slower here?
+    } else {
+      if (command$command == "C" || command$command == "c") {
+        # The "Cubic Bézier" command draws the eponymous curve
+        p0 <- current_point
       
-      if (command$command == "C") {
-        # 'C' -> Absolute Coordinates
-        p1 <- command$params[1:2]
-        p2 <- command$params[3:4]
-        p3 <- command$params[5:6]
+        if (command$command == "C") {
+          # 'C' -> Absolute Coordinates
+          p1 <- command$params[1,]
+          p2 <- command$params[2,]
+          p3 <- command$params[3,]
+        } else {
+          # 'c' -> Relative Coordinates
+          p1 <- command$params[1,] + current_point
+          p2 <- command$params[2,] + current_point
+          p3 <- command$params[3,] + current_point
+        }
+      } else if (command$command == "S" || command$command == "s") {
+        # Smooth Cubic Bézier command
+        p0 <- current_point
+        
+        if (command$command == "S") {
+          # 'S' -> Absolute coordinates
+          # Reflect previous control point for smooth transition
+          if (length(previous_control_point) > 0) {
+            p1 <- current_point + (current_point - previous_control_point)
+          } else {
+            # Assume a starting control point at current_point
+            p1 = current_point
+          }
+          
+          p2 <- command$params[1,]
+          p3 <- command$params[2,]
+        } else {
+          # 's' -> Relative coordinates
+          # Reflect previous control point for smooth transition
+          if (length(previous_control_point) > 0) {
+            p1 <- current_point + (current_point - previous_control_point)
+          } else {
+            # Assume a starting control point at current_point 
+            p1 = current_point
+          }
+          
+          p2 <- command$params[1,] + current_point
+          p3 <- command$params[2,] + current_point
+        }
+
+      } # Let's hope that no other SVG commands are used.
+    
+      if (eqspaced) {
+        curve_points <- cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3)
+          # 25 "check points" is fully sufficient (so let's keep this hard wired):
+          # when point_density is just around 20-30, the
+          # computed theoretical distance between different strokes will vary a lot due to rounding
+          # (so errors in no of check point is not seen), when point_density is high (e.g. 100),
+          # the distances turn pretty perfect even with only 25 check points.
       } else {
-        # 'c' -> Relative Coordinates
-        p1 <- adjust_relative_points(command$params[1:2], current_point)
-        p2 <- adjust_relative_points(command$params[3:4], current_point)
-        p3 <- adjust_relative_points(command$params[5:6], current_point)
+        d <- p3 - p0
+        approxlen <- sqrt(d[1]^2 + d[2]^2)
+        numpoints <- 2 + round(point_density * approxlen);  # to match bezier.cpp l.83, but with 2+ instead
+                                # of 1+ to slightly help the short very curved lines, where we get the length
+                                # very wrong with our approximate method (creates slight inefficiency for 
+                                # short but more or less straight lines)
+        curve_points <- cubic_bezier_curve_cpp(seq(0,1, length.out=numpoints), p0, p1, p2, p3)
       }
-      
-      if (spaced) {
-        # Determine the number of points based on arc length
-        arc_length <- cubic_bezier_arc_length(p0, p1, p2, p3)
-        num_points <- max(1, floor(arc_length * point_density))
-      }
-      else {
-        num_points <- max(1, point_density)
-      }
-      
-      # Sample points along the curve
-      t_values <- seq(1/(2*num_points),(2*num_points-1)/(2*num_points), length.out = num_points)
-      curve_points <- sapply(t_values, function(t) cubic_bezier_point(t, p0, p1, p2, p3))
-      
-      # Add curve points to the list and update the current point
-      list_of_points <- c(list_of_points, list(t(curve_points)))
-      current_point <- p3
-    } # Let's hope that no other SVG commands are used.
+      # Add curve points to the list (removing the point at the beginning, which we already have) and update the current point
+      list_of_points <- c(list_of_points, list(curve_points[-1,]))
+      # Keep track for the next 'S' or 's' command
+      previous_control_point <- p2
+      current_point <- p3 
+      # DS: last line was only there for C and c in versions prior to 24/04/21 but I think this was a mistake
+    }
   }
-  
+    
   do.call(rbind, list_of_points)
 }
 
-'
-# A duplicate from the above, both should become one function eventually.
-points_from_svg <- function(svg_str, total_points=100, equidistant=TRUE) {
-  parsed_path <- parse_svg_path(svg_str)
-  arc_lengths <- list()
-  parameters  <- matrix(nrow = 0, ncol = 8)
-  
-  list_of_points <- list()
-  current_point <- c(0, 0)
-  
-  # Iterate through each command
-  for (command in parsed_path) {
-    if (command$command == "M") {
-      # Move command sets the current point
-      current_point <- command$params
-    } else if (command$command == "C" || command$command == "c") {
-      p0 <- current_point
-      
-      if (command$command == "C") {
-        p1 <- command$params[1:2]
-        p2 <- command$params[3:4]
-        p3 <- command$params[5:6]
-      } else {
-        p1 <- adjust_relative_points(command$params[1:2], current_point)
-        p2 <- adjust_relative_points(command$params[3:4], current_point)
-        p3 <- adjust_relative_points(command$params[5:6], current_point)
-      }
-      
-      parameters  <- rbind(parameters, c(p0,p1,p2,p3))
-      arc_length <- 1
-      if (equidistant) {
-        arc_length <- cubic_bezier_arc_length(p0, p1, p2, p3)
-      }
-      
-      arc_lengths <- c(arc_lengths, arc_length)
-      
-      current_point <- p3
-    } # Let`s hope that no other SVG commands are used ;)
+
+# A helper function to calculate the distance to the points before and after
+# in a polygonal line representing an SVG curve.
+average_distances <- function(coords) {
+  n <- dim(coords)[1]
+  if (n < 2) {
+    return(rep(0.1, n/2)) # Dealing with one-row matrices
   }
+  diffs <- diff(coords)
+  distances <- sqrt(diffs[, 1]^2 + diffs[, 2]^2)
   
-  total_arc_length <- sum(unlist(arc_lengths))
-  used_points <- 0
-  
-  for (i in 1:nrow(parameters)) {
-    p0 <- unlist(parameters[i,1:2])
-    p1 <- unlist(parameters[i,3:4])
-    p2 <- unlist(parameters[i,5:6])
-    p3 <- unlist(parameters[i,7:8])
-    num_points <- max(2, ceiling(total_points*arc_lengths[[i]]/total_arc_length))
-    num_points <- min(num_points, total_points - used_points)
-    used_points <- used_points + num_points
-    if (num_points > 0) {
-      # Sample points along the curve
-      t_values <- seq(1/(2*num_points),(2*num_points-1)/(2*num_points), length.out = num_points)
-      curve_points <- sapply(t_values, function(t) cubic_bezier_point(t, p0, p1, p2, p3))
-      # Add curve points to the list and update the current point
-      list_of_points <- c(list_of_points, list(t(curve_points)))
-    }
-  }
-  do.call(rbind, list_of_points)
+  distance_average <- (distances[-(n-1)] + distances[-1]) / 2
+  distance_average <- c(distances[1]/2, distance_average, distances[n-1]/2)
+  # except for the /2 in the previous line, this code does the same as the old code
+  return(distance_average)
 }
-'

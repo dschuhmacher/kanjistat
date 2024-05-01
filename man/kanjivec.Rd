@@ -8,6 +8,7 @@ kanjivec(
   kanji,
   database = NULL,
   flatten = "intelligent",
+  bezier_discr = c("svgparser", "eqtimed", "eqspaced"),
   save = FALSE,
   overwrite = FALSE,
   simplify = TRUE
@@ -25,6 +26,12 @@ prompting for confirmation, which can be switched off via the \link[=kanjistat_o
 \item{flatten}{logical. Should nodes that are only-children be fused with their parents?
 Alternatively one of the strings "intelligent", "inner" or "leaves". Although the first is the default
 it is experimental and the precise meaning will change in the future; see details.}
+
+\item{bezier_discr}{character. How to discretize the Bézier curves describing the strokes. If
+"svgparser" (the only option available prior to kanjistat 0.12.0), code from the non-CRAN package svgparser
+is used for discretizing at equal time steps. The new choices "eqtimed" and "eqspaced" discretize
+into fewer points (and allow for more customization underneath). The former creates discretization
+points at equal time steps, the latter at equal distance steps (to a good approximation).}
 
 \item{save}{logical or character. If FALSE return the (list of) kanjivec object(s). Otherwise save the result
 as an rds file in the working directory (as kvecsave.rds) or under the file path provided.}

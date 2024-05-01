@@ -12,6 +12,8 @@ NULL
 
 ## usethis namespace: start
 #' @importFrom lifecycle badge
+#' @importFrom Rcpp sourceCpp
+#' @useDynLib kanjistat, .registration = TRUE
 ## usethis namespace: end
 NULL
 
@@ -228,3 +230,35 @@ NULL
 #' @format NULL
 #' @rdname distdata
 "dyehli"
+
+
+
+#' Precomputed kanji distances
+#'
+#' @encoding UTF-8
+#'
+#' @format
+#' A tibble containing kanji similarity judgments by 3 "native or native-like"
+#' speakers of Japanese. For each row, the pivot kanji was compared to a list of
+#' potential distractors. From the distractors, the subjects selected one 
+#' character which they found particularly easy to confuse with the pivot. For 
+#' the exact methodology, see the original study referenced below. 
+#' 
+#' @source 
+#' Datasets from <https://lars.yencken.org/datasets>, made available under the
+#' Creative Commons Attribution 3.0 Unported licence.
+#' 
+#' Collected as part of *Yencken, Lars (2010) 
+#' [Orthographic support for passing the reading hurdle in Japanese](https://lars.yencken.org/papers/phd-thesis.pdf). 
+#' PhD Thesis, University of Melbourne, Melbourne, Australia*.
+#' 
+#' @references 
+#' Yencken, Lars, & Baldwin, Timothy (2008). Measuring and predicting orthographic associations:
+#' Modelling the similarity of Japanese kanji. In: *Proceedings of the 22nd International Conference on Computational
+#' Linguistics (Coling 2008)*, pp. 1041-1048.
+#' 
+#' @examples
+#' # Get kanji characters that were found to be easily confused with 大.
+#' pooled_similarity[pooled_similarity$selected == "大", ]$pivot
+#'
+"pooled_similarity"

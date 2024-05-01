@@ -1,15 +1,15 @@
 Package: kanjistat
 Type: Package
 Title: A Statistical Framework for the Analysis of Japanese Kanji Characters
-Version: 0.11.0
-Date: 2024-02-17
+Version: 0.12.0
+Date: 2024-05-02
 Authors@R: c( person("Dominic", "Schuhmacher", email = "dominic.schuhmacher@mathematik.uni-goettingen.de", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7079-6313")),
               person("Lennart", "Finke", email = "l.finke@stud.uni-goettingen.de", role = "aut", comment = c(ORCID = "0009-0003-6908-314X")) )
 Maintainer: Dominic Schuhmacher <dominic.schuhmacher@mathematik.uni-goettingen.de>
 Description: Various tools and data sets that support the study of kanji, including their morphology, decomposition and concepts of distance and similarity between them.
 URL: https://dschuhmacher.github.io/kanjistat/
 BugReports: https://github.com/dschuhmacher/kanjistat/issues
-Depends: R (>= 3.5)
+Depends: R (>= 4.1)
 Imports:
     methods,
     graphics,
@@ -28,11 +28,13 @@ Imports:
     showtext,
     stringi,
     stringr,
-    transport,
+    transport (>= 0.15),
     xml2,
-    lifecycle
+    lifecycle,
+    Rcpp
 Suggests:
     dplyr,
+    jsonlite,
     knitr,
     rmarkdown,
     ROI.plugin.glpk,
@@ -47,3 +49,5 @@ RoxygenNote: 7.3.1
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
+LinkingTo: 
+    Rcpp

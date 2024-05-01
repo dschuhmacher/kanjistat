@@ -1,4 +1,28 @@
-# kanjistat (development version)
+# kanjistat 0.12.0 (2024-05-02)
+
+* kanjistat depends on R (>= 4.1) and transport (>= 0.15) now.
+
+## New features
+
+* Function `kanjidist` has a new argument `approx`, which specifies how the strokes are to be approximated for computing component distances. The three options "grid", "pc" or "pcweighted" work in any combination with the three options for the `type` argument (which now strictly specifies the type of distance used for the components).
+
+* Function `kanjivec` has a new argument `bezier_discr`, which may be any of "svgparser", "eqtimed" and "eqspaced", specifing, for the discretization of the strokes in the `stroketree` component, which code is used and according to which strategy the points are placed.  
+
+* Data set `pooled_similarity` contains the human similarity judgements of kanji from Yencken and Baldwin (2008). 
+
+## Enhancements
+
+* point cloud approximations ("pc" and "pcweighted") use (approximately) equispaced points on the Bézier curves now. 
+
+* Various speed improvements to options "pc" and "pcweighted".
+
+## Bugs
+
+* Using `kanjidist` for compo_seg_depth1 >= 5 returned an error. Fixed. 
+
+-------------------------------
+
+# kanjistat 0.11.0 (2024-02-17)
 
 * Lennart Finke is now a co-author.
 
