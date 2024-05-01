@@ -43,14 +43,12 @@ parse_svg_path <- function(path, factors=c(1,1)) {
   parsed_commands <- lapply(commands, function(cmd) {
     cmd_letter <- substr(cmd, 1, 1)
     params <- stringr::str_split_1(stringr::str_sub(cmd, 2), "[ ,]")
-    params <- as.numeric(params)
-    
-    # params <- rescale_points(params, a=factors)
+    params <- matrix(as.numeric(params), ncol=2, byrow=TRUE)
     # Rescaling X
-    params[seq(1, length(params), by = 2)] <- (params[seq(1, length(params), by = 2)]) * factors[1]
+    params[,1] <- params[,1] * factors[1]
     # Rescaling Y
-    params[seq(2, length(params), by = 2)] <- (params[seq(2, length(params), by = 2)]) * factors[2]
-    
+    params[,2] <- params[,2] * factors[2]
+
     list(command = cmd_letter, params = params)
   })
   
@@ -58,10 +56,10 @@ parse_svg_path <- function(path, factors=c(1,1)) {
 }
 
 # A function for keeping track of relative points given a current point
-adjust_relative_points <- function(relative_points, current_point) {
-  adjusted_points <- matrix(relative_points, ncol = 2, byrow = TRUE) + current_point
-  return(as.vector(adjusted_points))
-}
+# adjust_relative_points <- function(relative_points, current_point) {
+#    adjusted_points <- relative_points + current_point
+#  return(adjusted_points))
+# }
 
 # Given an SVG string and a parameter adjusting the number of points, 
 # returns a point cloud as a 2xn matrix described by that SVG string.
@@ -89,14 +87,14 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) 
       
         if (command$command == "C") {
           # 'C' -> Absolute Coordinates
-          p1 <- command$params[1:2]
-          p2 <- command$params[3:4]
-          p3 <- command$params[5:6]
+          p1 <- command$params[1,]
+          p2 <- command$params[2,]
+          p3 <- command$params[3,]
         } else {
           # 'c' -> Relative Coordinates
-          p1 <- adjust_relative_points(command$params[1:2], current_point)
-          p2 <- adjust_relative_points(command$params[3:4], current_point)
-          p3 <- adjust_relative_points(command$params[5:6], current_point)
+          p1 <- command$params[1,] + current_point
+          p2 <- command$params[2,] + current_point
+          p3 <- command$params[3,] + current_point
         }
       } else if (command$command == "S" || command$command == "s") {
         # Smooth Cubic Bézier command
@@ -112,8 +110,8 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) 
             p1 = current_point
           }
           
-          p2 <- command$params[1:2]
-          p3 <- command$params[3:4]
+          p2 <- command$params[1,]
+          p3 <- command$params[2,]
         } else {
           # 's' -> Relative coordinates
           # Reflect previous control point for smooth transition
@@ -124,8 +122,8 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) 
             p1 = current_point
           }
           
-          p2 <- adjust_relative_points(command$params[1:2], current_point)
-          p3 <- adjust_relative_points(command$params[3:4], current_point)
+          p2 <- command$params[1,] + current_point
+          p3 <- command$params[2,] + current_point
         }
 
       } # Let's hope that no other SVG commands are used.
