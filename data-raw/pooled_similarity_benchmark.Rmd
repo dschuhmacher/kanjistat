@@ -52,7 +52,7 @@ process_doc <- function(doc) {
 pooled_similarity <- lapply(yaml_data_list, process_doc) %>% bind_rows()
 
 
-save(pooled_similarity, file="../data/dpooledsimilarity.rda", compress="xz")   
+save(pooled_similarity, file="../data/pooledsimilarity.rda", compress="xz")   
 ```
 
 
@@ -91,7 +91,7 @@ pooled_distance_benchmark <- function(distance, sample_size) {
   # that it accepts two single kanji and nothing else as outputs.
   # The benchmark will do around 5*sample_size comparisons.
   
-  file_path <- "../data/dpooledsimilarity.rda"
+  file_path <- "../data/pooledsimilarity.rda"
   load(file_path)  # Load the RData file
   
   df <- pooled_similarity

@@ -238,7 +238,7 @@ NULL
 #' @encoding UTF-8
 #'
 #' @format
-#' A dataframe containing kanji similarity judgments by 3 "native or native-like"
+#' A tibble containing kanji similarity judgments by 3 "native or native-like"
 #' speakers of Japanese. For each row, the pivot kanji was compared to a list of
 #' potential distractors. From the distractors, the subjects selected one 
 #' character which they found particularly easy to confuse with the pivot. For 
