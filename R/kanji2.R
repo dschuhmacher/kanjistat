@@ -249,11 +249,13 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
   
   # first determine weights for the whole component list (including unreal components)
   # then pick only real compos
-  weights1 <- compoweights_ink(k1, relative = TRUE, trickleloss = trickleloss)$compos  
+  weights1 <- compoweights_ink(k1, compo_seg_depth=compo_seg_depth1, relative = TRUE,
+                               trickleloss = trickleloss)$compos  
   weights1 <- weights1[lseq1]
   w1 <- lapply(seq_along(weights1), \(x) {weights1[[x]][realminor1[[x]]]})
   w1 <- unlist(w1)
-  weights2 <- compoweights_ink(k2, relative = TRUE, trickleloss = trickleloss)$compos
+  weights2 <- compoweights_ink(k2, compo_seg_depth=compo_seg_depth2, relative = TRUE,
+                               trickleloss = trickleloss)$compos
   weights2 <- weights2[lseq2]
   w2 <- lapply(seq_along(weights2), \(x) {weights2[[x]][realminor2[[x]]]})
   w2 <- unlist(w2)
