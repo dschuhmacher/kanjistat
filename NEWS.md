@@ -1,3 +1,11 @@
+# kanjistat (development version)
+
+## Bug
+
+* Producing the point cloud representations of a few individual `kanjivec` objects produced an error. Fixed.  
+
+-------------------------------
+
 # kanjistat 0.12.0 (2024-05-02)
 
 * kanjistat depends on R (>= 4.1) and transport (>= 0.15) now.

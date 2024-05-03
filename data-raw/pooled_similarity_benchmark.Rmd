@@ -52,7 +52,8 @@ process_doc <- function(doc) {
 pooled_similarity <- lapply(yaml_data_list, process_doc) %>% bind_rows()
 
 
-save(pooled_similarity, file="../data/pooledsimilarity.rda", compress="xz")   
+# save(pooled_similarity, file="../data/pooledsimilarity.rda", compress="xz") 
+load("../data/pooledsimilarity.rda") 
 ```
 
 
