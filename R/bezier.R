@@ -162,7 +162,7 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) 
 average_distances <- function(coords) {
   n <- dim(coords)[1]
   if (n < 2) {
-    return(rep(0.1, n/2)) # Dealing with one-row matrices
+    return(rep(0.1, ceiling(n/2))) # Dealing with one-row matrices
   }
   diffs <- diff(coords)
   distances <- sqrt(diffs[, 1]^2 + diffs[, 2]^2)
