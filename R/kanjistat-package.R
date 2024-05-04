@@ -1,7 +1,7 @@
 #' @importFrom graphics image lines par strheight strwidth text
 #' @importFrom grDevices dev.new dev.off gray hcl.colors pdf png svg tiff
 #' @importFrom methods hasArg is
-#' @importFrom stats approx setNames
+#' @importFrom stats approx pbeta pnorm setNames
 #' @importFrom utils combn data head packageVersion str relist
 # non-standard packages (tidyverse), frequently used functions only (otherwise call with ::)  
 #' @importFrom purrr attr_getter chuck list_flatten pluck pluck<-

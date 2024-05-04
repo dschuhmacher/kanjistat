@@ -191,21 +191,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
   stopifnot(is(k1, "kanjivec") && is(k2, "kanjivec"))
   type <- match.arg(type)
   if (k1$char == k2$char) return(0) 
-  
-  logi2C <- function(q, a=2, p0=0.5, CC=0.2) {  
-    ptemp <- q/CC
-    p <- pmax(0,pmin(1,ptemp))
-    if (any(abs(p-ptemp) > 1e-6)) warning("q = ", q[abs(p-ptemp) > 1e-6], " is substantially out of range for logi2C") 
-    1/(1+((p0/(1-p0))*(1-p)/p)^a)
-  }
-  
-  logi2Cplus <- function(q, a=2, p0=0.5, CC=0.2) {  
-    ptemp <- q/CC
-    p <- pmax(0,pmin(1,ptemp))
-    if (any(abs(p-ptemp) > 1e-6)) warning("q = ", q[abs(p-ptemp) > 1e-6], " is substantially out of range for logi2C") 
-    1/(1+(p0/(1-p0))*((1-p)/p)^a)
-  }
-  
+
   level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
   useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
     # Currently this uses only a strict comparison, e.g. the "left and right betas" are not the same.
