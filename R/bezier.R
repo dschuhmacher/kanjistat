@@ -63,7 +63,6 @@ parse_svg_path <- function(path, factors=c(1,1)) {
 # We expect strings with an M in the beginning and a number of CcSc afterwards
 # otherwise the behaviour of the following function is a bit strange ...
 points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) {
-  # DS to do: we need factor back, but not for parse_svg_path
   parsed_path <- parse_svg_path(svg_str, factors)
   # list_of_points <- list()
   # current_point <- c(0, 0)  # DS: removed to ensure the function fails if something is weird with the string
@@ -167,3 +166,98 @@ average_distances <- function(coords) {
   # except for the /2 in the previous line, this code does the same as the old code
   return(distance_average)
 }
+
+
+
+
+# alternative pipeline for svg-strings to point clouds
+#
+# parses a wellformed d-string composed of cubic Beziér curves
+# (only letters M, C, c, S, s allowed, must start with M and have no other Ms)
+# and transforms it into a strict MCCC...C format (a list of a 2-vector followed
+# by any number of 3x2 matrices containing in the rows the two control points and the
+# endpoint for a C-representation)
+strictformat_bezier <- function(path) {
+  stopifnot(stringr::str_sub(path,1,1) == "M")
+  path <- stringr::str_sub(path,2,-1)
+  if (grepl("[MmLlHhVvQqTtAaZz]", path)) {
+    stop("unexpected letters found in ", path)
+  }
+  
+  # after that "," is our separator for splitting 
+  path <- gsub("-", ",-", path)   # insert comma before negative numbers
+  path <- gsub("\\s+", ",", path) # replace any sequence of whitespaces by a comma
+  path <- gsub(",+", ",", path) # replace multiple by single commas
+  
+  path <- gsub("^[,\\s]+", "", path, perl=TRUE)   # remove any whitespaces or commas at the beginning
+  # (I don't think comma would be legal there; perl=TRUE since POSIX does apparently not
+  # allow/understand \s in a character set)
+  path <- gsub("[,\\s]+$", "", path, perl=TRUE)   # and at the end (just to be sure)
+  
+  atoms <- stringr::str_split_1(path, ",")
+  
+  current_point <- as.numeric(atoms[1:2])
+  current_command <- NA
+  previous_control_point <- current_point  # for the S/s commands: if there is no 
+  # previous control point its assumed to be current point
+  bezierlist <- list(current_point)  # make matrix in the end (seems faster)
+  
+  atoms <- atoms[-(1:2)]
+  natoms <- length(atoms)
+  athead <- 1
+  while (athead <= natoms) {
+    # if we do not have one of the following letter, the letter stored in 
+    # current_command is relevant (if NA an error is returned)
+    if (atoms[athead] %in% c("C", "c", "S", "s")) { 
+      current_command <- atoms[athead]
+      athead <- athead + 1
+    }
+    if (current_command  == "C") {
+      bmat <- matrix(as.numeric(atoms[athead+0:5]), 2, 3)
+      athead <- athead + 6
+    } else if (current_command  == "c") {
+      bmat <- matrix(current_point, 2, 3) + matrix(as.numeric(atoms[athead+0:5]), 2, 3)
+      athead <- athead + 6
+    } else if (current_command == "S") {
+      bmat <- matrix(as.numeric(atoms[athead+0:3]), 2, 2)
+      bmat <- cbind(2 * current_point - previous_control_point, bmat)  # reflection
+      athead <- athead + 4
+    } else if (current_command == "s") {
+      bmat <- matrix(current_point, 2, 2) + matrix(as.numeric(atoms[athead+0:3]), 2, 2)
+      bmat <- cbind(2 * current_point - previous_control_point, bmat)  # reflection
+      athead <- athead + 4
+    }
+    
+    previous_control_point <- bmat[,2]  # keep track for future S/s commands
+    current_point <- bmat[,3]           # keep track für future C/c commands
+    
+    bezierlist <- c(bezierlist, list(bmat))
+  } 
+  
+  beziermat <- t( do.call(cbind, bezierlist) )
+  return(beziermat)
+}
+
+
+scale_svg_path <- function(beziermat, factors){
+  beziermat[,1] <- beziermat[,1] * factors[1]
+  beziermat[,2] <- beziermat[,2] * factors[2]
+  beziermat
+}
+
+
+# will be replaced by a function that directly takes an unscaled beziermat
+# once this is included in the kanjivec format
+points_from_svg2 <- function(svg_str, point_density, eqspaced, factors = c(1,1)) {
+  beziermat <- strictformat_bezier(svg_str)
+  beziermat <- scale_svg_path(beziermat, factors)
+  ncurves <- (dim(beziermat)[1]-1)/3
+  stopifnot(all.equal(round(ncurves), ncurves))
+  
+  curve_points <- bezier_curve_cpp(beziermat, ncurves, point_density, eqspaced)
+  # Add curve points to the list (removing the point at the beginning, which we already have) and update the current point
+  list_of_points <- c(list_of_points, list(curve_points[-1,]))
+}
+
+
+

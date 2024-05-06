@@ -13,6 +13,10 @@ cubic_bezier_curve_eqspaced_cpp <- function(density, n, p0, p1, p2, p3) {
     .Call(`_kanjistat_cubic_bezier_curve_eqspaced_cpp`, density, n, p0, p1, p2, p3)
 }
 
+bezier_curve_cpp <- function(beziermat, ncurves, point_density, eqspaced) {
+    .Call(`_kanjistat_bezier_curve_cpp`, beziermat, ncurves, point_density, eqspaced)
+}
+
 match_diagonal_trafo <- function(points1, points2) {
     .Call(`_kanjistat_match_diagonal_trafo`, points1, points2)
 }

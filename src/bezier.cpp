@@ -90,3 +90,38 @@ NumericMatrix cubic_bezier_curve_eqspaced_cpp (float density, int n, NumericVect
   
   return out;
 }
+
+
+// part of the alternative pipeline
+// [[Rcpp::export]]
+NumericMatrix bezier_curve_cpp (NumericMatrix beziermat, int ncurves, float point_density, bool eqspaced) {
+  NumericMatrix curve_points;
+  for (int i = 0; i < ncurves; i++) {
+    NumericVector p0 = beziermat(3*i,_);
+    NumericVector p1 = beziermat(3*i+1,_);
+    NumericVector p2 = beziermat(3*i+2,_);
+    NumericVector p3 = beziermat(3*i+3,_);
+    if (eqspaced) {
+      Rcout << point_density << " " << p0 << " " << p1 << " " << p2 << " " << p3 << std::endl;
+      curve_points = cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3);
+      /* 25 "check points" is fully sufficient (so let's keep this hard wired):
+       * when point_density is just around 20-30, the
+       * computed theoretical distance between different strokes will vary a lot due to rounding
+       * (so errors in no of check point is not seen), when point_density is high (e.g. 100),
+       * the distances turn pretty perfect even with only 25 check points. */
+    } else {
+      NumericVector d = p3 - p0;
+      float approxlen = sqrt(d[1]*d[1] + d[2]*d[2]);
+      int numpoints = 2 + R::fround(point_density * approxlen, 0);  //  to match bezier.cpp l.83, but with 2+ instead
+      /* of 1+ to slightly help the short very curved lines, where we get the length
+       * very wrong with our approximate method (creates slight inefficiency for 
+       * short but more or less straight lines) */
+      NumericVector t (numpoints);
+      curve_points = cubic_bezier_curve_cpp(t, p0, p1, p2, p3);
+    }
+  }
+  
+  return curve_points;
+}
+
+  

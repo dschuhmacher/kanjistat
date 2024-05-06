@@ -56,6 +56,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bezier_curve_cpp
+NumericMatrix bezier_curve_cpp(NumericMatrix beziermat, int ncurves, float point_density, bool eqspaced);
+RcppExport SEXP _kanjistat_bezier_curve_cpp(SEXP beziermatSEXP, SEXP ncurvesSEXP, SEXP point_densitySEXP, SEXP eqspacedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type beziermat(beziermatSEXP);
+    Rcpp::traits::input_parameter< int >::type ncurves(ncurvesSEXP);
+    Rcpp::traits::input_parameter< float >::type point_density(point_densitySEXP);
+    Rcpp::traits::input_parameter< bool >::type eqspaced(eqspacedSEXP);
+    rcpp_result_gen = Rcpp::wrap(bezier_curve_cpp(beziermat, ncurves, point_density, eqspaced));
+    return rcpp_result_gen;
+END_RCPP
+}
 // match_diagonal_trafo
 List match_diagonal_trafo(NumericMatrix points1, NumericMatrix points2);
 RcppExport SEXP _kanjistat_match_diagonal_trafo(SEXP points1SEXP, SEXP points2SEXP) {
@@ -73,6 +87,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kanjistat_cubic_bezier_point_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_point_cpp, 5},
     {"_kanjistat_cubic_bezier_curve_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_cpp, 5},
     {"_kanjistat_cubic_bezier_curve_eqspaced_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_eqspaced_cpp, 6},
+    {"_kanjistat_bezier_curve_cpp", (DL_FUNC) &_kanjistat_bezier_curve_cpp, 4},
     {"_kanjistat_match_diagonal_trafo", (DL_FUNC) &_kanjistat_match_diagonal_trafo, 2},
     {NULL, NULL, 0}
 };
