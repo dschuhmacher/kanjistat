@@ -189,24 +189,49 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
                       approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
                       size=48, lwd=2.5, density=30, verbose=FALSE) {
   stopifnot(is(k1, "kanjivec") && is(k2, "kanjivec"))
+  approx <- match.arg(approx)
   type <- match.arg(type)
   if (k1$char == k2$char) return(0) 
-
-  level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
-  useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
+  
+  # we distinguish between parameters for pgrid and the two pointclouds because the component distances
+  # differ by nature quite a bit; this is mainly for experimenting and in the end their might be just
+  # one set of parameters
+  if (approx == "grid") { 
+    level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
+    useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
+      # Currently this uses only a strict comparison, e.g. the "left and right betas" are not the same.
+    exmatchdist <- 0.06  # dist below this value (for 2 components) is considered "excellent".
+      # Currently the only effect is a warning if the kanjiVG elements match, but the rtt distance is larger than
+      # exmatchdist (if it is much larger there is usually a good reason to take the warning seriously).
+      # rtt distance = the unbalanced bounded Wasserstein distance *without* division by b resp. CC,
+    unmatchedcost <- 0.25 # weight mass that is not matched contributes this to overall cost (a in the paper)
+    trickleloss <- 0.02   # in [0,1), epsilon in the paper.
+    distfact <- 0.8       # lambda_0 in the paper
+    transfact <- 0.1      # lambda_1
+    scalefact <- 0.05     # lambda_2
+    distortfact <- 0.05   # lambda_3
+    # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
+    # on data that is suitable for the task we want kanjidist to fulfill.
+    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=C) }
+  } else { # pointcloud approximation
+    level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
+    useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
     # Currently this uses only a strict comparison, e.g. the "left and right betas" are not the same.
-  exmatchdist <- 0.06  # dist below this value (for 2 components) is considered "excellent".
+    exmatchdist <- 0.06  # dist below this value (for 2 components) is considered "excellent".
     # Currently the only effect is a warning if the kanjiVG elements match, but the rtt distance is larger than
     # exmatchdist (if it is much larger there is usually a good reason to take the warning seriously).
     # rtt distance = the unbalanced bounded Wasserstein distance *without* division by b resp. CC,
-  unmatchedcost <- 0.25 # weight mass that is not matched contributes this to overall cost (a in the paper)
-  trickleloss <- 0.02   # in [0,1), epsilon in the paper.
-  distfact <- 0.8       # lambda_0 in the paper
-  transfact <- 0.1      # lambda_1
-  scalefact <- 0.05     # lambda_2
-  distortfact <- 0.05   # lambda_3
-  # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
-  # on data that is suitable for the task we want kanjidist to fulfill.
+    unmatchedcost <- 0.25 # weight mass that is not matched contributes this to overall cost (a in the paper)
+    trickleloss <- 0.02   # in [0,1), epsilon in the paper.
+    distfact <- 0.8       # lambda_0 in the paper
+    transfact <- 0.1      # lambda_1
+    scalefact <- 0.05     # lambda_2
+    distortfact <- 0.05   # lambda_3
+    # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
+    # on data that is suitable for the task we want kanjidist to fulfill.
+    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=0.8*C) }
+  }
+  
   stopifnot(isTRUE(all.equal(distfact+transfact+scalefact+distortfact,1)))
   
   allcosts <- all_compcosts(k1=k1, k2=k2,
@@ -289,9 +314,9 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     scaleerror <- sqrt(scar[1] * scar[2])   # geom. mean
     distorterror <- distort[1]/distort[2]   # since we take abs log below the order of numerator and denom. is not important
     if (r1 == 1 && r2 == 1) {
-      totcost <- logi2C(dist, a=2, p0=0.4, CC=C)  
+      totcost <- psi(dist)  
     } else {
-      totcost <- distfact * logi2C(dist, a=2, p0=0.4, CC=C) + transfact * transerror + scalefact * abs(log(scaleerror)) + distortfact * abs(log(distorterror))
+      totcost <- distfact * psi(dist) + transfact * transerror + scalefact * abs(log(scaleerror)) + distortfact * abs(log(distorterror))
     }
     # Formula (4.1) in the paper corresponds exactly to what we are doing here.
     # However:
@@ -406,6 +431,7 @@ kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
                   size=48, lwd=2.5, density=30, verbose=FALSE) {
   stopifnot( is.list(klist) )
   stopifnot( all(sapply(klist, \(x) is(x, "kanjivec"))) )
+  approx <- match.arg(approx)
   type <- match.arg(type)
   n <- length(klist)
   

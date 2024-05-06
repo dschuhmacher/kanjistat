@@ -55,11 +55,6 @@ parse_svg_path <- function(path, factors=c(1,1)) {
   return(parsed_commands)
 }
 
-# A function for keeping track of relative points given a current point
-# adjust_relative_points <- function(relative_points, current_point) {
-#    adjusted_points <- relative_points + current_point
-#  return(adjusted_points))
-# }
 
 # Given an SVG string and a parameter adjusting the number of points, 
 # returns a point cloud as a 2xn matrix described by that SVG string.
