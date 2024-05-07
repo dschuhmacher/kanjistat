@@ -11,12 +11,12 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // cubic_bezier_point_cpp
-NumericVector cubic_bezier_point_cpp(float t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
+NumericVector cubic_bezier_point_cpp(double t, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
 RcppExport SEXP _kanjistat_cubic_bezier_point_cpp(SEXP tSEXP, SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP, SEXP p3SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< float >::type t(tSEXP);
+    Rcpp::traits::input_parameter< double >::type t(tSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p0(p0SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p2(p2SEXP);
@@ -41,12 +41,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // cubic_bezier_curve_eqspaced_cpp
-NumericMatrix cubic_bezier_curve_eqspaced_cpp(float density, int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
+NumericMatrix cubic_bezier_curve_eqspaced_cpp(double density, int n, NumericVector p0, NumericVector p1, NumericVector p2, NumericVector p3);
 RcppExport SEXP _kanjistat_cubic_bezier_curve_eqspaced_cpp(SEXP densitySEXP, SEXP nSEXP, SEXP p0SEXP, SEXP p1SEXP, SEXP p2SEXP, SEXP p3SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< float >::type density(densitySEXP);
+    Rcpp::traits::input_parameter< double >::type density(densitySEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p0(p0SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
@@ -57,16 +57,49 @@ BEGIN_RCPP
 END_RCPP
 }
 // bezier_curve_cpp
-NumericMatrix bezier_curve_cpp(NumericMatrix beziermat, int ncurves, float point_density, bool eqspaced);
+NumericMatrix bezier_curve_cpp(NumericMatrix beziermat, int ncurves, double point_density, bool eqspaced);
 RcppExport SEXP _kanjistat_bezier_curve_cpp(SEXP beziermatSEXP, SEXP ncurvesSEXP, SEXP point_densitySEXP, SEXP eqspacedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type beziermat(beziermatSEXP);
     Rcpp::traits::input_parameter< int >::type ncurves(ncurvesSEXP);
-    Rcpp::traits::input_parameter< float >::type point_density(point_densitySEXP);
+    Rcpp::traits::input_parameter< double >::type point_density(point_densitySEXP);
     Rcpp::traits::input_parameter< bool >::type eqspaced(eqspacedSEXP);
     rcpp_result_gen = Rcpp::wrap(bezier_curve_cpp(beziermat, ncurves, point_density, eqspaced));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ftestloop
+NumericVector ftestloop(int n);
+RcppExport SEXP _kanjistat_ftestloop(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(ftestloop(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// itestloop
+NumericVector itestloop(int n);
+RcppExport SEXP _kanjistat_itestloop(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(itestloop(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// idtestloop
+NumericVector idtestloop(int n);
+RcppExport SEXP _kanjistat_idtestloop(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(idtestloop(n));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -88,6 +121,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_kanjistat_cubic_bezier_curve_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_cpp, 5},
     {"_kanjistat_cubic_bezier_curve_eqspaced_cpp", (DL_FUNC) &_kanjistat_cubic_bezier_curve_eqspaced_cpp, 6},
     {"_kanjistat_bezier_curve_cpp", (DL_FUNC) &_kanjistat_bezier_curve_cpp, 4},
+    {"_kanjistat_ftestloop", (DL_FUNC) &_kanjistat_ftestloop, 1},
+    {"_kanjistat_itestloop", (DL_FUNC) &_kanjistat_itestloop, 1},
+    {"_kanjistat_idtestloop", (DL_FUNC) &_kanjistat_idtestloop, 1},
     {"_kanjistat_match_diagonal_trafo", (DL_FUNC) &_kanjistat_match_diagonal_trafo, 2},
     {NULL, NULL, 0}
 };

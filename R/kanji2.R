@@ -229,7 +229,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     distortfact <- 0.05   # lambda_3
     # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
     # on data that is suitable for the task we want kanjidist to fulfill.
-    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=0.8*C) }
+    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=1.25*C) }
   }
   
   stopifnot(isTRUE(all.equal(distfact+transfact+scalefact+distortfact,1)))

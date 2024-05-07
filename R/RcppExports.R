@@ -17,6 +17,18 @@ bezier_curve_cpp <- function(beziermat, ncurves, point_density, eqspaced) {
     .Call(`_kanjistat_bezier_curve_cpp`, beziermat, ncurves, point_density, eqspaced)
 }
 
+ftestloop <- function(n) {
+    .Call(`_kanjistat_ftestloop`, n)
+}
+
+itestloop <- function(n) {
+    .Call(`_kanjistat_itestloop`, n)
+}
+
+idtestloop <- function(n) {
+    .Call(`_kanjistat_idtestloop`, n)
+}
+
 match_diagonal_trafo <- function(points1, points2) {
     .Call(`_kanjistat_match_diagonal_trafo`, points1, points2)
 }
