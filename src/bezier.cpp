@@ -99,16 +99,18 @@ NumericMatrix cubic_bezier_curve_eqspaced_cpp (double density, int n, NumericVec
 
 // part of the alternative pipeline
 // [[Rcpp::export]]
-NumericMatrix bezier_curve_cpp (NumericMatrix beziermat, int ncurves, double point_density, bool eqspaced) {
+NumericMatrix bezier_curve_cpp(NumericMatrix beziermat, int ncurves, double point_density, bool eqspaced) {
   NumericMatrix curve_points;
+  NumericVector stroke_points = beziermat(_,0);  // we make a matrix out of it in the end (Matrix operations are insufficient)
+  int npoints_tot = 1;
   for (int i = 0; i < ncurves; i++) {
-    NumericVector p0 = beziermat(3*i,_);
-    NumericVector p1 = beziermat(3*i+1,_);
-    NumericVector p2 = beziermat(3*i+2,_);
-    NumericVector p3 = beziermat(3*i+3,_);
+    NumericVector p0 = beziermat(_,3*i);
+    NumericVector p1 = beziermat(_,3*i+1);
+    NumericVector p2 = beziermat(_,3*i+2);
+    NumericVector p3 = beziermat(_,3*i+3);
     if (eqspaced) {
-      Rcout << point_density << " " << p0 << " " << p1 << " " << p2 << " " << p3 << std::endl;
-      curve_points = cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3);
+      // Rcout << point_density << " " << p0 << " " << p1 << " " << p2 << " " << p3 << std::endl;
+      curve_points = transpose(cubic_bezier_curve_eqspaced_cpp(point_density, 25, p0, p1, p2, p3));
       /* 25 "check points" is fully sufficient (so let's keep this hard wired):
        * when point_density is just around 20-30, the
        * computed theoretical distance between different strokes will vary a lot due to rounding
@@ -125,11 +127,16 @@ NumericMatrix bezier_curve_cpp (NumericMatrix beziermat, int ncurves, double poi
       for (int j = 0; j < numpoints; j++) {
         t[j] = j/(numpoints-1);
       }
-      curve_points = cubic_bezier_curve_cpp(t, p0, p1, p2, p3);
+      curve_points = transpose(cubic_bezier_curve_cpp(t, p0, p1, p2, p3));
     }
+    for (NumericVector::iterator it = curve_points.begin()+2; it < curve_points.end(); ++it) {
+      stroke_points.push_back(*it);
+    }
+    npoints_tot += curve_points.ncol() - 1;
   }
   
-  return curve_points;
+  stroke_points.attr("dim") = Dimension(2, npoints_tot);
+  return transpose(as<NumericMatrix>(stroke_points));
 }
 
 

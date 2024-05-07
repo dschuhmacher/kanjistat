@@ -186,6 +186,7 @@ strictformat_bezier <- function(path) {
   
   # after that "," is our separator for splitting 
   path <- gsub("-", ",-", path)   # insert comma before negative numbers
+  path <- gsub("([CcSs])", ",\\1,", path)
   path <- gsub("\\s+", ",", path) # replace any sequence of whitespaces by a comma
   path <- gsub(",+", ",", path) # replace multiple by single commas
   
@@ -234,14 +235,14 @@ strictformat_bezier <- function(path) {
     bezierlist <- c(bezierlist, list(bmat))
   } 
   
-  beziermat <- t( do.call(cbind, bezierlist) )
+  beziermat <- do.call(cbind, bezierlist)
   return(beziermat)
 }
 
 
 scale_svg_path <- function(beziermat, factors){
-  beziermat[,1] <- beziermat[,1] * factors[1]
-  beziermat[,2] <- beziermat[,2] * factors[2]
+  beziermat[1,] <- beziermat[1,] * factors[1]
+  beziermat[2,] <- beziermat[2,] * factors[2]
   beziermat
 }
 
@@ -251,13 +252,38 @@ scale_svg_path <- function(beziermat, factors){
 points_from_svg2 <- function(svg_str, point_density, eqspaced, factors = c(1,1)) {
   beziermat <- strictformat_bezier(svg_str)
   beziermat <- scale_svg_path(beziermat, factors)
-  ncurves <- (dim(beziermat)[1]-1)/3
+  ncurves <- (dim(beziermat)[2]-1)/3
   stopifnot(all.equal(round(ncurves), ncurves))
   
   curve_points <- bezier_curve_cpp(beziermat, ncurves, point_density, eqspaced)
-  # Add curve points to the list (removing the point at the beginning, which we already have) and update the current point
-  list_of_points <- c(list_of_points, list(curve_points[-1,]))
+  curve_points
 }
 
-
-
+if (FALSE) {
+  # kan <- fivebetas[[2]]
+  kk <- samplekan("jouyou", 1)
+  print(kk)
+  wh <- which(kbase$kanji == kk)
+  # wh <- 2121  # works for points_from_svg2, but not points_from_svg1
+  kan <- kvec[[wh]]
+  strokes <- get_strokes(kan)
+  bez <- sapply(strokes, \(x) {attr(x, "d")})
+  plot(0,0, xlim=c(0,1), ylim=c(0,1), asp=1, xaxs="i", yaxs="i", type="n")
+  allpoints1 <- matrix(0,0,2)
+  allpoints2 <- matrix(0,0,2)
+  for (st in bez) {
+    print(st)
+    temp1 <- points_from_svg(st, point_density/109, eqspaced, factors = c(1,1))
+    temp1 <- rescale_points(temp1, a=c(1,-1)/109, b=c(0,1))
+    allpoints1 <- rbind(allpoints1, temp1)
+  }
+  for (st in bez) {
+    print(st)
+    temp2 <- points_from_svg2(st, point_density/109, eqspaced, factors = c(1,1))
+    temp2 <- rescale_points(temp2, a=c(1,-1)/109, b=c(0,1))
+    allpoints2 <- rbind(allpoints2, temp2)
+  }
+  points(allpoints1, cex=0.6, pch=16)
+  points(allpoints2, cex=0.8, col=2, lwd=1)
+  all.equal(allpoints1,allpoints2)  # only the last stroke
+}

@@ -124,6 +124,7 @@
 #' @seealso \code{\link{plot.kanjivec}}, \code{\link{str.kanjivec}}
 #' 
 kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c("svgparser", "eqtimed", "eqspaced"),
+                     code = 1,
                      # default for flatten went from TRUE in 2022, to FALSE in Jan 2023
                      # to "intelligent" in Feb 2023 (about when components and veins where
                      # added to kanjivec objects)
@@ -203,7 +204,7 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c
     # it seems using paste0 rather than filepath is the easiest way(?) to account for the fact
     # that the user might have a another path separator than "/" on her system (does that exist?? apparently not even under windows)
     # but that when loading data from kanjivg on github we have to use "/".
-    res1$stroketree <- .kanjivg_to_list(xmldat, padhex=padhex, char=kan1, bezier_discr = bezier_discr,
+    res1$stroketree <- .kanjivg_to_list(xmldat, padhex=padhex, char=kan1, bezier_discr = bezier_discr, code=code,
                                         flatten_inner=flatten_inner, flatten_leaves=flatten_leaves)
     if (flatten == "intelligent") {
       res1$stroketree <- flatten_intel(res1$stroketree)
