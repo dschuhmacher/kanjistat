@@ -124,7 +124,6 @@
 #' @seealso \code{\link{plot.kanjivec}}, \code{\link{str.kanjivec}}
 #' 
 kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c("svgparser", "eqtimed", "eqspaced"),
-                     code = 1,
                      # default for flatten went from TRUE in 2022, to FALSE in Jan 2023
                      # to "intelligent" in Feb 2023 (about when components and veins where
                      # added to kanjivec objects)
@@ -133,6 +132,7 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c
                      # complicated kanji with many split components plots are confusing.
                      save=FALSE, overwrite=FALSE, simplify=TRUE) {
   
+  code <- 2  # for now use points_from_svg2 rather than points_from_svg
   bezier_discr <- match.arg(bezier_discr)
   callstring <- paste(deparse(sys.call(), width.cutoff = 100L), collapse = "")
   

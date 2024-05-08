@@ -178,7 +178,7 @@ average_distances <- function(coords) {
 # by any number of 3x2 matrices containing in the rows the two control points and the
 # endpoint for a C-representation)
 strictformat_bezier <- function(path) {
-  stopifnot(stringr::str_sub(path,1,1) == "M")
+  stopifnot(stringr::str_sub(path,1,1) %in% c("M","m"))
   path <- stringr::str_sub(path,2,-1)
   if (grepl("[MmLlHhVvQqTtAaZz]", path)) {
     stop("unexpected letters found in ", path)
@@ -266,24 +266,42 @@ if (FALSE) {
   wh <- which(kbase$kanji == kk)
   # wh <- 2121  # works for points_from_svg2, but not points_from_svg1
   kan <- kvec[[wh]]
-  strokes <- get_strokes(kan)
-  bez <- sapply(strokes, \(x) {attr(x, "d")})
+  strokes <- get_strokes(kan, simplify=FALSE)
+  bez <- sapply(as.list(strokes), \(x) {attr(x, "d")})
   plot(0,0, xlim=c(0,1), ylim=c(0,1), asp=1, xaxs="i", yaxs="i", type="n")
   allpoints1 <- matrix(0,0,2)
   allpoints2 <- matrix(0,0,2)
+  cat(wh, " ")
   for (st in bez) {
-    print(st)
+    #print(st)
     temp1 <- points_from_svg(st, point_density/109, eqspaced, factors = c(1,1))
     temp1 <- rescale_points(temp1, a=c(1,-1)/109, b=c(0,1))
     allpoints1 <- rbind(allpoints1, temp1)
+    points(allpoints1, cex=0.6, pch=16)
   }
   for (st in bez) {
-    print(st)
+    #print(st)
     temp2 <- points_from_svg2(st, point_density/109, eqspaced, factors = c(1,1))
     temp2 <- rescale_points(temp2, a=c(1,-1)/109, b=c(0,1))
     allpoints2 <- rbind(allpoints2, temp2)
+    points(allpoints2, cex=0.8, col=2, lwd=1)
   }
-  points(allpoints1, cex=0.6, pch=16)
-  points(allpoints2, cex=0.8, col=2, lwd=1)
-  all.equal(allpoints1,allpoints2)  # only the last stroke
+  stopifnot(all.equal(allpoints1,allpoints2))  # only the last stroke
 }
+
+# points_from_svg2 fixes errors for kanji 2, 235, 359, 507, 633, 658, 809, 823, 1035, 1044, 1085
+#   1306, 1556, 1651, 1798, 1815, 1824, 2033, 2058, 2121 (among 1:2136, all other kanji give
+#   the matrix of points as points_from_svg1)
+
+# current problems in points_from_svg: cannot treat spaces, implicitly repeated commands ("missing letters"), small m at
+# beginning of string
+
+# A combination of spaces and missing letters is often in (particularly long) 左はらい. But also elsewhere (perhaps
+# these strokes have been manually corrected at some point) 
+
+# small m at the beginning is e.g. in kanji 809, 1085, 1306; what to do with that is not everywhere well documented
+# but according to some sources and visual inspection it should clearly be interpreted as M (absolute move)
+
+
+
+
