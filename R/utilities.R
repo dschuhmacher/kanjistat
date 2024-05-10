@@ -271,7 +271,10 @@ samplekan <- function(set = c("kyouiku", "jouyou", "jinmeiyou", "kanjidic"), siz
       }
       attr(li, "id") <- id
       attr(li, "type") <- type
-      attr(li, "d") <- path_d # we save the original Bézier curve as attribute
+      attr(li, "d") <- path_d # we save the original d-string describing the Bézier curves of the stroke as attribute
+      attr(li, "beziermat") <- strictformat_bezier(path_d)
+         # as well as our 2 x (1+3n) matrix format specifying MCC..C points without duplication
+         # (where n denotes the number of curves in the stroke) 
     }
     li
   }

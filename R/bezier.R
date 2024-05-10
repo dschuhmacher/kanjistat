@@ -173,7 +173,7 @@ average_distances <- function(coords) {
 # alternative pipeline for svg-strings to point clouds
 #
 # parses a wellformed d-string composed of cubic Beziér curves
-# (only letters M, C, c, S, s allowed, must start with M and have no other Ms)
+# (only letters M, m, C, c, S, s allowed, must start with M or m and have no other M/m)
 # and transforms it into a strict MCCC...C format (a list of a 2-vector followed
 # by any number of 3x2 matrices containing in the rows the two control points and the
 # endpoint for a C-representation)
@@ -249,8 +249,8 @@ scale_svg_path <- function(beziermat, factors){
 
 # will be replaced by a function that directly takes an unscaled beziermat
 # once this is included in the kanjivec format
-points_from_svg2 <- function(svg_str, point_density, eqspaced, factors = c(1,1)) {
-  beziermat <- strictformat_bezier(svg_str)
+points_from_svg2 <- function(beziermat, point_density, eqspaced, factors = c(1,1)) {
+  # beziermat <- strictformat_bezier(svg_str)
   beziermat <- scale_svg_path(beziermat, factors)
   ncurves <- (dim(beziermat)[2]-1)/3
   stopifnot(all.equal(round(ncurves), ncurves))
@@ -265,27 +265,27 @@ if (FALSE) {
   print(kk)
   wh <- which(kbase$kanji == kk)
   # wh <- 2121  # works for points_from_svg2, but not points_from_svg1
-  kan <- kvec[[wh]]
+  kan <- kvecjoyo[[wh]]
   strokes <- get_strokes(kan, simplify=FALSE)
   bez <- sapply(as.list(strokes), \(x) {attr(x, "d")})
   plot(0,0, xlim=c(0,1), ylim=c(0,1), asp=1, xaxs="i", yaxs="i", type="n")
   allpoints1 <- matrix(0,0,2)
   allpoints2 <- matrix(0,0,2)
   cat(wh, " ")
-  for (st in bez) {
+  system.time(for (st in bez) {
     #print(st)
-    temp1 <- points_from_svg(st, point_density/109, eqspaced, factors = c(1,1))
+    temp1 <- points_from_svg(st, point_density=30/109, eqspaced=TRUE, factors = c(1,1))
     temp1 <- rescale_points(temp1, a=c(1,-1)/109, b=c(0,1))
     allpoints1 <- rbind(allpoints1, temp1)
     points(allpoints1, cex=0.6, pch=16)
-  }
-  for (st in bez) {
+  })
+  system.time(for (st in bez) {
     #print(st)
-    temp2 <- points_from_svg2(st, point_density/109, eqspaced, factors = c(1,1))
+    temp2 <- points_from_svg2(st, point_density=30/109, eqspaced=TRUE, factors = c(1,1))
     temp2 <- rescale_points(temp2, a=c(1,-1)/109, b=c(0,1))
     allpoints2 <- rbind(allpoints2, temp2)
     points(allpoints2, cex=0.8, col=2, lwd=1)
-  }
+  })
   stopifnot(all.equal(allpoints1,allpoints2))  # only the last stroke
 }
 

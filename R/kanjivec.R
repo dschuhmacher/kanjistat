@@ -82,10 +82,14 @@
 #'          
 #' @details The main differences to the svg file are 
 #'          \enumerate{
-#'            \item the actual strokes are not only given as d-attributes describing Bézier curves
+#'            \item the actual strokes are not only given as d-attributes describing Bézier curves, but 
 #'                      but also as two-column matrices describing discretizations of these curves. These matrices
 #'                      are the actual contents of the innermost lists in \code{stroketree}, but are more conveniently
-#'                      accessed via the function \code{\link{get_strokes}}.
+#'                      accessed via the function \code{\link{get_strokes}}. Starting with version 0.13.0, there is
+#'                      also an additional attribute "beziermat", which describes the Bézier curves for the stroke 
+#'                      in a 2 x (1+3n) matrix format. The first column is the start point, then each triplet of columns
+#'                      stands for control point 1, control point 2 and end point (=start point of the next Bézier curve
+#'                      if any).
 #'            \item The positions of the stroke numbers (for plotting) are saved as an attribute strokenum_coords
 #'                      to the entire stroke tree rather than a separate element.
 #'          }
