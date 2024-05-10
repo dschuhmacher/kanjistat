@@ -12,7 +12,7 @@ based on .svg files from the KanjiVG database containing further, derived inform
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -192,10 +192,14 @@ some serious nesting of sublists. The XML attributes become attributes of the li
 The user will usually not have to look at or manipulate <code>stroketree</code> directly, but
 <code>strokedend</code> and <code>compents</code> are derived from it and other functions may process it
 further.</p>
-<p>The main differences to the svg file are</p><ol><li><p>the actual strokes are not only given as d-attributes describing Bézier curves
+<p>The main differences to the svg file are</p><ol><li><p>the actual strokes are not only given as d-attributes describing Bézier curves, but
 but also as two-column matrices describing discretizations of these curves. These matrices
 are the actual contents of the innermost lists in <code>stroketree</code>, but are more conveniently
-accessed via the function <code><a href="get_strokes.html">get_strokes</a></code>.</p></li>
+accessed via the function <code><a href="get_strokes.html">get_strokes</a></code>. Starting with version 0.13.0, there is
+also an additional attribute "beziermat", which describes the Bézier curves for the stroke
+in a 2 x (1+3n) matrix format. The first column is the start point, then each triplet of columns
+stands for control point 1, control point 2 and end point (=start point of the next Bézier curve
+if any).</p></li>
 <li><p>The positions of the stroke numbers (for plotting) are saved as an attribute strokenum_coords
 to the entire stroke tree rather than a separate element.</p></li>
 </ol><p><code>strokedend</code> is more easy to examine and work with due to various convenience functions for

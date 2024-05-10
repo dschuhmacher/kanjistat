@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,27 @@
       <small>Source: <a href="https://github.com/dschuhmacher/kanjistat/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.13.0" id="kanjistat-0130-2024-05-10">kanjistat 0.13.0 (2024-05-10)<a class="anchor" aria-label="anchor" href="#kanjistat-0130-2024-05-10"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-13-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-13-0"></a></h3>
+<ul><li>Function <code>kanjidist</code> with <code>approx = "pc"</code> or <code>approx = "pcweighted"</code> now runs only for <code>kanjivec</code> objects generated with kanjistat 0.13.0 or newer.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-0-13-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-13-0"></a></h3>
+<ul><li><p>The structure of <code>kanjivec</code> objects has been extended. Each strokes in the <code>stroketree</code> component now has an additional attribute <code>"beziermat"</code> which describes the Bézier curves of the stroke in a standardized 2 x (1+3n) matrix format (n = number of curves). The new structure is fully backward compatible. Whether a given kanjivec object <code>kan</code> follows the new structure can be tested by <code>attr(kan, "kanjistat_version") &gt;= 0.13.0</code>. The <code>kvecjoyo</code> dataset on <a href="https://github.com/dschuhmacher/kanjistat.data" class="external-link uri">https://github.com/dschuhmacher/kanjistat.data</a> has been updated accordingly.</p></li>
+<li><p>New function <code>compare_neighborhoods</code>, which currently compares stroke edit distances and kanji distances in a dstrokedit neighborhood of a given kanji and optionally extends the comparison to nearest neighbors in the kanji distance. This function is still somewhat experimental.</p></li>
+<li><p><code>kanjidist</code> and <code>kanjidistmat</code> have a new parameter <code>minor_warnings</code> which toggles any warnings that can be ignored by most users. These warnings usually point to issues in the underlying <code>kanjivec</code> data or the <code>kanjidist</code> computation that are currently addressed by workarounds.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="enhancements-0-13-0">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-0-13-0"></a></h3>
+<ul><li>kanjidist with <code>approx = "pc"</code> or <code>approx = "pcweighted"</code> runs considerably faster with the new <code>kanjivec</code> objects, because the inefficient (multiple) parsing of <code>d</code> attributes from previous versions is now avoided.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-13-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-13-0"></a></h3>
+<ul><li>Producing the point cloud representations produced an error for some individual <code>kanjivec</code> objects. Fixed in the internal functions. Both <code>kanjivec</code> with non-default parameter <code>bezier_discr</code> and <code>kanjidist</code> with <code>approx = "pc"</code> or <code>approx = "pcweighted"</code> should run now in all cases without problems (tested for Jouyou kanji).</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.12.0" id="kanjistat-0120-2024-05-02">kanjistat 0.12.0 (2024-05-02)<a class="anchor" aria-label="anchor" href="#kanjistat-0120-2024-05-02"></a></h2>
 <ul><li>kanjistat depends on R (&gt;= 4.1) and transport (&gt;= 0.15) now.</li>

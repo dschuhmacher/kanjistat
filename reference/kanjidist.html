@@ -16,7 +16,7 @@ ratio) plus the (relative unbalanced) Wasserstein distance between the registere
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,7 +75,8 @@ ratio) plus the (relative unbalanced) Wasserstein distance between the registere
 <span>  size <span class="op">=</span> <span class="fl">48</span>,</span>
 <span>  lwd <span class="op">=</span> <span class="fl">2.5</span>,</span>
 <span>  density <span class="op">=</span> <span class="fl">30</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  minor_warnings <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -135,6 +136,14 @@ total mass 1. Everything has to be transported, i.e.\ disposal of mass is not al
 <dt>verbose</dt>
 <dd><p>logical. Whether to print detailed information on the cost for all pairs of
 components and the final matching.</p></dd>
+
+
+<dt>minor_warnings</dt>
+<dd><p>logical. Should minor_warnings be given. If <code>FALSE</code>, the warnings about substantial
+distances between bitmaps/pointclouds standing for the same component and the use of a workaround due to
+missing strokes in component decompositions are suppressed. While these warnings indicate to same extent
+that things are not going exactly as planned, they are usually not of interest if a larger number of
+kanji distances is computed and obscure the visibility of more important warnings (if any).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -389,7 +398,7 @@ ArXiv, <a href="https://doi.org/10.48550/arXiv.2304.02493" class="external-link"
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2      垂    車 0.21167340 0.6359614 0.6359614 0.6864604</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Unmatched at cost 0.25: 0.050499</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Directly computed total cost based on this overview: 0.17756932132619</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Directly computed total cost based on this overview: 0.177569321326189</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   flatind1   flatind2     level1       ind1     level2       ind2    totcost </span>
