@@ -16,7 +16,8 @@ kanjidist(
   size = 48,
   lwd = 2.5,
   density = 30,
-  verbose = FALSE
+  verbose = FALSE,
+  minor_warnings = TRUE
 )
 }
 \arguments{
@@ -55,6 +56,12 @@ total mass 1. Everything has to be transported, i.e.\ disposal of mass is not al
 
 \item{verbose}{logical. Whether to print detailed information on the cost for all pairs of
 components and the final matching.}
+
+\item{minor_warnings}{logical. Should minor_warnings be given. If \code{FALSE}, the warnings about substantial
+distances between bitmaps/pointclouds standing for the same component and the use of a workaround due to
+missing strokes in component decompositions are suppressed. While these warnings indicate to same extent
+that things are not going exactly as planned, they are usually not of interest if a larger number of
+kanji distances is computed and obscure the visibility of more important warnings (if any).}
 }
 \value{
 The kanji distance, a non-negative number.

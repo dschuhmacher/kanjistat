@@ -82,10 +82,14 @@
 #'          
 #' @details The main differences to the svg file are 
 #'          \enumerate{
-#'            \item the actual strokes are not only given as d-attributes describing Bézier curves
+#'            \item the actual strokes are not only given as d-attributes describing Bézier curves, but 
 #'                      but also as two-column matrices describing discretizations of these curves. These matrices
 #'                      are the actual contents of the innermost lists in \code{stroketree}, but are more conveniently
-#'                      accessed via the function \code{\link{get_strokes}}.
+#'                      accessed via the function \code{\link{get_strokes}}. Starting with version 0.13.0, there is
+#'                      also an additional attribute "beziermat", which describes the Bézier curves for the stroke 
+#'                      in a 2 x (1+3n) matrix format. The first column is the start point, then each triplet of columns
+#'                      stands for control point 1, control point 2 and end point (=start point of the next Bézier curve
+#'                      if any).
 #'            \item The positions of the stroke numbers (for plotting) are saved as an attribute strokenum_coords
 #'                      to the entire stroke tree rather than a separate element.
 #'          }
@@ -132,6 +136,7 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c
                      # complicated kanji with many split components plots are confusing.
                      save=FALSE, overwrite=FALSE, simplify=TRUE) {
   
+  code <- 2  # for now use points_from_svg2 rather than points_from_svg
   bezier_discr <- match.arg(bezier_discr)
   callstring <- paste(deparse(sys.call(), width.cutoff = 100L), collapse = "")
   
@@ -203,7 +208,7 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c
     # it seems using paste0 rather than filepath is the easiest way(?) to account for the fact
     # that the user might have a another path separator than "/" on her system (does that exist?? apparently not even under windows)
     # but that when loading data from kanjivg on github we have to use "/".
-    res1$stroketree <- .kanjivg_to_list(xmldat, padhex=padhex, char=kan1, bezier_discr = bezier_discr,
+    res1$stroketree <- .kanjivg_to_list(xmldat, padhex=padhex, char=kan1, bezier_discr = bezier_discr, code=code,
                                         flatten_inner=flatten_inner, flatten_leaves=flatten_leaves)
     if (flatten == "intelligent") {
       res1$stroketree <- flatten_intel(res1$stroketree)

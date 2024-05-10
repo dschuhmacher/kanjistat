@@ -55,11 +55,6 @@ parse_svg_path <- function(path, factors=c(1,1)) {
   return(parsed_commands)
 }
 
-# A function for keeping track of relative points given a current point
-# adjust_relative_points <- function(relative_points, current_point) {
-#    adjusted_points <- relative_points + current_point
-#  return(adjusted_points))
-# }
 
 # Given an SVG string and a parameter adjusting the number of points, 
 # returns a point cloud as a 2xn matrix described by that SVG string.
@@ -68,7 +63,6 @@ parse_svg_path <- function(path, factors=c(1,1)) {
 # We expect strings with an M in the beginning and a number of CcSc afterwards
 # otherwise the behaviour of the following function is a bit strange ...
 points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) {
-  # DS to do: we need factor back, but not for parse_svg_path
   parsed_path <- parse_svg_path(svg_str, factors)
   # list_of_points <- list()
   # current_point <- c(0, 0)  # DS: removed to ensure the function fails if something is weird with the string
@@ -162,7 +156,7 @@ points_from_svg <- function(svg_str, point_density, eqspaced, factors = c(1,1)) 
 average_distances <- function(coords) {
   n <- dim(coords)[1]
   if (n < 2) {
-    return(rep(0.1, n/2)) # Dealing with one-row matrices
+    return(rep(0.1, ceiling(n/2))) # Dealing with one-row matrices
   }
   diffs <- diff(coords)
   distances <- sqrt(diffs[, 1]^2 + diffs[, 2]^2)
@@ -172,3 +166,142 @@ average_distances <- function(coords) {
   # except for the /2 in the previous line, this code does the same as the old code
   return(distance_average)
 }
+
+
+
+
+# alternative pipeline for svg-strings to point clouds
+#
+# parses a wellformed d-string composed of cubic Beziér curves
+# (only letters M, m, C, c, S, s allowed, must start with M or m and have no other M/m)
+# and transforms it into a strict MCCC...C format (a list of a 2-vector followed
+# by any number of 3x2 matrices containing in the rows the two control points and the
+# endpoint for a C-representation)
+strictformat_bezier <- function(path) {
+  stopifnot(stringr::str_sub(path,1,1) %in% c("M","m"))
+  path <- stringr::str_sub(path,2,-1)
+  if (grepl("[MmLlHhVvQqTtAaZz]", path)) {
+    stop("unexpected letters found in ", path)
+  }
+  
+  # after that "," is our separator for splitting 
+  path <- gsub("-", ",-", path)   # insert comma before negative numbers
+  path <- gsub("([CcSs])", ",\\1,", path)
+  path <- gsub("\\s+", ",", path) # replace any sequence of whitespaces by a comma
+  path <- gsub(",+", ",", path) # replace multiple by single commas
+  
+  path <- gsub("^[,\\s]+", "", path, perl=TRUE)   # remove any whitespaces or commas at the beginning
+  # (I don't think comma would be legal there; perl=TRUE since POSIX does apparently not
+  # allow/understand \s in a character set)
+  path <- gsub("[,\\s]+$", "", path, perl=TRUE)   # and at the end (just to be sure)
+  
+  atoms <- stringr::str_split_1(path, ",")
+  
+  current_point <- as.numeric(atoms[1:2])
+  current_command <- NA
+  previous_control_point <- current_point  # for the S/s commands: if there is no 
+  # previous control point its assumed to be current point
+  bezierlist <- list(current_point)  # make matrix in the end (seems faster)
+  
+  atoms <- atoms[-(1:2)]
+  natoms <- length(atoms)
+  athead <- 1
+  while (athead <= natoms) {
+    # if we do not have one of the following letter, the letter stored in 
+    # current_command is relevant (if NA an error is returned)
+    if (atoms[athead] %in% c("C", "c", "S", "s")) { 
+      current_command <- atoms[athead]
+      athead <- athead + 1
+    }
+    if (current_command  == "C") {
+      bmat <- matrix(as.numeric(atoms[athead+0:5]), 2, 3)
+      athead <- athead + 6
+    } else if (current_command  == "c") {
+      bmat <- matrix(current_point, 2, 3) + matrix(as.numeric(atoms[athead+0:5]), 2, 3)
+      athead <- athead + 6
+    } else if (current_command == "S") {
+      bmat <- matrix(as.numeric(atoms[athead+0:3]), 2, 2)
+      bmat <- cbind(2 * current_point - previous_control_point, bmat)  # reflection
+      athead <- athead + 4
+    } else if (current_command == "s") {
+      bmat <- matrix(current_point, 2, 2) + matrix(as.numeric(atoms[athead+0:3]), 2, 2)
+      bmat <- cbind(2 * current_point - previous_control_point, bmat)  # reflection
+      athead <- athead + 4
+    }
+    
+    previous_control_point <- bmat[,2]  # keep track for future S/s commands
+    current_point <- bmat[,3]           # keep track für future C/c commands
+    
+    bezierlist <- c(bezierlist, list(bmat))
+  } 
+  
+  beziermat <- do.call(cbind, bezierlist)
+  return(beziermat)
+}
+
+
+scale_svg_path <- function(beziermat, factors){
+  beziermat[1,] <- beziermat[1,] * factors[1]
+  beziermat[2,] <- beziermat[2,] * factors[2]
+  beziermat
+}
+
+
+# will be replaced by a function that directly takes an unscaled beziermat
+# once this is included in the kanjivec format
+points_from_svg2 <- function(beziermat, point_density, eqspaced, factors = c(1,1)) {
+  # beziermat <- strictformat_bezier(svg_str)
+  beziermat <- scale_svg_path(beziermat, factors)
+  ncurves <- (dim(beziermat)[2]-1)/3
+  stopifnot(all.equal(round(ncurves), ncurves))
+  
+  curve_points <- bezier_curve_cpp(beziermat, ncurves, point_density, eqspaced)
+  curve_points
+}
+
+if (FALSE) {
+  # kan <- fivebetas[[2]]
+  kk <- samplekan("jouyou", 1)
+  print(kk)
+  wh <- which(kbase$kanji == kk)
+  # wh <- 2121  # works for points_from_svg2, but not points_from_svg1
+  kan <- kvecjoyo[[wh]]
+  strokes <- get_strokes(kan, simplify=FALSE)
+  bez <- sapply(as.list(strokes), \(x) {attr(x, "d")})
+  plot(0,0, xlim=c(0,1), ylim=c(0,1), asp=1, xaxs="i", yaxs="i", type="n")
+  allpoints1 <- matrix(0,0,2)
+  allpoints2 <- matrix(0,0,2)
+  cat(wh, " ")
+  system.time(for (st in bez) {
+    #print(st)
+    temp1 <- points_from_svg(st, point_density=30/109, eqspaced=TRUE, factors = c(1,1))
+    temp1 <- rescale_points(temp1, a=c(1,-1)/109, b=c(0,1))
+    allpoints1 <- rbind(allpoints1, temp1)
+    points(allpoints1, cex=0.6, pch=16)
+  })
+  system.time(for (st in bez) {
+    #print(st)
+    temp2 <- points_from_svg2(st, point_density=30/109, eqspaced=TRUE, factors = c(1,1))
+    temp2 <- rescale_points(temp2, a=c(1,-1)/109, b=c(0,1))
+    allpoints2 <- rbind(allpoints2, temp2)
+    points(allpoints2, cex=0.8, col=2, lwd=1)
+  })
+  stopifnot(all.equal(allpoints1,allpoints2))  # only the last stroke
+}
+
+# points_from_svg2 fixes errors for kanji 2, 235, 359, 507, 633, 658, 809, 823, 1035, 1044, 1085
+#   1306, 1556, 1651, 1798, 1815, 1824, 2033, 2058, 2121 (among 1:2136, all other kanji give
+#   the matrix of points as points_from_svg1)
+
+# current problems in points_from_svg: cannot treat spaces, implicitly repeated commands ("missing letters"), small m at
+# beginning of string
+
+# A combination of spaces and missing letters is often in (particularly long) 左はらい. But also elsewhere (perhaps
+# these strokes have been manually corrected at some point) 
+
+# small m at the beginning is e.g. in kanji 809, 1085, 1306; what to do with that is not everywhere well documented
+# but according to some sources and visual inspection it should clearly be interpreted as M (absolute move)
+
+
+
+

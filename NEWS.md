@@ -1,3 +1,28 @@
+# kanjistat 0.13.0 (2024-05-10)
+
+## Breaking changes
+
+* Function `kanjidist` with `approx = "pc"` or `approx = "pcweighted"` now runs only for `kanjivec` objects generated with kanjistat 0.13.0 or newer. 
+
+## New features
+
+* The structure of `kanjivec` objects has been extended. Each strokes in the `stroketree` component now has an additional attribute `"beziermat"` which describes the Bézier curves of the stroke in a standardized 2 x (1+3n) matrix format (n = number of curves). The new structure is fully backward compatible. Whether a given kanjivec object `kan` follows the new structure can be tested by `attr(kan, "kanjistat_version") >= 0.13.0`. The `kvecjoyo` dataset on <https://github.com/dschuhmacher/kanjistat.data> has been updated accordingly.
+
+* New function `compare_neighborhoods`, which currently compares stroke edit distances and kanji distances in a dstrokedit neighborhood of a given kanji and optionally extends the comparison to nearest neighbors in the kanji distance. This function is still somewhat experimental.
+
+* `kanjidist` and `kanjidistmat` have a new parameter `minor_warnings` which toggles any warnings that can be ignored by most users. These warnings usually point to issues in the underlying `kanjivec` data or the `kanjidist` computation that are currently addressed by workarounds.
+
+## Enhancements
+
+* kanjidist with `approx = "pc"` or `approx = "pcweighted"` runs considerably faster with the new `kanjivec` objects, because the inefficient (multiple) parsing of `d` attributes from previous versions is now avoided.
+
+
+## Bug fixes
+
+* Producing the point cloud representations produced an error for some individual `kanjivec` objects. Fixed in the internal functions. Both `kanjivec` with non-default parameter `bezier_discr` and `kanjidist` with `approx = "pc"` or `approx = "pcweighted"` should run now in all cases without problems (tested for Jouyou kanji).
+
+-------------------------------
+
 # kanjistat 0.12.0 (2024-05-02)
 
 * kanjistat depends on R (>= 4.1) and transport (>= 0.15) now.

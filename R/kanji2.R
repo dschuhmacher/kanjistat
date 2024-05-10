@@ -146,6 +146,11 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' @param density approximate number of discretization points per unit line length (if `approx != "grid`)
 #' @param verbose logical. Whether to print detailed information on the cost for all pairs of
 #' components and the final matching.  
+#' @param minor_warnings logical. Should minor_warnings be given. If `FALSE`, the warnings about substantial
+#' distances between bitmaps/pointclouds standing for the same component and the use of a workaround due to
+#' missing strokes in component decompositions are suppressed. While these warnings indicate to same extent 
+#' that things are not going exactly as planned, they are usually not of interest if a larger number of
+#' kanji distances is computed and obscure the visibility of more important warnings (if any).
 #'
 #' @details For the precise definition and details see the reference below. Parameter \code{C}
 #' corresponds to \eqn{b/2^{1/p}} in the paper.
@@ -187,40 +192,55 @@ kmatdistmat <- function(klist, klist2=NULL, p=1, C=0.2, type=c("unbalanced", "ba
 #' } 
 kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2,
                       approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
-                      size=48, lwd=2.5, density=30, verbose=FALSE) {
+                      size=48, lwd=2.5, density=30, verbose=FALSE, minor_warnings=TRUE) {
   stopifnot(is(k1, "kanjivec") && is(k2, "kanjivec"))
+  approx <- match.arg(approx)
+  if (approx %in% c("pc", "pcweighted") && 
+      (attr(k1, "kanjistat_version") < "0.13.0" || attr(k2, "kanjistat_version") < "0.13.0") ) {
+    stop('For approx="', approx, '" both kanjivec objects must be generated with kanjistat v0.13.0 or later')
+  }
   type <- match.arg(type)
   if (k1$char == k2$char) return(0) 
   
-  logi2C <- function(q, a=2, p0=0.5, CC=0.2) {  
-    ptemp <- q/CC
-    p <- pmax(0,pmin(1,ptemp))
-    if (any(abs(p-ptemp) > 1e-6)) warning("q = ", q[abs(p-ptemp) > 1e-6], " is substantially out of range for logi2C") 
-    1/(1+((p0/(1-p0))*(1-p)/p)^a)
-  }
-  
-  logi2Cplus <- function(q, a=2, p0=0.5, CC=0.2) {  
-    ptemp <- q/CC
-    p <- pmax(0,pmin(1,ptemp))
-    if (any(abs(p-ptemp) > 1e-6)) warning("q = ", q[abs(p-ptemp) > 1e-6], " is substantially out of range for logi2C") 
-    1/(1+(p0/(1-p0))*((1-p)/p)^a)
-  }
-  
-  level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
-  useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
+  # we distinguish between parameters for pgrid and the two pointclouds because the component distances
+  # differ by nature quite a bit; this is mainly for experimenting and in the end their might be just
+  # one set of parameters
+  if (approx == "grid") { 
+    level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
+    useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
+      # Currently this uses only a strict comparison, e.g. the "left and right betas" are not the same.
+    exmatchdist <- 0.06  # dist below this value (for 2 components) is considered "excellent".
+      # Currently the only effect is a warning if the kanjiVG elements match, but the rtt distance is larger than
+      # exmatchdist (if it is much larger there is usually a good reason to take the warning seriously).
+      # rtt distance = the unbalanced bounded Wasserstein distance *without* division by b resp. CC,
+    unmatchedcost <- 0.25 # weight mass that is not matched contributes this to overall cost (a in the paper)
+    trickleloss <- 0.02   # in [0,1), epsilon in the paper.
+    distfact <- 0.8       # lambda_0 in the paper
+    transfact <- 0.1      # lambda_1
+    scalefact <- 0.05     # lambda_2
+    distortfact <- 0.05   # lambda_3
+    # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
+    # on data that is suitable for the task we want kanjidist to fulfill.
+    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=C) }
+  } else { # pointcloud approximation
+    level0fact <- 1    # fudge factor for the optimal transport on the toplevel (probably not needed anymore)
+    useele <- TRUE     # if true the element attribute in kanjivec is used and dist is set to 1e-6 if it is a match. 
     # Currently this uses only a strict comparison, e.g. the "left and right betas" are not the same.
-  exmatchdist <- 0.06  # dist below this value (for 2 components) is considered "excellent".
+    exmatchdist <- 0.06  # dist below this value (for 2 components) is considered "excellent".
     # Currently the only effect is a warning if the kanjiVG elements match, but the rtt distance is larger than
     # exmatchdist (if it is much larger there is usually a good reason to take the warning seriously).
     # rtt distance = the unbalanced bounded Wasserstein distance *without* division by b resp. CC,
-  unmatchedcost <- 0.25 # weight mass that is not matched contributes this to overall cost (a in the paper)
-  trickleloss <- 0.02   # in [0,1), epsilon in the paper.
-  distfact <- 0.8       # lambda_0 in the paper
-  transfact <- 0.1      # lambda_1
-  scalefact <- 0.05     # lambda_2
-  distortfact <- 0.05   # lambda_3
-  # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
-  # on data that is suitable for the task we want kanjidist to fulfill.
+    unmatchedcost <- 0.25 # weight mass that is not matched contributes this to overall cost (a in the paper)
+    trickleloss <- 0.02   # in [0,1), epsilon in the paper.
+    distfact <- 0.8       # lambda_0 in the paper
+    transfact <- 0.1      # lambda_1
+    scalefact <- 0.05     # lambda_2
+    distortfact <- 0.05   # lambda_3
+    # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
+    # on data that is suitable for the task we want kanjidist to fulfill.
+    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=1.2*C) }
+  }
+  
   stopifnot(isTRUE(all.equal(distfact+transfact+scalefact+distortfact,1)))
   
   allcosts <- all_compcosts(k1=k1, k2=k2,
@@ -250,12 +270,12 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
   # first determine weights for the whole component list (including unreal components)
   # then pick only real compos
   weights1 <- compoweights_ink(k1, compo_seg_depth=compo_seg_depth1, relative = TRUE,
-                               trickleloss = trickleloss)$compos  
+                               trickleloss = trickleloss, minor_warnings = minor_warnings)$compos  
   weights1 <- weights1[lseq1]
   w1 <- lapply(seq_along(weights1), \(x) {weights1[[x]][realminor1[[x]]]})
   w1 <- unlist(w1)
   weights2 <- compoweights_ink(k2, compo_seg_depth=compo_seg_depth2, relative = TRUE,
-                               trickleloss = trickleloss)$compos
+                               trickleloss = trickleloss, minor_warnings = minor_warnings)$compos
   weights2 <- weights2[lseq2]
   w2 <- lapply(seq_along(weights2), \(x) {weights2[[x]][realminor2[[x]]]})
   w2 <- unlist(w2)
@@ -289,7 +309,10 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     ele2 <- chuck(allcosts, r1, r2, "elements", 2)
     ele2 <- str_sub(ele2, 1, 1)
     if (useele && ele1 == ele2 && ele1 != "g" && ele1 != "") { # not sure any more if == in the last one may happen
-      if (dist > exmatchdist) warning("elements in kanjiVG data are the same, but dist of bitmaps is substanial for ", ele1, " and ", ele2)
+      if (dist > exmatchdist && minor_warnings) {
+        warning("elements in kanjiVG data are the same, but dist between bitmaps/pointclouds is substanial for ",
+                ele1, " and ", ele2)
+      }
       dist <- 0.000001  
     }
         
@@ -303,9 +326,9 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     scaleerror <- sqrt(scar[1] * scar[2])   # geom. mean
     distorterror <- distort[1]/distort[2]   # since we take abs log below the order of numerator and denom. is not important
     if (r1 == 1 && r2 == 1) {
-      totcost <- logi2C(dist, a=2, p0=0.4, CC=C)  
+      totcost <- psi(dist)  
     } else {
-      totcost <- distfact * logi2C(dist, a=2, p0=0.4, CC=C) + transfact * transerror + scalefact * abs(log(scaleerror)) + distortfact * abs(log(distorterror))
+      totcost <- distfact * psi(dist) + transfact * transerror + scalefact * abs(log(scaleerror)) + distortfact * abs(log(distorterror))
     }
     # Formula (4.1) in the paper corresponds exactly to what we are doing here.
     # However:
@@ -395,7 +418,8 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #' @param klist2 an optional second list of \code{\link{kanjimat}} objects.
 #' @param compo_seg_depth integer \eqn{\geq 1}. Specifies for all kanji the 
 #' deepest level included for component matching. If 1, only the kanji itself is used.
-#' @param p,C,type,approx,size,lwd,density,verbose the same as for the function \code{\link{kanjidist}}.
+#' @param p,C,type,approx,size,lwd,density,verbose,minor_warnings the same as for the function \code{\link{kanjidist}},
+#' with the sole difference that `minor_warnings` defaults to `FALSE` here.
 #'
 #' @section Warning:
 #'
@@ -417,9 +441,10 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
 #' }
 kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
                   approx=c("grid", "pc", "pcweighted"), type=c("rtt", "unbalanced", "balanced"),
-                  size=48, lwd=2.5, density=30, verbose=FALSE) {
+                  size=48, lwd=2.5, density=30, verbose=FALSE, minor_warnings=FALSE) {
   stopifnot( is.list(klist) )
   stopifnot( all(sapply(klist, \(x) is(x, "kanjivec"))) )
+  approx <- match.arg(approx)
   type <- match.arg(type)
   n <- length(klist)
   
@@ -428,7 +453,8 @@ kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
     ll <- lapply(1:dim(temp)[2], \(x) {temp[,x]})
     dd <- sapply(ll, \(x) {kanjidist(klist[[x[1]]], klist[[x[2]]],
                                      compo_seg_depth1=compo_seg_depth, compo_seg_depth2=compo_seg_depth,
-                                     p=p, C=C, approx=approx, type=type, size=size, lwd=lwd, verbose=verbose)})
+                                     p=p, C=C, approx=approx, type=type, size=size, lwd=lwd,
+                                     verbose=verbose, minor_warnings=minor_warnings)})
     dmat <- matrix(0, n, n)
     dmat[t(temp)] <- dd
     dmat <- dmat + t(dmat)
@@ -441,7 +467,8 @@ kanjidistmat <- function(klist, klist2=NULL, compo_seg_depth=3, p=1, C=0.2,
     ll <- lapply(1:N, \(x) {temp[x,]})
     dd <- sapply(ll, \(x) {kanjidist(klist[[x[1]]], klist2[[x[2]]],
                                      compo_seg_depth1=compo_seg_depth, compo_seg_depth2=compo_seg_depth,
-                                     p=p, C=C, approx=approx, type=type, size=size, lwd=lwd, verbose=verbose)})
+                                     p=p, C=C, approx=approx, type=type, size=size, lwd=lwd,
+                                     verbose=verbose, minor_warnings=minor_warnings)})
     dmat <- matrix(dd, n, n2)
   }
   
@@ -499,7 +526,7 @@ fullmin_transport <- function(wmat, costmat, flatveins1, flatveins2, unmatchedco
 # i.e. sum of weights will be 1, 1, 1-tl, (1-tl)^2, a.s.o. on
 # (no loss from kanji to first compo level since kanji are treated specially anyway)
 # (needed for kanjidist)
-compoweights_ink <- function(kanji, compo_seg_depth=4, relative=TRUE, trickleloss=0) {
+compoweights_ink <- function(kanji, compo_seg_depth=4, relative=TRUE, trickleloss=0, minor_warnings=TRUE) {
   ncompos <- kanji$ncompos
   compos <- kanji$components
   get_real <- attr_getter("strokenums")
@@ -528,10 +555,12 @@ compoweights_ink <- function(kanji, compo_seg_depth=4, relative=TRUE, tricklelos
     
     if (!isTRUE(all.equal(counttab, rep(1, nstrokes)))) {
       if (relative && any(counttab == 0)) {
-        warning("Stroke(s) ", paste(which(counttab == 0)), " missing from component decomposition at level ", l,
-                " (where 1 = full kanji) for kanji ", kanji$char, ". As a cheap workaround the sum of the ",
-                "remaining stroke weights is renormalized to 1. This will be dealt with more judiciously ",
-                "in a future version of the package.")
+        if (minor_warnings) {
+          warning("Stroke(s) ", paste(which(counttab == 0), collapse=" "), " missing from component decomposition at level ", l,
+                  " (where 1 = full kanji) for kanji ", kanji$char, ". As a cheap workaround the sum of the ",
+                  "remaining stroke weights is renormalized to 1. This will be dealt with more judiciously ",
+                  "in a future version of the package.")
+        }
         considered_strokes <- which(counttab != 0)
         renorm_fact <- sum(all_lengths[considered_strokes])/divisor * tll
         for (i in seq_len(ncompos[l])) {
@@ -655,13 +684,9 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
   ffact2 <- mparams$fact2*0.95
   
   if (approx=="pc" || approx=="pcweighted") {
-    svg_strings1 <- sapply(s1, function(x) attr(x, "d"))
-    svg_strings2 <- sapply(s2, function(x) attr(x, "d"))
-    
-    # Use fact1,fact2 from precomputed points in kanjivec objects
-    # to find the right scaling for the strokes. Then compute
-    # point cloud discretizations directly for scaled Bézier curves
- 
+    beziermats1 <- lapply(s1, function(x) attr(x, "beziermat"))
+    beziermats2 <- lapply(s2, function(x) attr(x, "beziermat"))
+
     points1 <- matrix(0, 0, 2)
     points2 <- matrix(0, 0, 2)
     if (approx == "pcweighted") {
@@ -670,8 +695,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
     }
     
     # In case we want to control the number of points, we reconstruct from SVG like so:
-    for (svg_string in svg_strings1) {
-      new_points <- points_from_svg(svg_string, point_density=density, eqspaced=TRUE, factors=ffact1/109*c(1,-1))
+    for (beziermat in beziermats1) {
+      new_points <- points_from_svg2(beziermat, point_density=density, eqspaced=TRUE, factors=ffact1/109*c(1,-1))
         # 0.95 is for consistency of the parameters with the approx="grid" case
         # there it was to make sure that (essentially) no mass is lost, when discretizing to the grid
         # new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
@@ -679,8 +704,8 @@ component_cost <- function(k1, k2, which1=c(1,1), which2=c(1,1), size=48, lwd=2.
       if (approx == "pcweighted") # Here, we are weighing points by the nearest neighbors within the SVG command:
         mass1 <- c(mass1, average_distances(new_points))
     }
-    for (svg_string in svg_strings2) {
-      new_points <- points_from_svg(svg_string, point_density=density, eqspaced=TRUE, factors=ffact2/109*c(1,-1))
+    for (beziermat in beziermats2) {
+      new_points <- points_from_svg2(beziermat, point_density=density, eqspaced=TRUE, factors=ffact2/109*c(1,-1))
         # 0.95 is for consistency of the parameters with the approx="grid" case
         # there it was to make sure that (essentially) no mass is lost, when discretizing to the grid
         # new_points <- rescale_points(new_points, a=c(1,-1)/109, b=c(0,1))
