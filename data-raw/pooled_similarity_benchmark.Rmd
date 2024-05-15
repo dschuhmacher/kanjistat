@@ -52,8 +52,7 @@ process_doc <- function(doc) {
 pooled_similarity <- lapply(yaml_data_list, process_doc) %>% bind_rows()
 
 
-# save(pooled_similarity, file="../data/pooledsimilarity.rda", compress="xz") 
-load("../data/pooledsimilarity.rda") 
+save(pooled_similarity, file="../data/dpooledsimilarity.rda", compress="xz")   
 ```
 
 
@@ -92,7 +91,7 @@ pooled_distance_benchmark <- function(distance, sample_size) {
   # that it accepts two single kanji and nothing else as outputs.
   # The benchmark will do around 5*sample_size comparisons.
   
-  file_path <- "../data/pooledsimilarity.rda"
+  file_path <- "../data/dpooledsimilarity.rda"
   load(file_path)  # Load the RData file
   
   df <- pooled_similarity
@@ -158,7 +157,7 @@ participants <- lapply(participants, process_doc) %>% bind_rows()
 # We now select a subset of participant ids, in this case Japanese learners 
 # whose first languages does not use Hanzi/Kanji/Hanja. This is done with
 # the language group field, which is also used in the original study. 
-JSL_IDs <- filter(participants, participants["languageGroup"] == "JSL")[["id"]]
+JSL_IDs <- filter(participants, participants["languageGroup"] == "NON-CJK")[["id"]]
 ```
 ```{r}
 judgements <- load_yaml("kanjiexp_judgements.yaml.gz")
@@ -219,7 +218,7 @@ kanjistat_distance <- function(k1,k2) {
 We have to sample for now because kanjidist is computationally expensive.
 
 ```{r}
-sampled <- filtered[sample(nrow(filtered), size=100), ]
+sampled <- filtered[sample(nrow(filtered), size=1000), ]
 
 # We compute our distance for the pairs
 sampled$kanjistat <- lapply(1:nrow(sampled), function(i) {kanjistat_distance(sampled$k1[[i]], sampled$k2[[i]])})
@@ -234,7 +233,4 @@ rho <- cor(sampled$kanjistat, sampled$value, method = "spearman")
 
 print(rho)
 ```
-
-
-
 
