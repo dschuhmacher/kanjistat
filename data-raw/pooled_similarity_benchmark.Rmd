@@ -52,7 +52,7 @@ process_doc <- function(doc) {
 pooled_similarity <- lapply(yaml_data_list, process_doc) %>% bind_rows()
 
 
-save(pooled_similarity, file="../data/dpooledsimilarity.rda", compress="xz")   
+# save(pooled_similarity, file="../data/dpooledsimilarity.rda", compress="xz")   
 ```
 
 
@@ -62,11 +62,11 @@ kanjiToKvec <- function(kan) {
   # In case the index is out of bounds, we return the first kanji and alert.
   results <- lapply(kan, function(x) {
     index <- match(x, kbase$kanji)
-    if (index > length(kvec) || index < 1) {
+    if (index > length(kvecjoyo) || index < 1) {
       index <- 1
-      print(c(x, " was out of bounds for kvec database."))
+      print(c(x, " was out of bounds for kvecjoyo database."))
     }
-    kvec[[index]] 
+    kvecjoyo[[index]] 
   })
 }
 
@@ -91,8 +91,8 @@ pooled_distance_benchmark <- function(distance, sample_size) {
   # that it accepts two single kanji and nothing else as outputs.
   # The benchmark will do around 5*sample_size comparisons.
   
-  file_path <- "../data/dpooledsimilarity.rda"
-  load(file_path)  # Load the RData file
+  #file_path <- "../data/dpooledsimilarity.rda"
+  #load(file_path)  # Load the RData file
   
   df <- pooled_similarity
   df <- pooled_similarity[sample(nrow(df), sample_size), ]
@@ -122,7 +122,13 @@ pooled_distance_benchmark <- function(distance, sample_size) {
   
   df
 }
-results <- pooled_distance_benchmark(kanjidist, 100)
+
+ 
+kanjidist_spec <- function(k1, k2) {
+  kanjidist(k1, k2, compo_seg_depth1 = 4, compo_seg_depth2 = 4,
+            approx="pcweighted", minor_warnings = FALSE)
+}
+results <- pooled_distance_benchmark(kanjidist_spec, 100)
 
 df <- results
 
@@ -159,6 +165,8 @@ participants <- lapply(participants, process_doc) %>% bind_rows()
 # the language group field, which is also used in the original study. 
 JSL_IDs <- filter(participants, participants["languageGroup"] == "NON-CJK")[["id"]]
 ```
+
+
 ```{r}
 judgements <- load_yaml("kanjiexp_judgements.yaml.gz")
 
@@ -198,20 +206,21 @@ stroke_edit_distance <- function(k1,k2) {
   }
 } 
 
-# We use our kanji distance, assuming kvec is loaded.
+# We use our kanji distance, assuming kvecjoyo is loaded.
 # 
 kanjistat_distance <- function(k1,k2) {
   k1 <- match(k1, kbase$kanji)
   k2 <- match(k2, kbase$kanji)
   
-  if (k1 > length(kvec) || k2 > length(kvec)) {
+  if (k1 > length(kvecjoyo) || k2 > length(kvecjoyo)) {
     return(NA)
   }
 
-  k1 <- kvec[[k1]]
-  k2 <- kvec[[k2]]
+  k1 <- kvecjoyo[[k1]]
+  k2 <- kvecjoyo[[k2]]
   
-  kanjidist(k1, k2, approx="pcweighted")
+  kanjidist(k1, k2, compo_seg_depth1 = 4, compo_seg_depth2 = 4,
+            approx="pcweighted",  minor_warnings = FALSE)
 }
 
 ```
