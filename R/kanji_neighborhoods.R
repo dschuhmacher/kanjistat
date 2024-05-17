@@ -40,6 +40,9 @@ compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="
   if (refdist != "strokedit" || compdist != "kanjidist") stop("combination of distances not (yet) implemented")
   
   ki <- which(kanjistat::kbase$kanji == kan)
+  if (ki > 2133) {  # without the test we get obscure error message from next line
+    stop("no known stroke edit distances for kanji ", kan, " available")
+  }
   kj <- which(kanjistat::dstrokedit[ki,] > 0)  # the zeroes in the sparse matrix should be NAs (to be fixed?!)
   if (length(kj) == 0) {
     stop("no known stroke edit distances for kanji ", kan, " available")
