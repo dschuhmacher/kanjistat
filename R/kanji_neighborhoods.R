@@ -72,7 +72,11 @@ compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="
     kj2 <- numeric(0)
   }
   
-  sedrow <- kanjistat::dstrokedit[ki, c(kj, kj2)]
+  wh2 <- which(kj2 <= 2133) # we should really fix dstrokedit to 2136 x 2136 at some point
+  sedrow2 <- rep(NA, compnn)
+  sedrow2[wh2] <- kanjistat::dstrokedit[ki, kj2[wh2]]
+  sedrow1 <- kanjistat::dstrokedit[ki, kj]
+  sedrow <- c(sedrow1, sedrow2)
   sedrow[sedrow == 0] <- NA
   
   res <- rbind(sedrow, kdrow)
