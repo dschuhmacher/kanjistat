@@ -132,10 +132,11 @@ results <- pooled_distance_benchmark(kanjidist_spec, 100)
 
 df <- results
 
-hist(unlist(df$jaccard))
+hist(unlist(df$jaccard), xlab="Jaccard Index, |A∩B| / |A∪B|", main="Jaccard Index of Most Similar Kanji as selected by Subjective \n Similarity Judgements vs. by the Similarity Metric")
 ```
 
 Next, we load data from [Yencken and Baldwin (2006)](https://lars.yencken.org/papers/iccpol-2006.pdf).
+This contains similary scores for Kanji Pairs from “very different” represented by 0 to “very similar” represented by 4. We would like to compute the Rank Correlation between this and our kanji metric.
 
 ```{r}
 # Using the loading function from above to process participant data.
@@ -220,7 +221,7 @@ kanjistat_distance <- function(k1,k2) {
   k2 <- kvecjoyo[[k2]]
   
   kanjidist(k1, k2, compo_seg_depth1 = 4, compo_seg_depth2 = 4,
-            approx="pcweighted",  minor_warnings = FALSE)
+            approx="pcweighted", minor_warnings = FALSE)
 }
 
 ```
@@ -239,7 +240,6 @@ sampled <- sampled[!is.na(sampled$kanjistat), ]
 
 # Lastly we compute the rank correlation
 rho <- cor(sampled$kanjistat, sampled$value, method = "spearman")
-
-print(rho)
+print(c("Spearman's Rank Correlation between subjective similarity scores and kanji distance similarity: ", rho))
 ```
 
