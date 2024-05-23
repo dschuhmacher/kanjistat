@@ -34,7 +34,7 @@
 #' # compare_neighborhoods("晴", refnn=5, compo_seg_depth=4, approx="pcweighted",
 #' #                       compnn=0, minor_warnings=FALSE)
 #
-compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="kanjidist", compnn=0, kvecdata=kvecjoyo, ...) {
+compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="kanjidist", compnn=0, kvecdata=kanjistat.data::kvecjoyo, ...) {
   refdist = match.arg(refdist, choices=c("strokedit"))
   compdist = match.arg(compdist, choices=c("kanjidist"))
   if (refdist != "strokedit" || compdist != "kanjidist") stop("combination of distances not (yet) implemented")

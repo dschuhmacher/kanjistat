@@ -131,7 +131,7 @@ kanjivec <- function(kanji, database=NULL, flatten="intelligent", bezier_discr=c
                      # default for flatten went from TRUE in 2022, to FALSE in Jan 2023
                      # to "intelligent" in Feb 2023 (about when components and veins where
                      # added to kanjivec objects)
-                     # TRUE is mainly interesting for getting a simplified overview when 
+                     # TRUE is mainly interesting for getting a simplified overview 
                      # of the KanjiVG structure when plotting with type="dend", but in
                      # complicated kanji with many split components plots are confusing.
                      save=FALSE, overwrite=FALSE, simplify=TRUE) {

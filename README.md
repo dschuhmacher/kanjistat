@@ -13,7 +13,7 @@ Comments, suggestions and contributions are welcome!
 ## Installation
 
 Install directly from GitHub by saying in R
-```
+```r
 remotes::install_github("dschuhmacher/kanjistat")
 ```
 If you want to use the function `kanjidist`, you will have to install the [GNU Linear Programming Kit](https://www.gnu.org/software/glpk/) (and the R package `ROI.plugin.glpk`).
