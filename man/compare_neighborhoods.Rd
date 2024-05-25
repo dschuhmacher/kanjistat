@@ -10,7 +10,6 @@ compare_neighborhoods(
   refnn = 10,
   compdist = "kanjidist",
   compnn = 0,
-  kvecdata = kvecjoyo,
   ...
 )
 }
@@ -24,10 +23,8 @@ compare_neighborhoods(
 \item{compdist}{a character vector. The name(s) of one or several other distances to compare with
 (currently only "kanjidist").}
 
-\item{compnn}{the number of nearest neighbors in terms of the other distance(s).}
-
-\item{kvecdata}{a list of the 2136 Jouyou kanji in \code{\link{kanjivec}} format, as obtained e.g. from
-\url{https://github.com/dschuhmacher/kanjistat.data}.}
+\item{compnn}{the number of nearest neighbors in terms of the other distance(s). If this is
+positive it is assumed that the suggested package kanjistat.data is available.}
 
 \item{...}{further parameters that are passed to \code{\link[=kanjidist]{kanjidist()}}.}
 }
@@ -39,7 +36,7 @@ by the type of distance.
 \description{
 List distances to nearest neighbors of a given kanji in terms of a reference distance
 (which is currently only the stroke edit distance) and compare with values in terms of
-another distance (currently only the kanji distance).
+another distance (currently only the component transport distance, a.k.a. kanji distance).
 }
 \section{Warning}{
 
