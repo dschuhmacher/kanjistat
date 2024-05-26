@@ -1,6 +1,61 @@
 # Functions in this file operate on individual kanji.
 # They may take vectors of kanji as input, but generate output per kanji.
 
+
+# Convert between index number, character and kanjivec object (if kvecjoyo is available)
+# for now we assume a single kanji as key 
+convert_1kanji <- function(key, output=c("all", "index", "character", "kanjivec")) {
+  output <- match.arg(output)
+  
+  if (isa(key, "kanjivec")) {
+    key <- key$char
+  }
+  if (isa(key, "hexmode")) {
+    key <- codepointToKanji(key)
+  }
+  
+  if (is.character(key)) {
+    ind <- which(kanjistat::kbase$kanji == key)
+    if (length(ind) == 0) {
+      stop("kanji ", key, " not found in kbase")
+    }
+  } else {
+    ind <- key
+  }
+  if (output == "index")  return(ind)
+  
+  char <- kanjistat::kbase$kanji[ind]
+  if (output == "character") return(char)
+  
+  if (output == "kanjivec") {
+    check_for_data()
+    if (ind %in% 1:2136) {
+      return(kanjistat.data::kvecjoyo[[ind]])
+    } else {
+      stop("output kanjivec only available for jouyou kanji")
+    }
+  }
+    
+  # only "all" remains
+  if (requireNamespace("kanjistat.data", quietly = TRUE)) {
+    kvec <- kanjistat.data::kvecjoyo[[ind]]
+  } else {
+    kvec <- NA
+  }
+  
+  return(list(index=ind, character=char, kanjivec=kvec))
+}
+
+convert_kanji <- function(key, output=c("all", "index", "character", "kanjivec")) {
+  output <- match.arg(output)
+  if (output == "all" || output == "kanjivec") {
+    return(lapply(key, convert_1kanji, output))
+  } else {
+    return(sapply(key, convert_1kanji, output))
+  }
+}
+
+
 #' Look up kanji
 #' 
 #' Return readings and meanings or information from `kbase` or `kmorph`.

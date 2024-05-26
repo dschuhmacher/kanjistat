@@ -35,11 +35,7 @@
 #' #                       compnn=0, minor_warnings=FALSE)
 #
 compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="kanjidist", compnn=0, ...) {
-  if (isFALSE(requireNamespace("kanjistat.data", quietly = TRUE))) {
-    stop('Package kanjistat.data is not available. This can be installed from GitHub by saying\n', 
-         'remotes::install_github("dschuhmacher/kanjistat.data")\n',
-         '(warning: 100MB download, installation may take up to a minute)')
-  }
+  check_for_data()
   refdist = match.arg(refdist, choices=c("strokedit"))
   compdist = match.arg(compdist, choices=c("kanjidist"))
   if (refdist != "strokedit" || compdist != "kanjidist") stop("combination of distances not (yet) implemented")

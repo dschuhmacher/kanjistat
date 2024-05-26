@@ -1,3 +1,21 @@
+# kanjistat 0.13.2.9000 (development version)
+
+## New features
+
+* Add function `sedist` for computing the stroke edit distance by Lars Yencken.
+
+* Add function `convert_kanji` (currently not exported) for universal conversion between kanji formats.  
+
+-------------------------------
+
+# kanjistat 0.13.2 (2024-05-24)
+
+## Bug fixes
+
+* Properly set up integration of the new non-CRAN kanjistat.data package.  
+
+-------------------------------
+
 # kanjistat 0.13.1 (2024-05-17)
 
 ## Bug fixes
