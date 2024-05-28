@@ -10,7 +10,7 @@ kanjistat offers tools for processing and analyzing Japanese kanji characters. Y
   | ![Kanji with components in different colors](assets/hair_kveckanji_sm.svg) | ![Dendrogram of the kanji](assets/hair_kvecdend_sm.svg) |
   |:----------:|:----------:|
 
-  | ![Ink transport source and destination](img/treestrans_sm.png) | ![Optimal ink transport](img/treesplan_sm.png) |
+  | ![Ink transport source and destination](assets/treestrans_sm.png) | ![Optimal ink transport](assets/treesplan_sm.png) |
   |:----------:|:----------:|
 
 
