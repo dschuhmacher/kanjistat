@@ -95,6 +95,7 @@ made available under a [CC BY-SA 3.0 License](https://creativecommons.org/licens
 `085e4.svg` and `090f5.svg` (included for unit tests) are exact copies
 of files from the same source.
 
-The sparse distance matrices `dstrokedit` for the stroke edit distance and `dyehli` for the bag-of-radicals distance contain the data from Lars Yencken's PhD Thesis,
-made available under a [CC BY 3.0 Unported License](https://creativecommons.org/licenses/by/3.0/) at
+The sparse distance matrices `dstrokedit` and `dyehli` contain  
+the data from Lars Yencken's [PhD Thesis](https://lars.yencken.org/papers/phd-thesis.pdf),  
+made available under a [CC BY 3.0 Unported License](https://creativecommons.org/licenses/by/3.0/) at  
 <https://lars.yencken.org/datasets/kanji-confusion>
