@@ -121,11 +121,16 @@ strokesignature2 <- function(kvec) {
 #'   mat
 #' }
 #' 
-
 sedist <- function(k1, k2, type = c("full", "before_slash", "first")) {
   type <- match.arg(type)
-  kvec1 <- convert_kanji(k1, "kanjivec")
-  kvec2 <- convert_kanji(k2, "kanjivec")
+  kvec1 <- convert_kanji(k1, "kanjivec", simplify=FALSE)
+  if (is(kvec1, "kanjivec")) {  # if k1 was just a single kanji specified in atomic form
+    kvec1 <- list(kvec1)
+  }
+  kvec2 <- convert_kanji(k2, "kanjivec", simplify=FALSE)
+  if (is(kvec2, "kanjivec")) {  # if k1 was just a single kanji specified in atomic form
+    kvec2 <- list(kvec2)
+  }
   if (type == "first") {
     sig1 <- sapply(kvec1, strokesignature1)
     sig2 <- sapply(kvec2, strokesignature1)

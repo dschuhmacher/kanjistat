@@ -4,16 +4,23 @@
 
 # Convert between index number, character and kanjivec object (if kvecjoyo is available)
 # for now we assume a single kanji as key 
-convert_1kanji <- function(key, output=c("all", "index", "character", "kanjivec")) {
+convert_1kanji <- function(key, output=c("all", "index", "character", "hexmode", "kanjivec")) {
   output <- match.arg(output)
   
-  if (isa(key, "kanjivec")) {
+  # kanjivec input
+  if (is(key, "kanjivec")) {
     key <- key$char
   }
-  if (isa(key, "hexmode")) {
-    key <- codepointToKanji(key)
+  
+  # hex number of any form 
+  if (is.character(key) && str_sub(key, end = 2) %in% c("0x", "0X")) {
+    key <- as.hexmode(key)
+  }
+  if (is(key, "hexmode")) {
+    key <- intToUtf8(key)
   }
   
+  # character (by here, the only other possibility is index or something illegal)
   if (is.character(key)) {
     ind <- which(kanjistat::kbase$kanji == key)
     if (length(ind) == 0) {
@@ -22,17 +29,21 @@ convert_1kanji <- function(key, output=c("all", "index", "character", "kanjivec"
   } else {
     ind <- key
   }
+  
   if (output == "index")  return(ind)
   
   char <- kanjistat::kbase$kanji[ind]
   if (output == "character") return(char)
+  
+  hex <- as.hexmode(utf8ToInt(char))
+  if (output == "hexmode") return(hex)
   
   if (output == "kanjivec") {
     check_for_data()
     if (ind %in% 1:2136) {
       return(kanjistat.data::kvecjoyo[[ind]])
     } else {
-      stop("output kanjivec only available for jouyou kanji")
+      stop("kanjivec objects are only available for jouyou kanji")
     }
   }
     
@@ -43,16 +54,74 @@ convert_1kanji <- function(key, output=c("all", "index", "character", "kanjivec"
     kvec <- NA
   }
   
-  return(list(index=ind, character=char, kanjivec=kvec))
+  return(list(index=ind, character=char, hexmode=hex, kanjivec=kvec))
 }
 
-convert_kanji <- function(key, output=c("all", "index", "character", "kanjivec")) {
+
+#' Convert between kanji formats
+#' 
+#' Accept any interpretable representation of kanji in terms of index numbers,
+#' UTF-8 character strings of length 1, UTF-8 codepoints
+#' or [`kanjivec`] objects and convert it to all or any of these
+#' formats.
+#'
+#' @param key an atomic vector or list of kanji in any combination of formats.
+#' @param output a string describing the desired output.
+#' @param simplify logical. Whether to simplify the output to an atomic vector
+#' or keep the structure of the original vector. In either case it depends on
+#' output whether this is possible.
+#'
+#' @details
+#' Index numbers are in terms of the order in [`kbase`]. UTF-8 codepoints are
+#' usually of class "hexmode", but character strings starting 
+#' with "0x" or "0X" are also accepted in the `key`.
+#'
+#' For `output = "kanjivec"`, the GitHub package kanjistat.data has to be available or
+#' an error is returned. For `output = "all"`, component kanjivec is set to NA if
+#' kanjistat.data is not available.
+#'
+#' @return A vector of the same length as key. If `simplify` is `TRUE`, this is an
+#' atomic vector for output = "index", "character" or "hexmode", and a list
+#' for output = "kanjivec" or "all" a list. If `simplify` is `FALSE`, the original
+#' structure (atomic or list) kept whenever possible.
+#' @export
+#'
+#' @examples
+#' convert_kanji(as.hexmode("99ac"))
+#' convert_kanji("0x99ac")  # same
+#' convert_kanji(500, "character") == kbase$kanji[500]  # TRUE
+#
+convert_kanji <- function(key, output=c("all", "index", "character", "hexmode", "kanjivec"), simplify=TRUE) {
   output <- match.arg(output)
-  if (output == "all" || output == "kanjivec") {
-    return(lapply(key, convert_1kanji, output))
+  
+  input_simple <- (is.atomic(key) || is(key, "kanjivec"))  # atomic or a single kanjivec object
+  
+  # the following seems to be necessary since as.list (also if implicitly used by lapply)
+  # drops the hexmode class (as would c)
+  if (is(key, "hexmode")) {  # key is atomic and has class "hexmode"
+    key <- as.list(key)
+    key <- lapply(key, \(x) {as.hexmode(x)}) 
+  } else if (is(key, "kanjivec")) {  # the special case of a single kanjivec (which is a list)
+    key <- list(key) 
   } else {
-    return(sapply(key, convert_1kanji, output))
+    key <- as.list(key)   # explicit conversion to list for better maintainability
   }
+
+  res <- lapply(key, convert_1kanji, output)
+  
+  # output (and therefore input) is just one object (input could be a single kanjivec)
+  if (simplify || input_simple) {
+    if (length(res) == 1) { # output (and therefore input) is just one object (input could be a single kanjivec)
+      res <- res[[1]]
+    } else if (output %in% c("index", "character", "hexmode")) {
+      res <- purrr::list_simplify(res)
+    }
+    if (output == "hexmode") {  # the simplification drops the hexmode class again
+      res <- as.hexmode(res)
+    }
+  }
+
+  return(res)
 }
 
 
