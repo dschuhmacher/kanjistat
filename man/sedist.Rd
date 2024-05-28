@@ -39,13 +39,14 @@ Requires kanjistat.data package.
 }
 
 \examples{
-ind1 <- 384
-k1 <- kbase$kanji[ind1]
-ind2 <- which(dstrokedit[ind1,] > 0)
-k2 <- kbase$kanji[ind2]
-row_a <- dstrokedit[ind1,ind2]  # note that dstrokedit contains only the closest kanji
+ind1 <- 384  
+k1 <- convert_kanji(ind1, "character")
+ind2 <- which(dstrokedit[ind1,] > 0)  
+# dstrokedit contains only the "closest" kanji
+k2 <- convert_kanji(ind2, "character")
+row_a <- dstrokedit[ind1, ind2]  
 if (requireNamespace("kanjistat.data", quietly = TRUE)) {
-  row_b <- sedist(k1, k2)
+  row_b <- sedist(k1, k2)  
   mat <- rbind(row_a, row_b)
   rownames(mat) = c(k1, k1)
   colnames(mat) = k2

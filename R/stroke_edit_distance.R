@@ -17,18 +17,24 @@ strokesigraw <- function(kvec) {
 # using full info
 strokesignature <- function(kvec) {
   strokes <-
-    c("㇀", "㇀/㇏", "㇀/㇐", "㇁", "㇂", "㇃", "㇄", "㇄a", 
-      "㇅", "㇆", "㇆/㇚", "㇆a", "㇆v", "㇇", "㇇/㇆", "㇇a", 
-      "㇈", "㇈a", "㇈b", "㇉", "㇋", "㇏", "㇏a", "㇐", "㇐/㇒", 
-      "㇐/㇔", "㇐a", "㇐b", "㇐b/㇔", "㇐c", "㇐c/㇀", "㇐c/㇔", 
-      "㇑", "㇑/㇒", "㇑/㇙", "㇑/㇚", "㇑a", "㇑a/㇒", "㇒", 
-      "㇒/㇀", "㇒/㇑", "㇒/㇔", "㇒/㇚", "㇓", "㇔", "㇔/㇀", 
-      "㇔/㇏", "㇔/㇐", "㇔/㇑", "㇔/㇒", "㇔a", "㇕", "㇕/㇆", 
-      "㇕a", "㇕a/㇆", "㇕b", "㇕b/㇆", "㇕c", "㇖", "㇖a", 
-      "㇖b", "㇖b/㇆", "㇗", "㇗/㇛", "㇗a", "㇙", "㇙/㇏", 
-      "㇙/㇟", "㇚", "㇛", "㇜", "㇞", "㇟", "㇟/㇏", "㇟/㇑", 
-      "㇟a", "㇟a/㇏", "㇟b", "㇡")
-  # lookup list to encode strokes for use with adist
+    c("\u31c0", "\u31c0/\u31cf", "\u31c0/\u31d0", "\u31c1", 
+      "\u31c2", "\u31c3", "\u31c4", "\u31c4a", "\u31c5", "\u31c6", 
+      "\u31c6/\u31da", "\u31c6a", "\u31c6v", "\u31c7", "\u31c7/\u31c6", 
+      "\u31c7a", "\u31c8", "\u31c8a", "\u31c8b", "\u31c9", "\u31cb", 
+      "\u31cf", "\u31cfa", "\u31d0", "\u31d0/\u31d2", "\u31d0/\u31d4", 
+      "\u31d0a", "\u31d0b", "\u31d0b/\u31d4", "\u31d0c", "\u31d0c/\u31c0", 
+      "\u31d0c/\u31d4", "\u31d1", "\u31d1/\u31d2", "\u31d1/\u31d9", 
+      "\u31d1/\u31da", "\u31d1a", "\u31d1a/\u31d2", "\u31d2", 
+      "\u31d2/\u31c0", "\u31d2/\u31d1", "\u31d2/\u31d4", "\u31d2/\u31da", 
+      "\u31d3", "\u31d4", "\u31d4/\u31c0", "\u31d4/\u31cf", "\u31d4/\u31d0", 
+      "\u31d4/\u31d1", "\u31d4/\u31d2", "\u31d4a", "\u31d5", 
+      "\u31d5/\u31c6", "\u31d5a", "\u31d5a/\u31c6", "\u31d5b", 
+      "\u31d5b/\u31c6", "\u31d5c", "\u31d6", "\u31d6a", "\u31d6b", 
+      "\u31d6b/\u31c6", "\u31d7", "\u31d7/\u31db", "\u31d7a", 
+      "\u31d9", "\u31d9/\u31cf", "\u31d9/\u31df", "\u31da", "\u31db", 
+      "\u31dc", "\u31de", "\u31df", "\u31df/\u31cf", "\u31df/\u31d1", 
+      "\u31dfa", "\u31dfa/\u31cf", "\u31dfb", "\u31e1")
+  # lookup list to encode strokes for use with adist:
   # (using part of the visible ascii range; careful \\ is escaped \, i.e. 1 character)
   lookup <- as.list(intToUtf8(44:122, multiple=TRUE))
   names(lookup) <- strokes
@@ -52,13 +58,14 @@ strokesignature1 <- function(kvec) {
 # using full stroke info except if / appears (then only part before /)
 strokesignature2 <- function(kvec) {
   strokes2 <-
-    c("㇀", "㇁", "㇂", "㇃", "㇄", "㇄a", "㇅", "㇆", "㇆a", 
-      "㇆v", "㇇", "㇇a", "㇈", "㇈a", "㇈b", "㇉", "㇋", "㇏", 
-      "㇏a", "㇐", "㇐a", "㇐b", "㇐c", "㇑", "㇑a", "㇒", 
-      "㇓", "㇔", "㇔a", "㇕", "㇕a", "㇕b", "㇕c", "㇖", "㇖a", 
-      "㇖b", "㇗", "㇗a", "㇙", "㇚", "㇛", "㇜", "㇞", "㇟", 
-      "㇟a", "㇟b", "㇡")
-  
+    c("\u31c0", "\u31c1", "\u31c2", "\u31c3", "\u31c4", "\u31c4a", 
+      "\u31c5", "\u31c6", "\u31c6a", "\u31c6v", "\u31c7", "\u31c7a", 
+      "\u31c8", "\u31c8a", "\u31c8b", "\u31c9", "\u31cb", "\u31cf", 
+      "\u31cfa", "\u31d0", "\u31d0a", "\u31d0b", "\u31d0c", "\u31d1", 
+      "\u31d1a", "\u31d2", "\u31d3", "\u31d4", "\u31d4a", "\u31d5", 
+      "\u31d5a", "\u31d5b", "\u31d5c", "\u31d6", "\u31d6a", "\u31d6b", 
+      "\u31d7", "\u31d7a", "\u31d9", "\u31da", "\u31db", "\u31dc", 
+      "\u31de", "\u31df", "\u31dfa", "\u31dfb", "\u31e1")
   # lookup list to encode strokes for use with adist
   # (using part of the visible ascii range)
   lookup2 <- as.list(intToUtf8(44:90, multiple=TRUE))
@@ -108,13 +115,14 @@ strokesignature2 <- function(kvec) {
 #' @export
 #'
 #' @examples
-#' ind1 <- 384
-#' k1 <- kbase$kanji[ind1]
-#' ind2 <- which(dstrokedit[ind1,] > 0)
-#' k2 <- kbase$kanji[ind2]
-#' row_a <- dstrokedit[ind1,ind2]  # note that dstrokedit contains only the closest kanji
+#' ind1 <- 384  
+#' k1 <- convert_kanji(ind1, "character")
+#' ind2 <- which(dstrokedit[ind1,] > 0)  
+#' # dstrokedit contains only the "closest" kanji
+#' k2 <- convert_kanji(ind2, "character")
+#' row_a <- dstrokedit[ind1, ind2]  
 #' if (requireNamespace("kanjistat.data", quietly = TRUE)) {
-#'   row_b <- sedist(k1, k2)
+#'   row_b <- sedist(k1, k2)  
 #'   mat <- rbind(row_a, row_b)
 #'   rownames(mat) = c(k1, k1)
 #'   colnames(mat) = k2
@@ -162,7 +170,7 @@ for (i in 1:2136) {
   fullstrokes <- get_strokes(kanjistat.data::kvecjoyo[[i]], simplify=FALSE)
   s1 <- sapply(fullstrokes, \(x){attr(x, "type")})
   stopifnot(is(s1, "character"))
-  if ("㇐b" %in% s1 && i %in% joyo1981ind) stop("reverse engineer")
+  # if ("㇐b" %in% s1 && i %in% joyo1981ind) stop("reverse engineer")
   allthestrokes <- c(allthestrokes, s1)
 }
 str(allthestrokes)
@@ -173,18 +181,18 @@ attributes(counts) <- NULL
 data.frame(strokes, counts)
 dump("strokes", file="")
 
-strokes <-
-  c("㇀", "㇀/㇏", "㇀/㇐", "㇁", "㇂", "㇃", "㇄", "㇄a", 
-    "㇅", "㇆", "㇆/㇚", "㇆a", "㇆v", "㇇", "㇇/㇆", "㇇a", 
-    "㇈", "㇈a", "㇈b", "㇉", "㇋", "㇏", "㇏a", "㇐", "㇐/㇒", 
-    "㇐/㇔", "㇐a", "㇐b", "㇐b/㇔", "㇐c", "㇐c/㇀", "㇐c/㇔", 
-    "㇑", "㇑/㇒", "㇑/㇙", "㇑/㇚", "㇑a", "㇑a/㇒", "㇒", 
-    "㇒/㇀", "㇒/㇑", "㇒/㇔", "㇒/㇚", "㇓", "㇔", "㇔/㇀", 
-    "㇔/㇏", "㇔/㇐", "㇔/㇑", "㇔/㇒", "㇔a", "㇕", "㇕/㇆", 
-    "㇕a", "㇕a/㇆", "㇕b", "㇕b/㇆", "㇕c", "㇖", "㇖a", 
-    "㇖b", "㇖b/㇆", "㇗", "㇗/㇛", "㇗a", "㇙", "㇙/㇏", 
-    "㇙/㇟", "㇚", "㇛", "㇜", "㇞", "㇟", "㇟/㇏", "㇟/㇑", 
-    "㇟a", "㇟a/㇏", "㇟b", "㇡")
+# strokes <-
+#   c("㇀", "㇀/㇏", "㇀/㇐", "㇁", "㇂", "㇃", "㇄", "㇄a", 
+#     "㇅", "㇆", "㇆/㇚", "㇆a", "㇆v", "㇇", "㇇/㇆", "㇇a", 
+#     "㇈", "㇈a", "㇈b", "㇉", "㇋", "㇏", "㇏a", "㇐", "㇐/㇒", 
+#     "㇐/㇔", "㇐a", "㇐b", "㇐b/㇔", "㇐c", "㇐c/㇀", "㇐c/㇔", 
+#     "㇑", "㇑/㇒", "㇑/㇙", "㇑/㇚", "㇑a", "㇑a/㇒", "㇒", 
+#     "㇒/㇀", "㇒/㇑", "㇒/㇔", "㇒/㇚", "㇓", "㇔", "㇔/㇀", 
+#     "㇔/㇏", "㇔/㇐", "㇔/㇑", "㇔/㇒", "㇔a", "㇕", "㇕/㇆", 
+#     "㇕a", "㇕a/㇆", "㇕b", "㇕b/㇆", "㇕c", "㇖", "㇖a", 
+#     "㇖b", "㇖b/㇆", "㇗", "㇗/㇛", "㇗a", "㇙", "㇙/㇏", 
+#     "㇙/㇟", "㇚", "㇛", "㇜", "㇞", "㇟", "㇟/㇏", "㇟/㇑", 
+#     "㇟a", "㇟a/㇏", "㇟b", "㇡")
 
 # lookup list to encode strokes for use with adist
 # (using part of the visible ascii range; careful \\ is escaped \, i.e. 1 character)
@@ -211,11 +219,11 @@ attributes(counts1) <- NULL
 data.frame(strokes1, counts1)
 dump("strokes1", file="")
 
-strokes1 <-
-  c("㇀", "㇁", "㇂", "㇃", "㇄", "㇅", "㇆", "㇇", "㇈", 
-    "㇉", "㇋", "㇏", "㇐", "㇑", "㇒", "㇓", "㇔", "㇕", 
-    "㇖", "㇗", "㇙", "㇚", "㇛", "㇜", "㇞", "㇟", "㇡"
-  )
+# strokes1 <-
+#   c("㇀", "㇁", "㇂", "㇃", "㇄", "㇅", "㇆", "㇇", "㇈", 
+#     "㇉", "㇋", "㇏", "㇐", "㇑", "㇒", "㇓", "㇔", "㇕", 
+#     "㇖", "㇗", "㇙", "㇚", "㇛", "㇜", "㇞", "㇟", "㇡"
+#   )
 
 
 # taking only part before / into account (otherwise full;
@@ -240,13 +248,13 @@ attributes(counts2) <- NULL
 data.frame(strokes2, counts2)
 dump("strokes2", file="")
 
-strokes2 <-
-  c("㇀", "㇁", "㇂", "㇃", "㇄", "㇄a", "㇅", "㇆", "㇆a", 
-    "㇆v", "㇇", "㇇a", "㇈", "㇈a", "㇈b", "㇉", "㇋", "㇏", 
-    "㇏a", "㇐", "㇐a", "㇐b", "㇐c", "㇑", "㇑a", "㇒", 
-    "㇓", "㇔", "㇔a", "㇕", "㇕a", "㇕b", "㇕c", "㇖", "㇖a", 
-    "㇖b", "㇗", "㇗a", "㇙", "㇚", "㇛", "㇜", "㇞", "㇟", 
-    "㇟a", "㇟b", "㇡")
+# strokes2 <-
+#   c("㇀", "㇁", "㇂", "㇃", "㇄", "㇄a", "㇅", "㇆", "㇆a", 
+#     "㇆v", "㇇", "㇇a", "㇈", "㇈a", "㇈b", "㇉", "㇋", "㇏", 
+#     "㇏a", "㇐", "㇐a", "㇐b", "㇐c", "㇑", "㇑a", "㇒", 
+#     "㇓", "㇔", "㇔a", "㇕", "㇕a", "㇕b", "㇕c", "㇖", "㇖a", 
+#     "㇖b", "㇗", "㇗a", "㇙", "㇚", "㇛", "㇜", "㇞", "㇟", 
+#     "㇟a", "㇟b", "㇡")
 
 # lookup list to encode strokes for use with adist
 # (using part of the visible ascii range)
@@ -254,4 +262,21 @@ lookup2 <- as.list(intToUtf8(44:90, multiple=TRUE))
 names(lookup2) <- strokes2
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# code used to replace the UTF-8 strings by \u (and possibly \U) escapes
+repl_fun <- function(x) {
+  hexchar <- kanjiToCodepoint(x, character=TRUE)
+  prefix <- ifelse(nchar(hexchar) <= 4, "\\u", "\\U")
+  # \u works only for up to 4 hex digits, but is more common
+  # \U would work up to 8 hex digits (including for 4)
+  paste0(prefix, hexchar)
+}
+
+strokesa <- gsubfn::gsubfn(pattern = "(\\P{ASCII})",
+                 # Everything that is not in the basic_latin codeblock (i.e. is not ASCII)
+               replacement = repl_fun,
+               x = strokes, perl = TRUE, useBytes = FALSE)
+
+# oh dear, the following achieves the same for free:
+stringi::stri_escape_unicode(strokes)
 }
