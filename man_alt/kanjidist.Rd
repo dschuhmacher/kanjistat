@@ -11,10 +11,13 @@ kanjidist(
   compo_seg_depth2 = 3,
   p = 1,
   C = 0.2,
+  approx = c("grid", "pc", "pcweighted"),
   type = c("rtt", "unbalanced", "balanced"),
   size = 48,
   lwd = 2.5,
-  verbose = FALSE
+  density = 30,
+  verbose = FALSE,
+  minor_warnings = TRUE
 )
 }
 \arguments{
@@ -30,20 +33,35 @@ to the \code{p}-th power (which is compensated by taking the \code{p}-th root af
 \item{C}{the penalty for extra mass if \code{type} is \code{"rtt"} or \code{"unbalanced"}, i.e.
 we add  \code{C^p} per unit of extra mass (before applying the \code{p}-th root).}
 
-\item{type}{the type of Wasserstein distance used for matching components based on bitmaps drawn
-from the stroke information in \code{k1} and \code{k2}. \code{"unbalanced"} means the pixel values
-in the two images are interpreted as mass. The total masses can be very different. Extra mass can
-be disposed of at cost \code{C^p} per unit. \code{"rtt"} is computationally the same, but the final
-distance is divided by the maximum of the total ink in each kanji to the (1/p). \code{"balanced"}
-means the pixel values are normalized so that both images have the same total mass 1. Everything has
-to be transported, i.e.\ disposal of mass is not allowed.}
+\item{approx}{what kind of approximation is used for matching components. If this is \code{"grid"},
+a bitmap (raster image) is used, otherwise lines are approximated by more freely spaced points.
+For \code{"pc"} (point cloud) each point has the same weight and points are placed in a (more or
+less) equidistant way. For \code{"pcweighted"} points are further apart along straight lines and
+around the center of the Bezier curves that describe the strokes. The weights of the points are
+then (more or less) proportional to the amount of ink (stroke length) they represent.}
 
-\item{size}{side length of the bitmaps used for matching components.}
+\item{type}{the type of Wasserstein distance used for matching components based on the grid or
+point cloud approximation chosen. \code{"unbalanced"} means the weights (pixel values
+if \verb{approx = "grid}) are interpreted as mass. The total masses in two components be very different.
+Extra mass can be disposed of at cost \code{C^p} per unit. \code{"rtt"} is computationally the same,
+but the final distance is divided by the maximum of the total ink (sum of weights) in each component
+to the 1/p. \code{"balanced"} means the weights are normalized so that both images have the same
+total mass 1. Everything has to be transported, i.e.\ disposal of mass is not allowed.}
 
-\item{lwd}{linewidth for drawing the components in these bitmaps.}
+\item{size}{side length of the bitmaps used for matching components (if \verb{approx = "grid}).}
+
+\item{lwd}{linewidth for drawing the components in these bitmaps (if \verb{approx = "grid}).}
+
+\item{density}{approximate number of discretization points per unit line length (if \verb{approx != "grid})}
 
 \item{verbose}{logical. Whether to print detailed information on the cost for all pairs of
 components and the final matching.}
+
+\item{minor_warnings}{logical. Should minor_warnings be given. If \code{FALSE}, the warnings about substantial
+distances between bitmaps/pointclouds standing for the same component and the use of a workaround due to
+missing strokes in component decompositions are suppressed. While these warnings indicate to same extent
+that things are not going exactly as planned, they are usually not of interest if a larger number of
+kanji distances is computed and obscure the visibility of more important warnings (if any).}
 }
 \value{
 The kanji distance, a non-negative number.
@@ -90,7 +108,7 @@ if (requireNamespace("ROI.plugin.glpk")) {
 \references{
 Dominic Schuhmacher (2023).\cr
 Distance maps between Japanese kanji characters based on hierarchical optimal transport.\cr
-ArXiv Preprint, \doi{10.48550/arXiv.2304.02493}
+ArXiv, \doi{10.48550/arXiv.2304.02493}
 }
 \seealso{
 \code{\link{kanjidistmat}}, \code{\link{kmatdist}}

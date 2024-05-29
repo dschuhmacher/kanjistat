@@ -17,14 +17,14 @@ kanjimat(
 )
 }
 \arguments{
-\item{kanji}{a (vector of) character string(s) containing kanjis.}
+\item{kanji}{a (vector of) character string(s) containing kanji.}
 
 \item{family}{the font-family to be used. For details see vignette.}
 
 \item{size}{the sidelength of the (square) bitmap}
 
-\item{margin}{extra margin to around the character. Defaults to 0 which leaves a relatively slim margin.
-Can be negative, but risks cutting off parts of the character. Units are relative to size in steps of 1/32.}
+\item{margin}{numeric. Extra margin around the character. Defaults to 0 which leaves a relatively slim margin.
+Positive values increase this margin, negative values decrease it (which usually cuts off part of the kanji).}
 
 \item{antialias}{logical. Shall antialiasing be performed?}
 
@@ -58,6 +58,6 @@ We strongly advised that a Japanese font is used as detailed above.
 }
 
 \examples{
-res <- kanjimat(kanji="\u85e4", size = 128)
+res <- kanjimat(kanji="藤", size = 128)
 
 }

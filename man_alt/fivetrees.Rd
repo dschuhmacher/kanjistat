@@ -10,15 +10,15 @@
 \title{Sample lists of kanjimat objects}
 \format{
 \code{fivetrees1}, \code{fivetrees2} and \code{fivetrees3} are lists of five \code{\link{kanjimat}}
-objects each, representing the same five basic kanji \\u6821,\\u6728,\\u4f11,\\u6797,\\u76f8, containing each
+objects each, representing the same five basic kanji 校,木,休,林,相, containing each
 a tree component. Their matrices are antialiased 64 x 64 pixel representations of the kanji. The size
 is chosen as a compromise between aesthetics and memory/computational cost,
 such as for \code{\link{kmatdist}}.
 
 All of them are in handwriting style fonts.
 \code{fivetrees1} is in a Kyoukasho font (schoolbook style),
-\code{fivetrees2} is in a Kaisho font (regular script calligraphy font)
-\code{fivetrees3} is in a Gyousho font (semi-cursive calligraphy font)
+\code{fivetrees2} is in a Kaisho font (regular script calligraphy font),
+\code{fivetrees3} is in a Gyousho font (semi-cursive calligraphy font).
 
 An object of class \code{list} of length 5.
 

@@ -26,8 +26,8 @@ Please use one of the many excellent online kanji dictionaries (see e.g.) more
 sophisticated lookup methods and more detailed results.
 }
 \examples{
-lookup(c("晴", "曇", "雨"))  
-lookup("晴曇雨")   # same
+lookup(c("\u6674", "\u66c7", "\u96e8"))  
+lookup("\u6674\u66c7\u96e8")   # same
 
 }
 \author{

@@ -10,7 +10,7 @@
 \title{Sample lists of kanjimat objects}
 \format{
 \code{fivetrees1}, \code{fivetrees2} and \code{fivetrees3} are lists of five \code{\link{kanjimat}}
-objects each, representing the same five basic kanji 校,木,休,林,相, containing each
+objects each, representing the same five basic kanji \\u6821,\\u6728,\\u4f11,\\u6797,\\u76f8, containing each
 a tree component. Their matrices are antialiased 64 x 64 pixel representations of the kanji. The size
 is chosen as a compromise between aesthetics and memory/computational cost,
 such as for \code{\link{kmatdist}}.
