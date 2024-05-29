@@ -37,6 +37,16 @@ get_kanjistat_option <- function(x) {
 }
 
 
+check_for_data <- function() {
+  if (isFALSE(requireNamespace("kanjistat.data", quietly = TRUE))) {
+    stop('Package kanjistat.data is not available. This can be installed from GitHub by saying\n', 
+         'remotes::install_github("dschuhmacher/kanjistat.data")\n',
+         '(warning: 100MB download, installation may take up to a minute)')
+  }
+  invisible()
+}
+
+
 #' Convert between Unicode codepoint and kanji
 #' 
 #' Given codepoints \code{cp}, the function `codepointToKanji` transforms

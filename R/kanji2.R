@@ -238,7 +238,10 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     distortfact <- 0.05   # lambda_3
     # values for the lambdas are pretty ad hoc for now and should be ultimately estimated based 
     # on data that is suitable for the task we want kanjidist to fulfill.
-    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=1.2*C) }
+    # psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=1.2*C) }
+    psi <- function(compo_dist) { logi2C(compo_dist, a=2, p0=0.4, CC=1.15*C) }
+    # psi <- function(compo_dist) { cloglog01(compo_dist, a=1, p0=0.35, CC=C) }
+    # psi <- function(compo_dist) { betacdf(compo_dist, a=2.5, b=2.5, CC=C) }
   }
   
   stopifnot(isTRUE(all.equal(distfact+transfact+scalefact+distortfact,1)))
@@ -316,8 +319,9 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
       dist <- 0.000001  
     }
         
-    dist <- min(C, dist) # recall that dist is only guaranteed to be <= 2^(1/p)*C
-                         # practically it is even for p=1 only in relatively extreme cases >C
+    # dist <- min(C, dist)  # commented out  2024/05/16, should not be needed with new dist transforms 
+       # recall that dist is only guaranteed to be <= 2^(1/p)*C
+       # practically it is even for p=1 only in relatively extreme cases >C
         
     reltrans <- chuck(allcosts, r1, r2, "reltrans")
     scar <- chuck(allcosts, r1, r2, "scar")
@@ -339,7 +343,7 @@ kanjidist <- function(k1, k2, compo_seg_depth1=3, compo_seg_depth2=3, p=1, C=0.2
     # (also for general p, where the effect is smaller).
     
     costmat[r1,r2] <- totcost
-    pluck(compores, r1, r2) <- c(flatind=c(r1,r2), level1=l1, ind1=i1, level2=l2, ind2=i2, totcost=totcost, dist=dist, weight1=w1[r1], weight2=w2[r2],
+    pluck(compores, r1, r2) <- c(flatind=c(r1,r2), level1=l1, ind1=i1, level2=l2, ind2=i2, totcost=totcost, dist=dist, psidist=psi(dist), weight1=w1[r1], weight2=w2[r2],
                                       transx=reltrans[1], transy=reltrans[2], scalex=scar[1], scaley=scar[2],
                                       distortx=distort[1], distorty=distort[2])
     attr(pluck(compores, r1, r2), "elements") <- c(ele1, ele2)

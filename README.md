@@ -6,17 +6,28 @@
 
 kanjistat offers tools for processing and analyzing Japanese kanji characters. You can look up readings and meanings along with further dictionary information (to a large part provided by [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project)) including morphological details. You can plot kanji in your favorite font and process the resulting bitmap. You can represent kanji as nested lists of stroke paths (based on original data by [kanjiVG](https://kanjivg.tagaini.net/)), plot components in different color or display the tree structure, and analyze these decompositions and their individual strokes. Various old and new distance functions between kanji are implemented.
 
-Comments, suggestions and contributions are welcome!
+  
+  | ![Kanji with components in different colors](assets/hair_kveckanji_sm.svg) | ![Dendrogram of the kanji](assets/hair_kvecdend_sm.svg) |
+  |:----------:|:----------:|
+
+  | ![Ink transport source and destination](assets/treestrans_sm.png) | ![Optimal ink transport](assets/treesplan_sm.png) |
+  |:----------:|:----------:|
+
+
+Comments, suggestions and contributions are welcome! For more info, see the [contribution guide](https://github.com/dschuhmacher/kanjistat/blob/main/.github/CONTRIBUTING.md).
 
 
 
 ## Installation
 
 Install directly from GitHub by saying in R
-```
+```r
 remotes::install_github("dschuhmacher/kanjistat")
 ```
-If you want to use the function `kanjidist`, you will have to install the [GNU Linear Programming Kit](https://www.gnu.org/software/glpk/) (and the R package `ROI.plugin.glpk`).
+If you want to use the function `kanjidist`, you will have to install the [GNU Linear Programming Kit](https://www.gnu.org/software/glpk/) (and the R package `ROI.plugin.glpk`). To work with precomputed `kanjivec` objects and the distance matrix used for the [kanjidist website](https://www.kanjidist.org), download the R data package [kanjistat.data](https://github.com/dschuhmacher/kanjistat.data) via
+```r
+remotes::install_github("dschuhmacher/kanjistat.data")
+```
 
 
 
@@ -24,15 +35,13 @@ If you want to use the function `kanjidist`, you will have to install the [GNU L
 
 Kanji are represented in three different ways in this package:
 
-1. as **characters** (or their Unicode codepoints) in the console
+1. as **characters** (or their Unicode codepoints) in the console.
 
 1. as **`kanjimat` objects**, i.e., bitmaps using a certain font-family and possibly other typographical parameters.
 
-1. as **`kanjivec` objects**, i.e., nested lists of strokes given as paths.
+1. as **`kanjivec` objects**, i.e., nested lists of strokes given as paths. Recently these objects have become much more important than the `kanjimat` objects. 
 
-See `vignette("kanjistat")` for the basics and `?kanjivec` and `?kanjidist` for more information on the third point.
-
-A file with `kanjivec` objects for all Jōyō kanji can be obtained from the [kanjistat.data repository](https://github.com/dschuhmacher/kanjistat.data).
+See `vignette("kanjistat")` for the basics and `?kanjivec` and `?kanjidist` for more information on the third point. Alternatively, visit the pkgdown page at <https://dschuhmacher.github.io/kanjistat/>.
 
 
 
@@ -84,4 +93,9 @@ KanjiVG --- Copyright (C) 2009-2023 Ulrich Apel
 made available under a [CC BY-SA 3.0 License](https://creativecommons.org/licenses/by-sa/3.0/) at  
 <https://kanjivg.tagaini.net/>  
 `085e4.svg` and `090f5.svg` (included for unit tests) are exact copies
-of files from the same source
+of files from the same source.
+
+The sparse distance matrices `dstrokedit` and `dyehli` contain  
+the data from Lars Yencken's [PhD Thesis](https://lars.yencken.org/papers/phd-thesis.pdf),  
+made available under a [CC BY 3.0 Unported License](https://creativecommons.org/licenses/by/3.0/) at  
+<https://lars.yencken.org/datasets/kanji-confusion>

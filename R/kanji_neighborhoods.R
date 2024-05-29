@@ -2,16 +2,16 @@
 #'
 #' List distances to nearest neighbors of a given kanji in terms of a reference distance
 #' (which is currently only the stroke edit distance) and compare with values in terms of
-#' another distance (currently only the kanji distance).
+#' another distance (currently only the component transport distance, a.k.a. kanji distance).
 #'
 #' @param kan a kanji (currently only as a single UTF-8 character).
 #' @param refdist the name of the reference distance (currently only "strokedit").
 #' @param refnn the number of nearest neighbors in terms of the reference distance.
 #' @param compdist a character vector. The name(s) of one or several other distances to compare with
 #' (currently only "kanjidist").
-#' @param compnn the number of nearest neighbors in terms of the other distance(s).
-#' @param kvecdata a list of the 2136 Jouyou kanji in [`kanjivec`] format, as obtained e.g. from
-#' <https://github.com/dschuhmacher/kanjistat.data>.
+#' @param compnn the number of nearest neighbors in terms of the other distance(s). If this is 
+#' positive it is assumed that the suggested package kanjistat.data is available.
+#
 #' @param ... further parameters that are passed to [kanjidist()].
 #'
 #' @section Warning:
@@ -34,12 +34,16 @@
 #' # compare_neighborhoods("晴", refnn=5, compo_seg_depth=4, approx="pcweighted",
 #' #                       compnn=0, minor_warnings=FALSE)
 #
-compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="kanjidist", compnn=0, kvecdata=kvecjoyo, ...) {
+compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="kanjidist", compnn=0, ...) {
+  check_for_data()
   refdist = match.arg(refdist, choices=c("strokedit"))
   compdist = match.arg(compdist, choices=c("kanjidist"))
   if (refdist != "strokedit" || compdist != "kanjidist") stop("combination of distances not (yet) implemented")
   
   ki <- which(kanjistat::kbase$kanji == kan)
+  if (ki > 2133) {  # without the test we get obscure error message from next line
+    stop("no known stroke edit distances for kanji ", kan, " available")
+  }
   kj <- which(kanjistat::dstrokedit[ki,] > 0)  # the zeroes in the sparse matrix should be NAs (to be fixed?!)
   if (length(kj) == 0) {
     stop("no known stroke edit distances for kanji ", kan, " available")
@@ -51,11 +55,11 @@ compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="
   kj <- kj[kjord[seq_len(refnn)]]
   # dstrokedit[ki,kj]
   # kbase$kanji[kj]
-  kan1 <- kvecdata[ki]   # needs to be a list even if it is just one kanji!
+  kan1 <- kanjistat.data::kvecjoyo[ki]   # needs to be a list even if it is just one kanji!
   if (compnn > 0) {
     warning("compnn > 0 currently means that 2135 kanji distances have to be computed. This will take a while
             (see help page for details).")
-    kdall <- kanjidistmat(kan1, kvecdata, ...)
+    kdall <- kanjidistmat(kan1, kanjistat.data::kvecjoyo, ...)
     # computing also the distance to kan1 itself costs nothing and keeps the indices intact.
     kdord <- order(kdall)  # still keep the indices intact
     kdord <- setdiff(kdord, c(ki, kj))
@@ -64,12 +68,16 @@ compare_neighborhoods <- function(kan, refdist="strokedit", refnn=10, compdist="
     kj2 <- kdord[1:compnn]
     kdrow <- kdall[ c(kj, kj2) ]
   } else {
-    kan2 <- kvecdata[kj]
+    kan2 <- kanjistat.data::kvecjoyo[kj]
     kdrow <- kanjidistmat(kan1, kan2, ...)
     kj2 <- numeric(0)
   }
   
-  sedrow <- kanjistat::dstrokedit[ki, c(kj, kj2)]
+  wh2 <- which(kj2 <= 2133) # we should really fix dstrokedit to 2136 x 2136 at some point
+  sedrow2 <- rep(NA, compnn)
+  sedrow2[wh2] <- kanjistat::dstrokedit[ki, kj2[wh2]]
+  sedrow1 <- kanjistat::dstrokedit[ki, kj]
+  sedrow <- c(sedrow1, sedrow2)
   sedrow[sedrow == 0] <- NA
   
   res <- rbind(sedrow, kdrow)
