@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,6 +47,29 @@
       <small>Source: <a href="https://github.com/dschuhmacher/kanjistat/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.13.2.9100" id="kanjistat-01329100-development-version">kanjistat 0.13.2.9100 (development version)<a class="anchor" aria-label="anchor" href="#kanjistat-01329100-development-version"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-13-2-9100">New features<a class="anchor" aria-label="anchor" href="#new-features-0-13-2-9100"></a></h3>
+<ul><li><p>New function <code>convert_kanji</code> for universal conversion between kanji formats.</p></li>
+<li><p>New function <code>sedist</code> for computing the stroke edit distance by Lars Yencken.</p></li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.13.2" id="kanjistat-0132-2024-05-24">kanjistat 0.13.2 (2024-05-24)<a class="anchor" aria-label="anchor" href="#kanjistat-0132-2024-05-24"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-13-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-13-2"></a></h3>
+<ul><li>Properly set up integration of the new non-CRAN kanjistat.data package.</li>
+</ul><hr></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.13.1" id="kanjistat-0131-2024-05-17">kanjistat 0.13.1 (2024-05-17)<a class="anchor" aria-label="anchor" href="#kanjistat-0131-2024-05-17"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-13-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-13-1"></a></h3>
+<ul><li>
+<code>compare_neighborhoods</code> gave obscure errors when stroke edit distances involved kanji with index &gt; 2133. Fixed by returning an explicit error if the key kanji has such an index and setting the corresponding return value to NA if any of the closest kanji in the kanji distance has such an index.</li>
+</ul><hr></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.13.0" id="kanjistat-0130-2024-05-10">kanjistat 0.13.0 (2024-05-10)<a class="anchor" aria-label="anchor" href="#kanjistat-0130-2024-05-10"></a></h2>
 <div class="section level3">

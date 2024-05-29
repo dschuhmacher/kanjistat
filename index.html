@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">kanjistat</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,25 +68,49 @@
 </h1></div>
 <p><!-- badges: start --> <a href="https://github.com/dschuhmacher/kanjistat/actions/workflows/check-standard.yaml" class="external-link"><img src="https://github.com/dschuhmacher/kanjistat/actions/workflows/check-standard.yaml/badge.svg" alt="R-CMD-check"></a> <!-- badges: end --></p>
 <p>kanjistat offers tools for processing and analyzing Japanese kanji characters. You can look up readings and meanings along with further dictionary information (to a large part provided by <a href="https://www.edrdg.org/wiki/index.php/KANJIDIC_Project" class="external-link">KANJIDIC2</a>) including morphological details. You can plot kanji in your favorite font and process the resulting bitmap. You can represent kanji as nested lists of stroke paths (based on original data by <a href="https://kanjivg.tagaini.net/" class="external-link">kanjiVG</a>), plot components in different color or display the tree structure, and analyze these decompositions and their individual strokes. Various old and new distance functions between kanji are implemented.</p>
-<p>Comments, suggestions and contributions are welcome!</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="center"><img src="assets/hair_kveckanji_sm.svg" alt="Kanji with components in different colors"></th>
+<th align="center"><img src="assets/hair_kvecdend_sm.svg" alt="Dendrogram of the kanji"></th>
+</tr></thead>
+<tbody></tbody>
+</table>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th align="center"><img src="assets/treestrans_sm.png" alt="Ink transport source and destination"></th>
+<th align="center"><img src="assets/treesplan_sm.png" alt="Optimal ink transport"></th>
+</tr></thead>
+<tbody></tbody>
+</table>
+<p>Comments, suggestions and contributions are welcome! For more info, see the <a href="https://github.com/dschuhmacher/kanjistat/blob/main/.github/CONTRIBUTING.md" class="external-link">contribution guide</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install directly from GitHub by saying in R</p>
-<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dschuhmacher/kanjistat"</span><span class="op">)</span></span></code></pre>
-<p>If you want to use the function <code>kanjidist</code>, you will have to install the <a href="https://www.gnu.org/software/glpk/" class="external-link">GNU Linear Programming Kit</a> (and the R package <code>ROI.plugin.glpk</code>).</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dschuhmacher/kanjistat"</span><span class="op">)</span></span></code></pre></div>
+<p>If you want to use the function <code>kanjidist</code>, you will have to install the <a href="https://www.gnu.org/software/glpk/" class="external-link">GNU Linear Programming Kit</a> (and the R package <code>ROI.plugin.glpk</code>). To work with precomputed <code>kanjivec</code> objects and the distance matrix used for the <a href="https://www.kanjidist.org" class="external-link">kanjidist website</a>, download the R data package <a href="https://github.com/dschuhmacher/kanjistat.data" class="external-link">kanjistat.data</a> via</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"dschuhmacher/kanjistat.data"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
 <p>Kanji are represented in three different ways in this package:</p>
 <ol style="list-style-type: decimal">
-<li><p>as <strong>characters</strong> (or their Unicode codepoints) in the console</p></li>
+<li><p>as <strong>characters</strong> (or their Unicode codepoints) in the console.</p></li>
 <li><p>as <strong><code>kanjimat</code> objects</strong>, i.e., bitmaps using a certain font-family and possibly other typographical parameters.</p></li>
-<li><p>as <strong><code>kanjivec</code> objects</strong>, i.e., nested lists of strokes given as paths.</p></li>
+<li><p>as <strong><code>kanjivec</code> objects</strong>, i.e., nested lists of strokes given as paths. Recently these objects have become much more important than the <code>kanjimat</code> objects.</p></li>
 </ol>
-<p>See <code><a href="articles/kanjistat.html">vignette("kanjistat")</a></code> for the basics and <code><a href="reference/kanjivec.html">?kanjivec</a></code> and <code><a href="reference/kanjidist.html">?kanjidist</a></code> for more information on the third point.</p>
-<p>A file with <code>kanjivec</code> objects for all Jōyō kanji can be obtained from the <a href="https://github.com/dschuhmacher/kanjistat.data" class="external-link">kanjistat.data repository</a>.</p>
+<p>See <code><a href="articles/kanjistat.html">vignette("kanjistat")</a></code> for the basics and <code><a href="reference/kanjivec.html">?kanjivec</a></code> and <code><a href="reference/kanjidist.html">?kanjidist</a></code> for more information on the third point. Alternatively, visit the pkgdown page at <a href="https://dschuhmacher.github.io/kanjistat/" class="uri">https://dschuhmacher.github.io/kanjistat/</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
@@ -111,7 +135,10 @@ Kanjium — Copyright © Uros O. on any additions or modifications from previous
 made available under a <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">CC BY-SA 4.0 License</a> at<br><a href="https://github.com/mifunetoshiro/kanjium" class="external-link uri">https://github.com/mifunetoshiro/kanjium</a></p>
 <p>The data set <code>fivebetas</code> is derived from five of the svg files in<br>
 KanjiVG — Copyright (C) 2009-2023 Ulrich Apel<br>
-made available under a <a href="https://creativecommons.org/licenses/by-sa/3.0/" class="external-link">CC BY-SA 3.0 License</a> at<br><a href="https://kanjivg.tagaini.net/" class="external-link uri">https://kanjivg.tagaini.net/</a><br><code>085e4.svg</code> and <code>090f5.svg</code> (included for unit tests) are exact copies of files from the same source</p>
+made available under a <a href="https://creativecommons.org/licenses/by-sa/3.0/" class="external-link">CC BY-SA 3.0 License</a> at<br><a href="https://kanjivg.tagaini.net/" class="external-link uri">https://kanjivg.tagaini.net/</a><br><code>085e4.svg</code> and <code>090f5.svg</code> (included for unit tests) are exact copies of files from the same source.</p>
+<p>The sparse distance matrices <code>dstrokedit</code> and <code>dyehli</code> contain<br>
+the data from Lars Yencken’s <a href="https://lars.yencken.org/papers/phd-thesis.pdf" class="external-link">PhD Thesis</a>,<br>
+made available under a <a href="https://creativecommons.org/licenses/by/3.0/" class="external-link">CC BY 3.0 Unported License</a> at<br><a href="https://lars.yencken.org/datasets/kanji-confusion" class="external-link uri">https://lars.yencken.org/datasets/kanji-confusion</a></p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
