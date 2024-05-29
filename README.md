@@ -7,10 +7,10 @@
 kanjistat offers tools for processing and analyzing Japanese kanji characters. You can look up readings and meanings along with further dictionary information (to a large part provided by [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project)) including morphological details. You can plot kanji in your favorite font and process the resulting bitmap. You can represent kanji as nested lists of stroke paths (based on original data by [kanjiVG](https://kanjivg.tagaini.net/)), plot components in different color or display the tree structure, and analyze these decompositions and their individual strokes. Various old and new distance functions between kanji are implemented.
 
   
-  | ![Kanji with components in different colors](assets/hair_kveckanji_sm.svg) | ![Dendrogram of the kanji](assets/hair_kvecdend_sm.svg) |
+  | ![Kanji with components in different colors](man/hair_kveckanji_sm.svg) | ![Dendrogram of the kanji](man/hair_kvecdend_sm.svg) |
   |:----------:|:----------:|
 
-  | ![Ink transport source and destination](assets/treestrans_sm.png) | ![Optimal ink transport](assets/treesplan_sm.png) |
+  | ![Ink transport source and destination](man/treestrans_sm.png) | ![Optimal ink transport](man/treesplan_sm.png) |
   |:----------:|:----------:|
 
 
