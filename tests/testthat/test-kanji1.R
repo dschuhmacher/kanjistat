@@ -34,7 +34,7 @@ test_that("convert_kanji, single entry, simplify", {
   expect_equal( convert_kanji(list(kanjivec_ref_fuji), "index"), 1032 )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji), "character"), "藤" )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji), "hexmode"), as.hexmode("85e4") )
-  skip_if_not_installed("spatstat.data")
+  skip_if_not_installed("kanjistat.data")
     # output = "all"
     expect_equal( convert_kanji("藤"), list(index=1032, character="藤",
                                                 hexmode=as.hexmode("85e4"), kanjivec=kanjivec_ref_fuji),
@@ -87,7 +87,7 @@ test_that("convert_kanji, multiple entries, simplify", {
   expect_equal( convert_kanji(list(kanjivec_ref_fuji, kanjivec_ref_fuji), "index"), c(1032, 1032) )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji, kanjivec_ref_fuji), "character"), c("藤", "藤") )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji, kanjivec_ref_fuji), "hexmode"), as.hexmode(c("85e4", "85e4")) )
-  skip_if_not_installed("spatstat.data")
+  skip_if_not_installed("kanjistat.data")
     # output = "all"
     sublist <- list(index=1032, character="藤", hexmode=as.hexmode("85e4"), kanjivec=kanjivec_ref_fuji)
     expect_equal( convert_kanji(c("藤","藤")), list(sublist, sublist),
@@ -144,12 +144,12 @@ test_that("convert_kanji, single entry, don't simplify", {
   expect_equal( convert_kanji(list(kanjivec_ref_fuji), "index", simplify=FALSE), list(1032) )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji), "character", simplify=FALSE), list("藤") )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji), "hexmode", simplify=FALSE), list(as.hexmode("85e4")) )
-  skip_if_not_installed("spatstat.data")
+  skip_if_not_installed("kanjistat.data")
   # output = "all"
     expect_equal( convert_kanji(list("藤"), simplify=FALSE)[[1]],
                                 list(index=1032, character="藤",
                                      hexmode=as.hexmode("85e4"), kanjivec=kanjivec_ref_fuji),
-                ignore_attr=c("call", "kanjistat_version") )
+                  ignore_attr=c("call", "kanjistat_version") )
   # test only the first one also *without* list
     expect_equal( convert_kanji(1032, "kanjivec", simplify=FALSE), kanjivec_ref_fuji,
                   ignore_attr=c("call", "kanjistat_version") )
@@ -198,7 +198,7 @@ test_that("convert_kanji, multiple entries, don't simplify", {
   expect_equal( convert_kanji(list(kanjivec_ref_fuji, kanjivec_ref_fuji), "index", simplify=FALSE), list(1032, 1032) )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji, kanjivec_ref_fuji), "character", simplify=FALSE), list("藤", "藤") )
   expect_equal( convert_kanji(list(kanjivec_ref_fuji, kanjivec_ref_fuji), "hexmode", simplify=FALSE), list(as.hexmode("85e4"), as.hexmode("85e4")) )
-  skip_if_not_installed("spatstat.data")
+  skip_if_not_installed("kanjistat.data")
     # output = "all"
     sublist <- list(index=1032, character="藤", hexmode=as.hexmode("85e4"), kanjivec=kanjivec_ref_fuji)
     expect_equal( convert_kanji(list("藤","藤"), simplify=FALSE), list(sublist, sublist),

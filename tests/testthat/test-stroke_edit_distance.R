@@ -1,7 +1,7 @@
 # contains indirectly also tests for values of dstrokedit
 
 test_that("sedist, same as Yencken, type does not matter", {
-  skip_if_not_installed("spatstat.data")
+  skip_if_not_installed("kanjistat.data")
     ind1 <- 384L
     ind2 <- c(93L, 413L, 786L, 895L, 1020L, 1137L, 1282L, 1359L, 1433L, 1642L, 1959L)
     res <- sedist(ind1, ind2)
@@ -30,7 +30,7 @@ test_that("sedist, different from Yencken, type does matter", {
                  0.5, 0.44444444444444442)  # sedist first
   expect_equal(dstrokedit[ind1,ind2], expected0)
   #
-  skip_if_not_installed("spatstat.data")
+  skip_if_not_installed("kanjistat.data")
     expect_equal( as.vector(sedist(ind1, ind2, type="full")), expected1)
     expect_equal( as.vector(sedist(ind1, ind2, type="before_slash")), expected1)
     expect_equal( as.vector(sedist(ind1, ind2, type="first")), expected2)

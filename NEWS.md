@@ -1,3 +1,11 @@
+# kanjistat 0.14.1 (2024-05-30)
+
+## Bug fixes
+
+* Some unit tests were performed conditionally on the availability of package spatstat.data rather than kanjistat.data, which led to errors in the CRAN checks whenever spatstat.data was available but kanjistat.data was not. Fixed.
+
+-------------------------------
+
 # kanjistat 0.14.0 (2024-05-29)
 
 ## New features
