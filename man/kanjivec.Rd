@@ -141,7 +141,7 @@ of \link[=kanjidist]{kanji distances}.
 \examples{
 if (interactive()) {
   # Try to load the svg file for the kanji from GitHub.
-  res <- kanjivec("\u85e4", database=NULL)
+  res <- kanjivec("藤", database=NULL)
   str(res)
 }
 

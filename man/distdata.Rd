@@ -35,16 +35,16 @@ dyehli
 Precomputed kanji distances
 }
 \examples{
-# Find index for kanji \u90e8
-bu_index <- match("\u90e8", kbase$kanji)
+# Find index for kanji 部
+bu_index <- match("部", kbase$kanji)
 
-# Look up available stroke edit distances for \u90e8.
+# Look up available stroke edit distances for 部.
 non_zero <- which(dstrokedit[bu_index,] != 0)
 sed <- dstrokedit[non_zero, bu_index]
 names(sed) <- kbase[non_zero,]$kanji
 sort(sed)
 
-# Look up available bag-of-radicals distances for \u90e8.
+# Look up available bag-of-radicals distances for 部.
 non_zero <- which(dyehli[bu_index,] != 0)
 bord <- dyehli[non_zero, bu_index]
 names(bord) <- kbase[non_zero,]$kanji

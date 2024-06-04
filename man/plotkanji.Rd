@@ -58,7 +58,7 @@ We strongly advised that a Japanese font is used as detailed above.
 }
 
 \examples{
-plotkanji("\u6edd")   
-plotkanji("\u72ac\u732b\u9b5a")
+plotkanji("滝")   
+plotkanji("犬猫魚")
 
 }

@@ -1,3 +1,9 @@
+# kanjistat 0.14.1.9000 (development version)
+
+* Switch back man pages to contain UTF-8 characters. 
+
+-------------------------------
+
 # kanjistat 0.14.1 (2024-05-30)
 
 ## Bug fixes

@@ -33,6 +33,6 @@ to unicode codepoints.
 }
 \examples{
 codepointToKanji(c("51b7", "6696", "71b1"))
-kanjiToCodepoint("\u51b7\u6696\u71b1")
+kanjiToCodepoint("冷暖熱")
 
 }
