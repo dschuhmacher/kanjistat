@@ -17,8 +17,8 @@ such as for \code{\link{kmatdist}}.
 
 All of them are in handwriting style fonts.
 \code{fivetrees1} is in a Kyoukasho font (schoolbook style),
-\code{fivetrees2} is in a Kaisho font (regular script calligraphy font)
-\code{fivetrees3} is in a Gyousho font (semi-cursive calligraphy font)
+\code{fivetrees2} is in a Kaisho font (regular script calligraphy font),
+\code{fivetrees3} is in a Gyousho font (semi-cursive calligraphy font).
 
 An object of class \code{list} of length 5.
 

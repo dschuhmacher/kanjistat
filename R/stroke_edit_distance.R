@@ -130,6 +130,7 @@ strokesignature2 <- function(kvec) {
 #' }
 #' 
 sedist <- function(k1, k2, type = c("full", "before_slash", "first")) {
+  check_for_data()
   type <- match.arg(type)
   kvec1 <- convert_kanji(k1, "kanjivec", simplify=FALSE)
   if (is(kvec1, "kanjivec")) {  # if k1 was just a single kanji specified in atomic form
