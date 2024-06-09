@@ -7,6 +7,7 @@ library(R.utils)
 library(yaml)
 library(tidyverse)
 library(kanjistat)
+library(kanjistat.data)
 
 file_path <- "poolexp_judgements.yaml.gz"
 
@@ -128,11 +129,27 @@ kanjidist_spec <- function(k1, k2) {
   kanjidist(k1, k2, compo_seg_depth1 = 4, compo_seg_depth2 = 4,
             approx="pcweighted", minor_warnings = FALSE)
 }
-results <- pooled_distance_benchmark(kanjidist_spec, 100)
+results <- pooled_distance_benchmark(kanjidist_spec, 312)
 
 df <- results
 
-hist(unlist(df$jaccard), xlab="Jaccard Index, |A∩B| / |A∪B|", main="Jaccard Index of Most Similar Kanji as selected by Subjective \n Similarity Judgements vs. by the Similarity Metric")
+hist(unlist(df$jaccard), freq=FALSE, xlab="Jaccard Index, |A∩B| / |A∪B|", main="Jaccard Index of Most Similar Kanji as selected by Subjective \n Similarity Judgements vs. by kanjidist")
+cat("kanjidist:\n")
+table(unlist(df$jaccard))
+
+sedist_spec <- function(k1,k2) {
+  l1 <- convert_kanji(k1, output="character")
+  l2 <- convert_kanji(k2, output="character")
+  sedist(l1,l2)
+}
+
+results <- pooled_distance_benchmark(sedist_spec, 312)
+
+df <- results
+
+hist(unlist(df$jaccard), freq=FALSE, xlab="Jaccard Index, |A∩B| / |A∪B|", main="Jaccard Index of Most Similar Kanji as selected by Subjective \n Similarity Judgements vs. by stroke edit dist")
+cat("sedist:\n")
+table(unlist(df$jaccard))
 ```
 
 Next, we load data from [Yencken and Baldwin (2006)](https://lars.yencken.org/papers/iccpol-2006.pdf).
