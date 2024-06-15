@@ -2,7 +2,7 @@
 #' @importFrom grDevices dev.new dev.off gray hcl.colors pdf png svg tiff
 #' @importFrom methods hasArg is
 #' @importFrom stats approx pbeta pnorm setNames
-#' @importFrom utils adist combn data head packageVersion str relist
+#' @importFrom utils adist combn data download.file head packageVersion str relist
 # non-standard packages (tidyverse), frequently used functions only (otherwise call with ::)  
 #' @importFrom purrr attr_getter chuck list_flatten pluck pluck<-
 #' @importFrom stringr str_sub

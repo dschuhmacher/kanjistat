@@ -1,6 +1,6 @@
 # kanjistat 0.14.1.9000 (development version)
 
-* Switch back man pages to contain UTF-8 characters. 
+* `read_kanjidic2` gave an error when the KANJIDIC2 file was downloaded directly from the EDRDG website, i.e., for `fpath = NULL`. Fixed. 
 
 -------------------------------
 

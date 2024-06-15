@@ -84,7 +84,12 @@ read_kanjidic2 <- function(fpath=NULL, output=c("list","xml")) {
     if (interactive()) {
       ans <- readline("No directory supplied. Download latest KANJIDIC2 file from www.edrdg.org? (y/n) ")
       if (ans == "y" || ans == "Y" || ans == "yes" || ans == "Yes") {
-        fpath <- "https://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
+        # currently xml2::read_xml does not unzip files unless they are available locally, so
+        # just setting fpath <- "https://www.edrdg.org/kanjidic/kanjidic2.xml.gz" won't do
+        file_url <- "https://www.edrdg.org/kanjidic/kanjidic2.xml.gz"
+        fpath <- tempfile(pattern = "kanjidic2-", fileext = ".xml.gz")
+        on.exit(unlink(fpath), add = TRUE)
+        download.file(file_url, destfile = fpath, mode = "wb")
       }
     } else {
       stop("No access to KANJIDIC2 file. The latest KANJIDIC2 file can be downloaded manually at http://www.edrdg.org/wiki/index.php/KANJIDIC_Project")
