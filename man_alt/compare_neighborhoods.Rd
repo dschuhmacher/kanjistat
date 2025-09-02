@@ -51,6 +51,6 @@ this can take (roughly) anywhere between 2 minutes and an hour).
 }
 
 \examples{
-# compare_neighborhoods("\u6674", refnn=5, compo_seg_depth=4, approx="pcweighted",
+# compare_neighborhoods("晴", refnn=5, compo_seg_depth=4, approx="pcweighted",
 #                       compnn=0, minor_warnings=FALSE)
 }

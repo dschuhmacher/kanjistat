@@ -123,7 +123,7 @@ to the entire stroke tree rather than a separate element.
 }
 
 \code{strokedend} is more easy to examine and work with due to various convenience functions for
-dendrograms in the packages \code{stats} and \code{\link{dendextend}}, including \code{\link[utils]{str}}
+dendrograms in the packages \code{stats} and \code{dendextend}, including \code{\link[utils]{str}}
 and \code{\link[stats]{plot.dendrogram}}. The function \code{\link{plot.kanjivec}} with option
 \code{type = "dend"} is a wrapper for \code{\link[stats]{plot.dendrogram}} with reasonable presets
 for various options.
@@ -141,7 +141,7 @@ of \link[=kanjidist]{kanji distances}.
 \examples{
 if (interactive()) {
   # Try to load the svg file for the kanji from GitHub.
-  res <- kanjivec("藤", database=NULL)
+  res <- kanjivec("\u85e4", database=NULL)
   str(res)
 }
 

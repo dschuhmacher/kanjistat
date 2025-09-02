@@ -27,7 +27,7 @@ with further attributes.
 }
 \examples{
 kanji <- fivebetas[[5]]
-get_strokes(kanji, c(3,10))    # the two long vertical strokes in \u9663
+get_strokes(kanji, c(3,10))    # the two long vertical strokes in 陣
 
 }
 \seealso{

@@ -7,11 +7,11 @@
 \title{A sample list of kanjivec objects}
 \format{
 \code{fivebetas} is a list of five \code{\link{kanjivec}} objects
-representing the basic kanji 部,障,陪,郵,陣 containing  "beta" components,
+representing the basic kanji \\u90e8,\\u969c,\\u966a,\\u90f5,\\u9663 containing  "beta" components,
 which come in fact from two different classical radicals:
 \itemize{
-\item 阜-->⻖ on the left: mound, small village
-\item 邑-->⻏ on the right: large village
+\item \\u961c-->\\u2ed6 on the left: mound, small village
+\item \\u9091-->\\u2ecf on the right: large village
 }
 }
 \source{
