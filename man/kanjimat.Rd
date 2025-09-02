@@ -58,6 +58,6 @@ We strongly advised that a Japanese font is used as detailed above.
 }
 
 \examples{
-res <- kanjimat(kanji="藤", size = 128)
+res <- kanjimat(kanji="\u85e4", size = 128)
 
 }

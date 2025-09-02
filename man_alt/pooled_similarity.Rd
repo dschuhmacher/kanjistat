@@ -27,8 +27,8 @@ pooled_similarity
 Precomputed kanji distances
 }
 \examples{
-# Get kanji characters that were found to be easily confused with \u5927.
-pooled_similarity[pooled_similarity$selected == "\u5927", ]$pivot
+# Get kanji characters that were found to be easily confused with 大.
+pooled_similarity[pooled_similarity$selected == "大", ]$pivot
 
 }
 \references{

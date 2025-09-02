@@ -95,7 +95,7 @@
 #'          }
 #'
 #' @details \code{strokedend} is more easy to examine and work with due to various convenience functions for
-#'          dendrograms in the packages \code{stats} and \code{\link{dendextend}}, including \code{\link[utils]{str}}
+#'          dendrograms in the packages \code{stats} and \code{dendextend}, including \code{\link[utils]{str}}
 #'          and \code{\link[stats]{plot.dendrogram}}. The function \code{\link{plot.kanjivec}} with option
 #'          \code{type = "dend"} is a wrapper for \code{\link[stats]{plot.dendrogram}} with reasonable presets
 #'          for various options.

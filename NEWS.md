@@ -1,6 +1,6 @@
-# kanjistat 0.14.1.9000 (development version)
+# kanjistat 0.14.2 (development version)
 
-* Switch back man pages to contain UTF-8 characters. 
+* CRAN maintenance update. 
 
 -------------------------------
 
